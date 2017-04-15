@@ -1,10 +1,9 @@
-From 73eb322805ef31e9fbcb00f0f26200ab77766f5c Mon Sep 17 00:00:00 2001
+From 2ba1652200c05c044794509c29512c2c32d7b31f Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Fri, 31 Mar 2017 14:29:58 +0200
 Subject: [PATCH] Fixed build under Fedora using rpmbuild and mock.
 
 ---
- Telegram/SourceFiles/base/build_config.h    | 52 ++++++++++++++++
  Telegram/SourceFiles/main.cpp               |  7 ++-
  Telegram/SourceFiles/qt_functions.cpp       | 94 +++++++++++++++++++++++++++++
  Telegram/SourceFiles/qt_static_plugins.cpp  |  8 ---
@@ -22,76 +21,9 @@ Subject: [PATCH] Fixed build under Fedora using rpmbuild and mock.
  Telegram/gyp/utils.gyp                      |  4 +-
  lib/xdg/telegramdesktop.appdata.xml         |  2 +-
  lib/xdg/telegramdesktop.desktop             |  6 +-
- 18 files changed, 249 insertions(+), 145 deletions(-)
+ 17 files changed, 197 insertions(+), 145 deletions(-)
  create mode 100644 Telegram/SourceFiles/qt_functions.cpp
 
-diff --git a/Telegram/SourceFiles/base/build_config.h b/Telegram/SourceFiles/base/build_config.h
-index 1731630..8826feb 100644
---- a/Telegram/SourceFiles/base/build_config.h
-+++ b/Telegram/SourceFiles/base/build_config.h
-@@ -56,10 +56,62 @@ Copyright (c) 2014-2017 John Preston, https://desktop.telegram.org
- #define ARCH_CPU_X86_FAMILY 1
- #define ARCH_CPU_X86_64 1
- #define ARCH_CPU_64_BITS 1
-+#define ARCH_CPU_LITTLE_ENDIAN 1
- #elif defined(_M_IX86) || defined(__i386__)
- #define ARCH_CPU_X86_FAMILY 1
- #define ARCH_CPU_X86 1
- #define ARCH_CPU_32_BITS 1
-+#define ARCH_CPU_LITTLE_ENDIAN 1
-+#elif defined(__s390x__)
-+#define ARCH_CPU_S390_FAMILY 1
-+#define ARCH_CPU_S390X 1
-+#define ARCH_CPU_64_BITS 1
-+#define ARCH_CPU_BIG_ENDIAN 1
-+#elif defined(__s390__)
-+#define ARCH_CPU_S390_FAMILY 1
-+#define ARCH_CPU_S390 1
-+#define ARCH_CPU_31_BITS 1
-+#define ARCH_CPU_BIG_ENDIAN 1
-+#elif defined(__PPC64__) && defined(__BIG_ENDIAN__)
-+#define ARCH_CPU_PPC64_FAMILY 1
-+#define ARCH_CPU_PPC64 1
-+#define ARCH_CPU_64_BITS 1
-+#define ARCH_CPU_BIG_ENDIAN 1
-+#elif defined(__PPC64__) && defined(__LITTLE_ENDIAN__)
-+#define ARCH_CPU_PPC64_FAMILY 1
-+#define ARCH_CPU_PPC64 1
-+#define ARCH_CPU_64_BITS 1
-+#define ARCH_CPU_LITTLE_ENDIAN 1
-+#elif defined(__PPC__)
-+#define ARCH_CPU_PPC_FAMILY 1
-+#define ARCH_CPU_PPC 1
-+#define ARCH_CPU_32_BITS 1
-+#define ARCH_CPU_BIG_ENDIAN 1
-+#elif defined(__ARMEL__)
-+#define ARCH_CPU_ARM_FAMILY 1
-+#define ARCH_CPU_ARMEL 1
-+#define ARCH_CPU_32_BITS 1
-+#define ARCH_CPU_LITTLE_ENDIAN 1
-+#elif defined(__aarch64__)
-+#define ARCH_CPU_ARM_FAMILY 1
-+#define ARCH_CPU_ARM64 1
-+#define ARCH_CPU_64_BITS 1
-+#define ARCH_CPU_LITTLE_ENDIAN 1
-+#elif defined(__pnacl__)
-+#define ARCH_CPU_32_BITS 1
-+#define ARCH_CPU_LITTLE_ENDIAN 1
-+#elif defined(__MIPSEL__)
-+#if defined(__LP64__)
-+#define ARCH_CPU_MIPS_FAMILY 1
-+#define ARCH_CPU_MIPS64EL 1
-+#define ARCH_CPU_64_BITS 1
-+#define ARCH_CPU_LITTLE_ENDIAN 1
-+#else
-+#define ARCH_CPU_MIPS_FAMILY 1
-+#define ARCH_CPU_MIPSEL 1
-+#define ARCH_CPU_32_BITS 1
-+#define ARCH_CPU_LITTLE_ENDIAN 1
-+#endif
- #else
- #error Please add support for your architecture in base/build_config.h
- #endif
 diff --git a/Telegram/SourceFiles/main.cpp b/Telegram/SourceFiles/main.cpp
 index 6cd942e..0268e39 100644
 --- a/Telegram/SourceFiles/main.cpp

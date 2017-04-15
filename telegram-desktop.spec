@@ -40,7 +40,7 @@ Patch1: add_russian_locale.patch
 Requires: hicolor-icon-theme
 Requires: qt5-qtimageformats%{?_isa}
 Recommends: libappindicator-gtk3%{?_isa}
-ExcludeArch: ppc64
+ExclusiveArch: i686 x86_64
 
 BuildRequires: desktop-file-utils
 BuildRequires: libappstream-glib
