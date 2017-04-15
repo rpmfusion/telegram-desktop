@@ -27,6 +27,7 @@ Release: 1%{?dist}
 License: GPLv3+ and GPLv3 and LGPLv3 and BSD and MIT
 Group: Applications/Internet
 URL: https://github.com/telegramdesktop/%{appname}
+ExclusiveArch: i686 x86_64
 
 Source0: %{url}/archive/v%{version}.tar.gz#/%{appname}-%{version}.tar.gz
 Source1: https://chromium.googlesource.com/external/gyp/+archive/%{commit1}.tar.gz#/gyp-%{shortcommit1}.tar.gz
@@ -39,8 +40,9 @@ Patch1: add_russian_locale.patch
 
 Requires: hicolor-icon-theme
 Requires: qt5-qtimageformats%{?_isa}
+%if 0%{?fedora} >= 24
 Recommends: libappindicator-gtk3%{?_isa}
-ExclusiveArch: i686 x86_64
+%endif
 
 BuildRequires: desktop-file-utils
 BuildRequires: libappstream-glib
