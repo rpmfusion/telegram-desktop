@@ -15,7 +15,7 @@
 
 Summary: Telegram is a new era of messaging
 Name: telegram-desktop
-Version: 1.0.32
+Version: 1.0.33
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -23,8 +23,8 @@ Release: 1%{?dist}
 # * S1 (GYP) - BSD -- build-time dependency;
 # * S2 (GSL) - MIT -- build-time dependency;
 # * S3 (Variant) - BSD -- build-time dependency;
-# * S4 (Russian language pack) - GPLv3 -- bundled into executable.
-License: GPLv3+ and GPLv3 and LGPLv3 and BSD and MIT
+# * P0 (qt_functions.cpp) - LGPLv3 -- build-time dependency.
+License: GPLv3+ and LGPLv3 and BSD and MIT
 Group: Applications/Internet
 URL: https://github.com/telegramdesktop/%{appname}
 ExclusiveArch: i686 x86_64
@@ -33,10 +33,8 @@ Source0: %{url}/archive/v%{version}.tar.gz#/%{appname}-%{version}.tar.gz
 Source1: https://chromium.googlesource.com/external/gyp/+archive/%{commit1}.tar.gz#/gyp-%{shortcommit1}.tar.gz
 Source2: https://github.com/Microsoft/GSL/archive/%{commit2}.tar.gz#/GSL-%{shortcommit2}.tar.gz
 Source3: https://github.com/mapbox/variant/archive/%{commit3}.tar.gz#/variant-%{shortcommit3}.tar.gz
-Source4: https://tlgrm.ru/files/locales/tdesktop/Russian.strings#/%{appname}-%{version}-russian.strings
 
 Patch0: fix_build_under_fedora.patch
-Patch1: add_russian_locale.patch
 
 Requires: hicolor-icon-theme
 Requires: qt5-qtimageformats%{?_isa}
@@ -128,9 +126,6 @@ pushd third_party
     mv variant-%{commit3} variant
 popd
 
-# Unpacking additional locales from sources...
-iconv -f "UTF-16" -t "UTF-8" "%{SOURCE4}" > Telegram/Resources/langs/lang_ru.strings
-
 %build
 # Exporting correct build flags...
 export CFLAGS="%{optflags}"
@@ -212,6 +207,9 @@ fi
 %{_datadir}/appdata/%{name}.appdata.xml
 
 %changelog
+* Sun Apr 16 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.0.33-1
+- Updated to 1.0.33 (alpha).
+
 * Thu Apr 13 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.0.32-1
 - Updated to 1.0.32 (alpha).
 
