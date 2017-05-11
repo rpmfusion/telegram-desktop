@@ -1,8 +1,9 @@
 # Telegram Desktop's constants...
 %global appname tdesktop
+%global voipver 0.4.1
 
 # Git revision of GYP...
-%global commit1 a7055b3989c1074adca03b4b4829e7f0e57f6efd
+%global commit1 a478c1ab51ea3e04e79791ac3d1dad01b3f57434
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 
 # Git revision of GSL...
@@ -13,9 +14,13 @@
 %global commit3 916139a2e51e125816efce6e19d428385601273f
 %global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
 
+# Git revision of libtgvoip...
+%global commit4 61eeaba937943ee5fea7a4d310413c4261587fa9
+%global shortcommit4 %(c=%{commit4}; echo ${c:0:7})
+
 Summary: Telegram is a new era of messaging
 Name: telegram-desktop
-Version: 1.0.35
+Version: 1.0.37
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -23,6 +28,7 @@ Release: 1%{?dist}
 # * S1 (GYP) - BSD -- build-time dependency;
 # * S2 (GSL) - MIT -- build-time dependency;
 # * S3 (Variant) - BSD -- build-time dependency;
+# * S4 (libtgvoip) - Public Domain -- shared library;
 # * P0 (qt_functions.cpp) - LGPLv3 -- build-time dependency.
 License: GPLv3+ and LGPLv3 and BSD and MIT
 Group: Applications/Internet
@@ -33,8 +39,10 @@ Source0: %{url}/archive/v%{version}.tar.gz#/%{appname}-%{version}.tar.gz
 Source1: https://chromium.googlesource.com/external/gyp/+archive/%{commit1}.tar.gz#/gyp-%{shortcommit1}.tar.gz
 Source2: https://github.com/Microsoft/GSL/archive/%{commit2}.tar.gz#/GSL-%{shortcommit2}.tar.gz
 Source3: https://github.com/mapbox/variant/archive/%{commit3}.tar.gz#/variant-%{shortcommit3}.tar.gz
+Source4: https://github.com/telegramdesktop/libtgvoip/archive/%{commit4}.tar.gz#/libtgvoip-%{shortcommit4}.tar.gz
 
 Patch0: fix_build_under_fedora.patch
+Patch1: fix_libtgvoip.patch
 
 Requires: hicolor-icon-theme
 Requires: qt5-qtimageformats%{?_isa}
@@ -103,28 +111,39 @@ personal or business messaging needs.
 
 %prep
 # Unpacking Telegram Desktop source archive...
-%autosetup -n %{appname}-%{version} -p1
+%setup -qn %{appname}-%{version}
 
 # Unpacking GYP...
-mkdir -p third_party/gyp
-pushd third_party/gyp
+mkdir -p Telegram/ThirdParty/gyp
+pushd Telegram/ThirdParty/gyp
     tar -xf %{SOURCE1}
-    patch -p1 -i ../../Telegram/Patches/gyp.diff
+    patch -p1 -i ../../../Telegram/Patches/gyp.diff
 popd
 
 # Unpacking GSL...
-pushd third_party
+pushd Telegram/ThirdParty
     rm -rf GSL
     tar -xf %{SOURCE2}
     mv GSL-%{commit2} GSL
 popd
 
 # Unpacking Variant...
-pushd third_party
+pushd Telegram/ThirdParty
     rm -rf variant
     tar -xf %{SOURCE3}
     mv variant-%{commit3} variant
 popd
+
+# Unpacking libtgvoip...
+pushd Telegram/ThirdParty
+    rm -rf libtgvoip
+    tar -xf %{SOURCE4}
+    mv libtgvoip-%{commit4} libtgvoip
+popd
+
+# Applying patches with different fixes...
+%patch0 -p1
+%patch1 -p1
 
 %build
 # Exporting correct build flags...
@@ -147,6 +166,11 @@ popd
 mkdir -p "%{buildroot}%{_bindir}"
 chrpath -d out/Release/Telegram
 install -m 755 out/Release/Telegram "%{buildroot}%{_bindir}/%{name}"
+
+# Installing shared libraries...
+mkdir -p "%{buildroot}%{_libdir}"
+install -m 755 out/Release/lib.target/libtgvoip.so "%{buildroot}%{_libdir}/libtgvoip.so.%{voipver}"
+ln -s libtgvoip.so.%{voipver} %{buildroot}%{_libdir}/libtgvoip.so
 
 # Installing desktop shortcut...
 mv lib/xdg/telegramdesktop.desktop lib/xdg/%{name}.desktop
@@ -171,6 +195,7 @@ install -m 644 -p lib/xdg/telegramdesktop.appdata.xml "%{buildroot}%{_datadir}/a
 appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/appdata/%{name}.appdata.xml"
 
 %post
+/sbin/ldconfig
 %if 0%{?fedora} <= 23 || 0%{?rhel} == 7
 /bin/touch --no-create %{_datadir}/mime/packages &>/dev/null || :
 %endif
@@ -180,6 +205,7 @@ appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/appdata/%{name}.a
 %endif
 
 %postun
+/sbin/ldconfig
 if [ $1 -eq 0 ] ; then
     %if 0%{?fedora} <= 23 || 0%{?rhel} == 7
     /usr/bin/update-mime-database %{_datadir}/mime &> /dev/null || :
@@ -199,14 +225,21 @@ fi
 
 %files
 %doc README.md changelog.txt
-%license LICENSE
+%license LICENSE Telegram/ThirdParty/libtgvoip/UNLICENSE
 %{_bindir}/%{name}
+%{_libdir}/libtgvoip.*
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/kde4/services/tg.protocol
 %{_datadir}/icons/hicolor/*/apps/%{name}.png
 %{_datadir}/appdata/%{name}.appdata.xml
 
 %changelog
+* Wed May 10 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.0.37-1
+- Updated to 1.0.37 (alpha).
+
+* Wed May 10 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.0.36-1
+- Updated to 1.0.36 (alpha).
+
 * Sun Apr 30 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.0.35-1
 - Updated to 1.0.35 (alpha).
 

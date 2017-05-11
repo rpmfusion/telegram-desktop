@@ -1,4 +1,4 @@
-From c477e7a08c753247b78d28fdf7bda64690411a09 Mon Sep 17 00:00:00 2001
+From 243f9116a93f1a176626b84a57018616847be004 Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Fri, 31 Mar 2017 14:29:58 +0200
 Subject: [PATCH] Fixed build under Fedora using rpmbuild and mock.
@@ -11,17 +11,17 @@ Subject: [PATCH] Fixed build under Fedora using rpmbuild and mock.
  Telegram/SourceFiles/ui/text/text_block.cpp |  2 +-
  Telegram/SourceFiles/ui/twidget.cpp         |  4 +-
  Telegram/gyp/PrecompiledHeader.cmake        |  4 +-
- Telegram/gyp/Telegram.gyp                   | 16 ++---
+ Telegram/gyp/Telegram.gyp                   | 18 ++----
  Telegram/gyp/qt.gypi                        | 80 +++++++-----------------
  Telegram/gyp/qt_rcc.gypi                    |  2 +-
  Telegram/gyp/refresh.sh                     |  6 +-
  Telegram/gyp/settings_linux.gypi            | 14 ++++-
- Telegram/gyp/telegram_linux.gypi            | 79 ++++++++++++------------
+ Telegram/gyp/telegram_linux.gypi            | 80 ++++++++++++------------
  Telegram/gyp/telegram_sources.txt           |  8 +--
  Telegram/gyp/utils.gyp                      |  4 +-
  lib/xdg/telegramdesktop.appdata.xml         |  2 +-
  lib/xdg/telegramdesktop.desktop             |  6 +-
- 17 files changed, 197 insertions(+), 145 deletions(-)
+ 17 files changed, 198 insertions(+), 147 deletions(-)
  create mode 100644 Telegram/SourceFiles/qt_functions.cpp
 
 diff --git a/Telegram/SourceFiles/main.cpp b/Telegram/SourceFiles/main.cpp
@@ -200,7 +200,7 @@ index f89644e..35230cf 100644
  		layout.createLine();
  
 diff --git a/Telegram/SourceFiles/ui/twidget.cpp b/Telegram/SourceFiles/ui/twidget.cpp
-index 5162ac9..0acc77b 100644
+index 04fad32..688cd8e 100644
 --- a/Telegram/SourceFiles/ui/twidget.cpp
 +++ b/Telegram/SourceFiles/ui/twidget.cpp
 @@ -187,9 +187,9 @@ void sendSynteticMouseEvent(QWidget *widget, QEvent::Type type, Qt::MouseButton
@@ -238,22 +238,24 @@ index 5d6830e..c3f08d3 100644
          IMPLICIT_DEPENDS CXX "${_pch_header}"
          COMMENT "Precompiling ${_name} for ${_target} (C++)")
 diff --git a/Telegram/gyp/Telegram.gyp b/Telegram/gyp/Telegram.gyp
-index 5b7ead4..91a6eb6 100644
+index 80160d1..1c0ab91 100644
 --- a/Telegram/gyp/Telegram.gyp
 +++ b/Telegram/gyp/Telegram.gyp
-@@ -32,7 +32,6 @@
+@@ -31,7 +31,6 @@
+       'src_loc': '../SourceFiles',
        'res_loc': '../Resources',
-       'submodules_loc': '../../third_party',
-       'third_party_loc': '../ThirdParty',
--      'minizip_loc': '<(third_party_loc)/minizip',
-       'sp_media_key_tap_loc': '<(third_party_loc)/SPMediaKeyTap',
+       'submodules_loc': '../ThirdParty',
+-      'minizip_loc': '<(submodules_loc)/minizip',
+       'sp_media_key_tap_loc': '<(submodules_loc)/SPMediaKeyTap',
        'style_files': [
          '<(res_loc)/colors.palette',
-@@ -82,20 +81,17 @@
+@@ -83,23 +82,18 @@
      ],
  
      'defines': [
 -      'AL_LIBTYPE_STATIC',
+-      'AL_ALEXT_PROTOTYPES',
+       'TGVOIP_USE_CXX11_LIB',
 -      '<!@(python -c "for s in \'<(build_defines)\'.split(\',\'): print(s)")',
 +      '__STDC_FORMAT_MACROS',
 +      'TDESKTOP_DISABLE_AUTOUPDATE',
@@ -272,12 +274,13 @@ index 5b7ead4..91a6eb6 100644
 -      '<(libs_loc)/zlib-1.2.8',
 -      '<(libs_loc)/ffmpeg',
 -      '<(libs_loc)/openal-soft/include',
+-      '<(libs_loc)/opus/include',
 -      '<(minizip_loc)',
        '<(sp_media_key_tap_loc)',
        '<(submodules_loc)/GSL/include',
        '<(submodules_loc)/variant/include',
 diff --git a/Telegram/gyp/qt.gypi b/Telegram/gyp/qt.gypi
-index c12e450..f244fa6 100644
+index 81c13a1..899af14 100644
 --- a/Telegram/gyp/qt.gypi
 +++ b/Telegram/gyp/qt.gypi
 @@ -27,25 +27,21 @@
@@ -449,15 +452,15 @@ index eebc696..3efa7d0 100644
        '-no-compress',
        '<(RULE_INPUT_PATH)',
 diff --git a/Telegram/gyp/refresh.sh b/Telegram/gyp/refresh.sh
-index 87f16da..cfd93d8 100755
+index cd96456..63aa7ab 100755
 --- a/Telegram/gyp/refresh.sh
 +++ b/Telegram/gyp/refresh.sh
-@@ -9,11 +9,11 @@ MySystem=`uname -s`
+@@ -17,11 +17,11 @@ MySystem=`uname -s`
  cd $FullScriptPath
  
  if [ "$MySystem" == "Linux" ]; then
--  ../../../Libraries/gyp/gyp --depth=. --generator-output=../.. -Goutput_dir=out Telegram.gyp --format=cmake
-+  ../../third_party/gyp/gyp --depth=. --generator-output=../.. -Goutput_dir=out Telegram.gyp --format=cmake
+-  ../../../Libraries/gyp/gyp --depth=. --generator-output=../.. -Goutput_dir=out -Dofficial_build_target=$BuildTarget Telegram.gyp --format=cmake
++  ../ThirdParty/gyp/gyp --depth=. --generator-output=../.. -Goutput_dir=out Telegram.gyp --format=cmake
    cd ../../out/Debug
 -  ../../../Libraries/cmake-3.6.2/bin/cmake .
 +  cmake .
@@ -519,10 +522,10 @@ index fde88dc..f45fc09 100644
          'Debug': {
          },
 diff --git a/Telegram/gyp/telegram_linux.gypi b/Telegram/gyp/telegram_linux.gypi
-index b42e744..d89d9cd 100644
+index b42e744..29a26e7 100644
 --- a/Telegram/gyp/telegram_linux.gypi
 +++ b/Telegram/gyp/telegram_linux.gypi
-@@ -27,70 +27,69 @@
+@@ -27,70 +27,70 @@
  # QApplication() -> createPlatformIntegration -> QXcbIntegrationPlugin::create
          #'xkbcommon',
        ],
@@ -541,6 +544,7 @@ index b42e744..d89d9cd 100644
 +      '<!(rpm --eval "%{_includedir}")',
 +      '<!(rpm --eval "%{_includedir}")/ffmpeg',
 +      '<!(rpm --eval "%{_includedir}")/minizip',
++      '<!(rpm --eval "%{_includedir}")/opus',
      ],
      'library_dirs': [
 -      '/usr/local/lib',
@@ -633,10 +637,10 @@ index b42e744..d89d9cd 100644
        },
      },
 diff --git a/Telegram/gyp/telegram_sources.txt b/Telegram/gyp/telegram_sources.txt
-index a08b77b..e9cdfdd 100644
+index c970f98..fab0268 100644
 --- a/Telegram/gyp/telegram_sources.txt
 +++ b/Telegram/gyp/telegram_sources.txt
-@@ -535,13 +535,7 @@
+@@ -553,13 +553,7 @@
  <(src_loc)/structs.h
  
  platforms: !win
