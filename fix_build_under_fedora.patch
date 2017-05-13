@@ -1,4 +1,4 @@
-From 243f9116a93f1a176626b84a57018616847be004 Mon Sep 17 00:00:00 2001
+From 6e9b9e5aecc0c836d53920bf15f2cb422c546681 Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Fri, 31 Mar 2017 14:29:58 +0200
 Subject: [PATCH] Fixed build under Fedora using rpmbuild and mock.
@@ -16,12 +16,12 @@ Subject: [PATCH] Fixed build under Fedora using rpmbuild and mock.
  Telegram/gyp/qt_rcc.gypi                    |  2 +-
  Telegram/gyp/refresh.sh                     |  6 +-
  Telegram/gyp/settings_linux.gypi            | 14 ++++-
- Telegram/gyp/telegram_linux.gypi            | 80 ++++++++++++------------
+ Telegram/gyp/telegram_linux.gypi            | 82 ++++++++++++-------------
  Telegram/gyp/telegram_sources.txt           |  8 +--
  Telegram/gyp/utils.gyp                      |  4 +-
  lib/xdg/telegramdesktop.appdata.xml         |  2 +-
  lib/xdg/telegramdesktop.desktop             |  6 +-
- 17 files changed, 198 insertions(+), 147 deletions(-)
+ 17 files changed, 198 insertions(+), 149 deletions(-)
  create mode 100644 Telegram/SourceFiles/qt_functions.cpp
 
 diff --git a/Telegram/SourceFiles/main.cpp b/Telegram/SourceFiles/main.cpp
@@ -522,10 +522,10 @@ index fde88dc..f45fc09 100644
          'Debug': {
          },
 diff --git a/Telegram/gyp/telegram_linux.gypi b/Telegram/gyp/telegram_linux.gypi
-index b42e744..29a26e7 100644
+index b8866ec..29a26e7 100644
 --- a/Telegram/gyp/telegram_linux.gypi
 +++ b/Telegram/gyp/telegram_linux.gypi
-@@ -27,70 +27,70 @@
+@@ -27,72 +27,70 @@
  # QApplication() -> createPlatformIntegration -> QXcbIntegrationPlugin::create
          #'xkbcommon',
        ],
@@ -535,12 +535,14 @@ index b42e744..29a26e7 100644
 -      'linux_path_va%': '/usr/local',
 -      'linux_path_vdpau%': '/usr/local',
 -      'linux_path_breakpad%': '<(libs_loc)/breakpad',
+-      'linux_path_opus_include%': '<(libs_loc)/opus/include',
      },
      'include_dirs': [
 -      '/usr/local/include',
 -      '<(linux_path_ffmpeg)/include',
 -      '<(linux_path_openal)/include',
 -      '<(linux_path_breakpad)/include/breakpad',
+-      '<(linux_path_opus_include)',
 +      '<!(rpm --eval "%{_includedir}")',
 +      '<!(rpm --eval "%{_includedir}")/ffmpeg',
 +      '<!(rpm --eval "%{_includedir}")/minizip',

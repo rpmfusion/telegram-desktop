@@ -15,12 +15,12 @@
 %global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
 
 # Git revision of libtgvoip...
-%global commit4 61eeaba937943ee5fea7a4d310413c4261587fa9
+%global commit4 6dcf281d2477c8f2a22378e0d8c1c93f2428390b
 %global shortcommit4 %(c=%{commit4}; echo ${c:0:7})
 
 Summary: Telegram is a new era of messaging
 Name: telegram-desktop
-Version: 1.0.37
+Version: 1.0.38
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -91,6 +91,7 @@ BuildRequires: libxkbcommon-devel
 BuildRequires: libxkbcommon-x11-devel
 BuildRequires: harfbuzz-devel
 BuildRequires: gtk3-devel
+BuildRequires: pulseaudio-libs-devel
 %if 0%{?fedora} >= 26
 BuildRequires: compat-openssl10-devel
 %else
@@ -112,6 +113,7 @@ personal or business messaging needs.
 %prep
 # Unpacking Telegram Desktop source archive...
 %setup -qn %{appname}-%{version}
+%patch0 -p1
 
 # Unpacking GYP...
 mkdir -p Telegram/ThirdParty/gyp
@@ -141,9 +143,10 @@ pushd Telegram/ThirdParty
     mv libtgvoip-%{commit4} libtgvoip
 popd
 
-# Applying patches with different fixes...
-%patch0 -p1
+# Patching libtgvoip...
+pushd Telegram/ThirdParty/libtgvoip
 %patch1 -p1
+popd
 
 %build
 # Exporting correct build flags...
@@ -170,7 +173,7 @@ install -m 755 out/Release/Telegram "%{buildroot}%{_bindir}/%{name}"
 # Installing shared libraries...
 mkdir -p "%{buildroot}%{_libdir}"
 install -m 755 out/Release/lib.target/libtgvoip.so "%{buildroot}%{_libdir}/libtgvoip.so.%{voipver}"
-ln -s libtgvoip.so.%{voipver} %{buildroot}%{_libdir}/libtgvoip.so
+ln -s libtgvoip.so.%{voipver} "%{buildroot}%{_libdir}/libtgvoip.so"
 
 # Installing desktop shortcut...
 mv lib/xdg/telegramdesktop.desktop lib/xdg/%{name}.desktop
@@ -234,6 +237,9 @@ fi
 %{_datadir}/appdata/%{name}.appdata.xml
 
 %changelog
+* Sat May 13 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.0.38-1
+- Updated to 1.0.38 (alpha).
+
 * Wed May 10 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.0.37-1
 - Updated to 1.0.37 (alpha).
 
