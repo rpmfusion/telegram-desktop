@@ -20,7 +20,7 @@
 
 Summary: Telegram is a new era of messaging
 Name: telegram-desktop
-Version: 1.0.38
+Version: 1.1.0
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -44,6 +44,7 @@ Source4: https://github.com/telegramdesktop/libtgvoip/archive/%{commit4}.tar.gz#
 Patch0: fix_build_under_fedora.patch
 Patch1: fix_libtgvoip.patch
 
+Provides: libtgvoip = %{voipver}
 Requires: hicolor-icon-theme
 Requires: qt5-qtimageformats%{?_isa}
 %if 0%{?fedora} >= 24
@@ -154,6 +155,9 @@ export CFLAGS="%{optflags}"
 export CXXFLAGS="%{optflags}"
 export LDFLAGS="%{__global_ldflags}"
 
+# Exporting some additional constants...
+export VOIPVER="%{voipver}"
+
 # Generating cmake script using GYP...
 pushd Telegram
     gyp/refresh.sh
@@ -172,7 +176,8 @@ install -m 755 out/Release/Telegram "%{buildroot}%{_bindir}/%{name}"
 
 # Installing shared libraries...
 mkdir -p "%{buildroot}%{_libdir}"
-install -m 755 out/Release/lib.target/libtgvoip.so "%{buildroot}%{_libdir}/libtgvoip.so.%{voipver}"
+install -m 755 out/Release/lib.target/libtgvoip.so.%{voipver} "%{buildroot}%{_libdir}/libtgvoip.so.%{voipver}"
+ln -s libtgvoip.so.%{voipver} "%{buildroot}%{_libdir}/libtgvoip.so.0"
 ln -s libtgvoip.so.%{voipver} "%{buildroot}%{_libdir}/libtgvoip.so"
 
 # Installing desktop shortcut...
@@ -237,6 +242,12 @@ fi
 %{_datadir}/appdata/%{name}.appdata.xml
 
 %changelog
+* Sun May 14 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.0-1
+- Updated to 1.1.0.
+
+* Sun May 14 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.0.38-2
+- Fixed rpmlint errors and warnings. Set soname for shared library.
+
 * Sat May 13 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.0.38-1
 - Updated to 1.0.38 (alpha).
 

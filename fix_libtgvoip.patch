@@ -1,26 +1,27 @@
-From 16411afb4dddabe6dfb55b695b4b9d0f269356f2 Mon Sep 17 00:00:00 2001
+From 6ca6ec24c97fcf81413e312a5f032f163870f461 Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Wed, 10 May 2017 13:19:54 +0200
 Subject: [PATCH] Fixed build of libtgvoip under Fedora as shared library.
 
 ---
- libtgvoip.gyp | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ libtgvoip.gyp | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/libtgvoip.gyp b/libtgvoip.gyp
-index 58dc6bf..aaadaad 100644
+index 58dc6bf..b0288ae 100644
 --- a/libtgvoip.gyp
 +++ b/libtgvoip.gyp
-@@ -4,7 +4,7 @@
+@@ -4,7 +4,8 @@
      'targets': [
        {
          'target_name': 'libtgvoip',
 -        'type': 'static_library',
 +        'type': 'shared_library',
++        'product_extension': 'so.<!(echo -n "$VOIPVER")',
          'dependencies': [],
          'defines': [
            'WEBRTC_APM_DEBUG_DUMP=0',
-@@ -13,11 +13,11 @@
+@@ -13,11 +14,11 @@
          'variables': {
            'tgvoip_src_loc': '.',
            'official_build_target%': '',
