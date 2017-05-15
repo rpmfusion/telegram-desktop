@@ -43,6 +43,8 @@ Source4: https://github.com/telegramdesktop/libtgvoip/archive/%{commit4}.tar.gz#
 
 Patch0: fix_build_under_fedora.patch
 Patch1: fix_libtgvoip.patch
+# https://github.com/telegramdesktop/tdesktop/pull/3400
+Patch2: 0001-localstorage-qFlags-is-working-only-on-enumeration-t.patch
 
 Provides: libtgvoip = %{voipver}
 Requires: hicolor-icon-theme
@@ -115,6 +117,7 @@ personal or business messaging needs.
 # Unpacking Telegram Desktop source archive...
 %setup -qn %{appname}-%{version}
 %patch0 -p1
+%patch2 -p1
 
 # Unpacking GYP...
 mkdir -p Telegram/ThirdParty/gyp
