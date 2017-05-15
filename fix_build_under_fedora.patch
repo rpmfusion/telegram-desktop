@@ -466,7 +466,7 @@ index cd96456..dc04ae6 100755
 -  ../../../Libraries/cmake-3.6.2/bin/cmake .
 +  ../ThirdParty/gyp/gyp --depth=. --generator-output=../.. -Goutput_dir=out Telegram.gyp --format=cmake
 +  cd ../../out/Release
-+  cmake .
++  cmake . -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
    cd ../../Telegram/gyp
  else
    #gyp --depth=. --generator-output=../.. -Goutput_dir=out Telegram.gyp --format=ninja
