@@ -1,0 +1,24 @@
+From 8a60658af7a077bf6ab705c0877abff2092036a6 Mon Sep 17 00:00:00 2001
+From: John Preston <johnprestonmail@gmail.com>
+Date: Mon, 15 May 2017 11:17:59 +0300
+Subject: [PATCH] Fix crash in calls panel closing.
+
+---
+ Telegram/SourceFiles/calls/calls_panel.cpp | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/Telegram/SourceFiles/calls/calls_panel.cpp b/Telegram/SourceFiles/calls/calls_panel.cpp
+index b167fd0..8d4887e 100644
+--- a/Telegram/SourceFiles/calls/calls_panel.cpp
++++ b/Telegram/SourceFiles/calls/calls_panel.cpp
+@@ -646,7 +646,9 @@ void Panel::paintEvent(QPaintEvent *e) {
+ }
+ 
+ void Panel::closeEvent(QCloseEvent *e) {
+-	_call->hangup();
++	if (_call) {
++		_call->hangup();
++	}
+ }
+ 
+ void Panel::mousePressEvent(QMouseEvent *e) {
