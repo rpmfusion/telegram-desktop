@@ -1,4 +1,4 @@
-From 6ca6ec24c97fcf81413e312a5f032f163870f461 Mon Sep 17 00:00:00 2001
+From 1d93ee88637a91e1b833069e68ccac5f8e26f1b3 Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Wed, 10 May 2017 13:19:54 +0200
 Subject: [PATCH] Fixed build of libtgvoip under Fedora as shared library.
@@ -36,5 +36,5 @@ index 58dc6bf..b0288ae 100644
          'direct_dependent_settings': {
            'include_dirs': [
 -- 
-2.9.3
+2.9.4
 

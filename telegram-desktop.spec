@@ -7,21 +7,21 @@
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 
 # Git revision of GSL...
-%global commit2 3819df6e378ffccf0e29465afe99c3b324c2aa70
+%global commit2 c5851a8161938798c5594a66420cb814fea92711
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
 # Git revision of Variant...
-%global commit3 916139a2e51e125816efce6e19d428385601273f
+%global commit3 550ac2f159ca883d360c196149b466955c77a573
 %global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
 
 # Git revision of libtgvoip...
-%global commit4 6dcf281d2477c8f2a22378e0d8c1c93f2428390b
+%global commit4 2ed5a50271029bde58ba210ac81b6ba4011ec33f
 %global shortcommit4 %(c=%{commit4}; echo ${c:0:7})
 
 Summary: Telegram is a new era of messaging
 Name: telegram-desktop
-Version: 1.1.0
-Release: 3%{?dist}
+Version: 1.1.1
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
@@ -46,11 +46,6 @@ Source5: https://tlgrm.ru/files/locales/tdesktop/Russian.strings#/%{appname}-%{v
 Patch0: fix_build_under_fedora.patch
 Patch1: fix_libtgvoip.patch
 Patch2: add_russian_locale.patch
-
-# https://github.com/telegramdesktop/tdesktop/pull/3400
-Patch101: 0001-localstorage-qFlags-is-working-only-on-enumeration-t.patch
-# https://github.com/telegramdesktop/tdesktop/commit/8a60658af7a077bf6ab705c0877abff2092036a6
-Patch102: 0002-fix_crash_in_calls_panel_closing.patch
 
 Provides: libtgvoip = %{voipver}
 Requires: hicolor-icon-theme
@@ -124,8 +119,6 @@ personal or business messaging needs.
 %setup -qn %{appname}-%{version}
 %patch0 -p1
 %patch2 -p1
-%patch101 -p1
-%patch102 -p1
 
 # Unpacking GYP...
 mkdir -p Telegram/ThirdParty/gyp
@@ -256,6 +249,9 @@ fi
 %{_datadir}/appdata/%{name}.appdata.xml
 
 %changelog
+* Wed May 17 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.1-1
+- Updated to 1.1.1 (alpha).
+
 * Tue May 16 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.0-3
 - Backported patch with crash fixes.
 

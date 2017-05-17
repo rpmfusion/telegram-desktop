@@ -1,4 +1,4 @@
-From a6a5969e91f5d5652dc6feb0578fc76de3f14799 Mon Sep 17 00:00:00 2001
+From ec8022a1ecd618b53f3023044e5276fe2057977e Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Fri, 31 Mar 2017 14:29:58 +0200
 Subject: [PATCH] Fixed build under Fedora using rpmbuild and mock.
@@ -452,7 +452,7 @@ index eebc696..3efa7d0 100644
        '-no-compress',
        '<(RULE_INPUT_PATH)',
 diff --git a/Telegram/gyp/refresh.sh b/Telegram/gyp/refresh.sh
-index cd96456..dc04ae6 100755
+index cd96456..9df21fb 100755
 --- a/Telegram/gyp/refresh.sh
 +++ b/Telegram/gyp/refresh.sh
 @@ -17,11 +17,9 @@ MySystem=`uname -s`
@@ -666,5 +666,5 @@ index 0a80695..550b9f7 100644
  StartupWMClass=TelegramDesktop
  Type=Application
 -- 
-2.9.3
+2.9.4
 
