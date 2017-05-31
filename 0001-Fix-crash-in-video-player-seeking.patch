@@ -1,0 +1,77 @@
+From 66662e02a65ba60632085af0a6c64834334d39ed Mon Sep 17 00:00:00 2001
+From: John Preston <johnprestonmail@gmail.com>
+Date: Wed, 31 May 2017 11:58:43 +0300
+Subject: [PATCH] Fix crash in video player seeking.
+
+Regression was introduced in 87ff770020.
+
+Seek handler may destroy controller so first the playback is updated.
+---
+ Telegram/SourceFiles/media/player/media_player_cover.cpp  | 4 ++--
+ Telegram/SourceFiles/media/player/media_player_widget.cpp | 4 ++--
+ Telegram/SourceFiles/media/view/media_clip_controller.cpp | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/Telegram/SourceFiles/media/player/media_player_cover.cpp b/Telegram/SourceFiles/media/player/media_player_cover.cpp
+index 7a14876..365a23f 100644
+--- a/Telegram/SourceFiles/media/player/media_player_cover.cpp
++++ b/Telegram/SourceFiles/media/player/media_player_cover.cpp
+@@ -94,12 +94,12 @@ CoverWidget::CoverWidget(QWidget *parent) : TWidget(parent)
+ 		_playbackSlider->setValue(value);
+ 	});
+ 	_playbackSlider->setChangeProgressCallback([this](float64 value) {
+-		handleSeekProgress(value);
+ 		_playback->setValue(value, false);
++		handleSeekProgress(value);
+ 	});
+ 	_playbackSlider->setChangeFinishedCallback([this](float64 value) {
+-		handleSeekFinished(value);
+ 		_playback->setValue(value, false);
++		handleSeekFinished(value);
+ 	});
+ 	_playPause->setClickedCallback([this] {
+ 		instance()->playPauseCancelClicked(AudioMsgId::Type::Song);
+diff --git a/Telegram/SourceFiles/media/player/media_player_widget.cpp b/Telegram/SourceFiles/media/player/media_player_widget.cpp
+index 6d88254..7a2fd58 100644
+--- a/Telegram/SourceFiles/media/player/media_player_widget.cpp
++++ b/Telegram/SourceFiles/media/player/media_player_widget.cpp
+@@ -111,15 +111,15 @@ Widget::Widget(QWidget *parent) : TWidget(parent)
+ 		if (_type != AudioMsgId::Type::Song) {
+ 			return; // Round video seek is not supported for now :(
+ 		}
+-		handleSeekProgress(value);
+ 		_playback->setValue(value, false);
++		handleSeekProgress(value);
+ 	});
+ 	_playbackSlider->setChangeFinishedCallback([this](float64 value) {
+ 		if (_type != AudioMsgId::Type::Song) {
+ 			return; // Round video seek is not supported for now :(
+ 		}
+-		handleSeekFinished(value);
+ 		_playback->setValue(value, false);
++		handleSeekFinished(value);
+ 	});
+ 	_playPause->setClickedCallback([this] {
+ 		instance()->playPauseCancelClicked(_type);
+diff --git a/Telegram/SourceFiles/media/view/media_clip_controller.cpp b/Telegram/SourceFiles/media/view/media_clip_controller.cpp
+index edf7b15..913e35a 100644
+--- a/Telegram/SourceFiles/media/view/media_clip_controller.cpp
++++ b/Telegram/SourceFiles/media/view/media_clip_controller.cpp
+@@ -58,12 +58,12 @@ Controller::Controller(QWidget *parent) : TWidget(parent)
+ 		_playbackSlider->setValue(value);
+ 	});
+ 	_playbackSlider->setChangeProgressCallback([this](float64 value) {
+-		handleSeekProgress(value);
+ 		_playback->setValue(value, false);
++		handleSeekProgress(value); // This may destroy Controller.
+ 	});
+ 	_playbackSlider->setChangeFinishedCallback([this](float64 value) {
+-		handleSeekFinished(value);
+ 		_playback->setValue(value, false);
++		handleSeekFinished(value);
+ 	});
+ }
+ 
+-- 
+2.9.4
+

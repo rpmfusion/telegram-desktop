@@ -1,4 +1,4 @@
-From ec8022a1ecd618b53f3023044e5276fe2057977e Mon Sep 17 00:00:00 2001
+From 8c1ea2225422a80f9f4c9f64ba4977e36052c4f1 Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Fri, 31 Mar 2017 14:29:58 +0200
 Subject: [PATCH] Fixed build under Fedora using rpmbuild and mock.
@@ -14,14 +14,13 @@ Subject: [PATCH] Fixed build under Fedora using rpmbuild and mock.
  Telegram/gyp/Telegram.gyp                   | 18 ++----
  Telegram/gyp/qt.gypi                        | 80 +++++++-----------------
  Telegram/gyp/qt_rcc.gypi                    |  2 +-
- Telegram/gyp/refresh.sh                     |  8 +--
  Telegram/gyp/settings_linux.gypi            |  8 +--
  Telegram/gyp/telegram_linux.gypi            | 57 +++++------------
  Telegram/gyp/telegram_sources.txt           |  8 +--
  Telegram/gyp/utils.gyp                      |  4 +-
  lib/xdg/telegramdesktop.appdata.xml         |  2 +-
  lib/xdg/telegramdesktop.desktop             |  6 +-
- 17 files changed, 162 insertions(+), 156 deletions(-)
+ 16 files changed, 159 insertions(+), 151 deletions(-)
  create mode 100644 Telegram/SourceFiles/qt_functions.cpp
 
 diff --git a/Telegram/SourceFiles/main.cpp b/Telegram/SourceFiles/main.cpp
@@ -451,25 +450,6 @@ index eebc696..3efa7d0 100644
        '-name', '<(RULE_INPUT_ROOT)',
        '-no-compress',
        '<(RULE_INPUT_PATH)',
-diff --git a/Telegram/gyp/refresh.sh b/Telegram/gyp/refresh.sh
-index cd96456..9df21fb 100755
---- a/Telegram/gyp/refresh.sh
-+++ b/Telegram/gyp/refresh.sh
-@@ -17,11 +17,9 @@ MySystem=`uname -s`
- cd $FullScriptPath
- 
- if [ "$MySystem" == "Linux" ]; then
--  ../../../Libraries/gyp/gyp --depth=. --generator-output=../.. -Goutput_dir=out -Dofficial_build_target=$BuildTarget Telegram.gyp --format=cmake
--  cd ../../out/Debug
--  ../../../Libraries/cmake-3.6.2/bin/cmake .
--  cd ../Release
--  ../../../Libraries/cmake-3.6.2/bin/cmake .
-+  ../ThirdParty/gyp/gyp --depth=. --generator-output=../.. -Goutput_dir=out Telegram.gyp --format=cmake
-+  cd ../../out/Release
-+  cmake . -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
-   cd ../../Telegram/gyp
- else
-   #gyp --depth=. --generator-output=../.. -Goutput_dir=out Telegram.gyp --format=ninja
 diff --git a/Telegram/gyp/settings_linux.gypi b/Telegram/gyp/settings_linux.gypi
 index fde88dc..7d60322 100644
 --- a/Telegram/gyp/settings_linux.gypi
@@ -595,10 +575,10 @@ index b8866ec..1b14723 100644
        },
      },
 diff --git a/Telegram/gyp/telegram_sources.txt b/Telegram/gyp/telegram_sources.txt
-index c970f98..fab0268 100644
+index 069aa30..ce27332 100644
 --- a/Telegram/gyp/telegram_sources.txt
 +++ b/Telegram/gyp/telegram_sources.txt
-@@ -553,13 +553,7 @@
+@@ -555,13 +555,7 @@
  <(src_loc)/structs.h
  
  platforms: !win

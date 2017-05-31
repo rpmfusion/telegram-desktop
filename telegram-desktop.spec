@@ -15,12 +15,12 @@
 %global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
 
 # Git revision of libtgvoip...
-%global commit4 2ed5a50271029bde58ba210ac81b6ba4011ec33f
+%global commit4 2993da5aa08d18b549cc6fff160fc732f4114a31
 %global shortcommit4 %(c=%{commit4}; echo ${c:0:7})
 
 Summary: Telegram is a new era of messaging
 Name: telegram-desktop
-Version: 1.1.2
+Version: 1.1.7
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -46,6 +46,8 @@ Source5: https://tlgrm.ru/files/locales/tdesktop/Russian.strings#/%{appname}-%{v
 Patch0: fix_build_under_fedora.patch
 Patch1: fix_libtgvoip.patch
 Patch2: add_russian_locale.patch
+
+Patch101: 0001-Fix-crash-in-video-player-seeking.patch
 
 Provides: libtgvoip = %{voipver}
 Requires: hicolor-icon-theme
@@ -119,6 +121,7 @@ personal or business messaging needs.
 %setup -qn %{appname}-%{version}
 %patch0 -p1
 %patch2 -p1
+%patch101 -p1
 
 # Unpacking GYP...
 mkdir -p Telegram/ThirdParty/gyp
@@ -157,21 +160,17 @@ popd
 iconv -f "UTF-16" -t "UTF-8" "%{SOURCE5}" > Telegram/Resources/langs/lang_ru.strings
 
 %build
-# Exporting correct build flags...
-export CFLAGS="%{optflags}"
-export CXXFLAGS="%{optflags}"
-export LDFLAGS="%{__global_ldflags}"
-
 # Exporting some additional constants...
 export VOIPVER="%{voipver}"
 
 # Generating cmake script using GYP...
-pushd Telegram
-    gyp/refresh.sh
+pushd Telegram/gyp
+    ../ThirdParty/gyp/gyp --depth=. --generator-output=../.. -Goutput_dir=out Telegram.gyp --format=cmake
 popd
 
-# Building Telegram Desktop...
+# Building Telegram Desktop using cmake...
 pushd out/Release
+    %cmake .
     %make_build
 popd
 
@@ -249,6 +248,21 @@ fi
 %{_datadir}/appdata/%{name}.appdata.xml
 
 %changelog
+* Wed May 31 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.7-1
+- Updated to 1.1.7.
+
+* Sat May 27 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.6-1
+- Updated to 1.1.6 (alpha).
+
+* Fri May 26 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.5-1
+- Updated to 1.1.5 (alpha).
+
+* Thu May 25 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.4-1
+- Updated to 1.1.4 (alpha).
+
+* Wed May 24 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.3-1
+- Updated to 1.1.3 (alpha).
+
 * Thu May 18 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.2-1
 - Updated to 1.1.2.
 
