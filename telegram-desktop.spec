@@ -10,26 +10,20 @@
 %global commit2 c5851a8161938798c5594a66420cb814fea92711
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
-# Git revision of Variant...
-%global commit3 550ac2f159ca883d360c196149b466955c77a573
-%global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
-
 # Git revision of libtgvoip...
-%global commit4 2993da5aa08d18b549cc6fff160fc732f4114a31
-%global shortcommit4 %(c=%{commit4}; echo ${c:0:7})
+%global commit3 2993da5aa08d18b549cc6fff160fc732f4114a31
+%global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
 
 Summary: Telegram is a new era of messaging
 Name: telegram-desktop
-Version: 1.1.7
+Version: 1.1.9
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
 # * S1 (GYP) - BSD -- build-time dependency;
 # * S2 (GSL) - MIT -- build-time dependency;
-# * S3 (Variant) - BSD -- build-time dependency;
-# * S4 (libtgvoip) - Public Domain -- shared library;
-# * S5 (Russian language pack) - GPLv3+ -- bundled into executable.
+# * S3 (libtgvoip) - Public Domain -- shared library;
 # * P0 (qt_functions.cpp) - LGPLv3 -- build-time dependency.
 License: GPLv3+ and LGPLv3 and BSD and MIT
 Group: Applications/Internet
@@ -39,15 +33,10 @@ ExclusiveArch: i686 x86_64
 Source0: %{url}/archive/v%{version}.tar.gz#/%{appname}-%{version}.tar.gz
 Source1: https://chromium.googlesource.com/external/gyp/+archive/%{commit1}.tar.gz#/gyp-%{shortcommit1}.tar.gz
 Source2: https://github.com/Microsoft/GSL/archive/%{commit2}.tar.gz#/GSL-%{shortcommit2}.tar.gz
-Source3: https://github.com/mapbox/variant/archive/%{commit3}.tar.gz#/variant-%{shortcommit3}.tar.gz
-Source4: https://github.com/telegramdesktop/libtgvoip/archive/%{commit4}.tar.gz#/libtgvoip-%{shortcommit4}.tar.gz
-Source5: https://tlgrm.ru/files/locales/tdesktop/Russian.strings#/%{appname}-%{version}-russian.strings
+Source3: https://github.com/telegramdesktop/libtgvoip/archive/%{commit3}.tar.gz#/libtgvoip-%{shortcommit3}.tar.gz
 
 Patch0: fix_build_under_fedora.patch
 Patch1: fix_libtgvoip.patch
-Patch2: add_russian_locale.patch
-
-Patch101: 0001-Fix-crash-in-video-player-seeking.patch
 
 Provides: libtgvoip = %{voipver}
 Requires: hicolor-icon-theme
@@ -98,6 +87,7 @@ BuildRequires: libxkbcommon-x11-devel
 BuildRequires: harfbuzz-devel
 BuildRequires: gtk3-devel
 BuildRequires: pulseaudio-libs-devel
+BuildRequires: mapbox-variant-devel
 %if 0%{?fedora} >= 26
 BuildRequires: compat-openssl10-devel
 %else
@@ -120,8 +110,6 @@ personal or business messaging needs.
 # Unpacking Telegram Desktop source archive...
 %setup -qn %{appname}-%{version}
 %patch0 -p1
-%patch2 -p1
-%patch101 -p1
 
 # Unpacking GYP...
 mkdir -p Telegram/ThirdParty/gyp
@@ -137,27 +125,17 @@ pushd Telegram/ThirdParty
     mv GSL-%{commit2} GSL
 popd
 
-# Unpacking Variant...
-pushd Telegram/ThirdParty
-    rm -rf variant
-    tar -xf %{SOURCE3}
-    mv variant-%{commit3} variant
-popd
-
 # Unpacking libtgvoip...
 pushd Telegram/ThirdParty
     rm -rf libtgvoip
-    tar -xf %{SOURCE4}
-    mv libtgvoip-%{commit4} libtgvoip
+    tar -xf %{SOURCE3}
+    mv libtgvoip-%{commit3} libtgvoip
 popd
 
 # Patching libtgvoip...
 pushd Telegram/ThirdParty/libtgvoip
 %patch1 -p1
 popd
-
-# Unpacking additional locales from sources...
-iconv -f "UTF-16" -t "UTF-8" "%{SOURCE5}" > Telegram/Resources/langs/lang_ru.strings
 
 %build
 # Exporting some additional constants...
@@ -248,6 +226,9 @@ fi
 %{_datadir}/appdata/%{name}.appdata.xml
 
 %changelog
+* Fri Jun 30 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.9-1
+- Updated to 1.1.9.
+
 * Wed May 31 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.7-1
 - Updated to 1.1.7.
 
