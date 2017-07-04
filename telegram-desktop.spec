@@ -11,12 +11,12 @@
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
 # Git revision of libtgvoip...
-%global commit3 2993da5aa08d18b549cc6fff160fc732f4114a31
+%global commit3 445433f4f02fb4099a5f6cb64f67c56648c460d8
 %global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
 
 Summary: Telegram is a new era of messaging
 Name: telegram-desktop
-Version: 1.1.9
+Version: 1.1.10
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -33,7 +33,7 @@ ExclusiveArch: i686 x86_64
 Source0: %{url}/archive/v%{version}.tar.gz#/%{appname}-%{version}.tar.gz
 Source1: https://chromium.googlesource.com/external/gyp/+archive/%{commit1}.tar.gz#/gyp-%{shortcommit1}.tar.gz
 Source2: https://github.com/Microsoft/GSL/archive/%{commit2}.tar.gz#/GSL-%{shortcommit2}.tar.gz
-Source3: https://github.com/telegramdesktop/libtgvoip/archive/%{commit3}.tar.gz#/libtgvoip-%{shortcommit3}.tar.gz
+Source3: https://github.com/grishka/libtgvoip/archive/%{commit3}.tar.gz#/libtgvoip-%{shortcommit3}.tar.gz
 
 Patch0: fix_build_under_fedora.patch
 Patch1: fix_libtgvoip.patch
@@ -226,6 +226,9 @@ fi
 %{_datadir}/appdata/%{name}.appdata.xml
 
 %changelog
+* Tue Jul 04 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.10-1
+- Updated to 1.1.10.
+
 * Fri Jun 30 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.9-1
 - Updated to 1.1.9.
 
