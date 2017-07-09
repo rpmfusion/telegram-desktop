@@ -16,8 +16,8 @@
 
 Summary: Telegram is a new era of messaging
 Name: telegram-desktop
-Version: 1.1.10
-Release: 1%{?dist}
+Version: 1.1.11
+Release: 2%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
@@ -41,6 +41,7 @@ Patch1: fix_libtgvoip.patch
 Provides: libtgvoip = %{voipver}
 Requires: hicolor-icon-theme
 Requires: qt5-qtimageformats%{?_isa}
+Requires: gtk3%{?_isa}
 %if 0%{?fedora} >= 24
 Recommends: libappindicator-gtk3%{?_isa}
 %endif
@@ -226,6 +227,12 @@ fi
 %{_datadir}/appdata/%{name}.appdata.xml
 
 %changelog
+* Sun Jul 09 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.11-2
+- Fixed some small bugs.
+
+* Fri Jul 07 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.11-1
+- Updated to 1.1.11 (alpha).
+
 * Tue Jul 04 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.10-1
 - Updated to 1.1.10.
 
