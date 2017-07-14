@@ -11,13 +11,13 @@
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
 # Git revision of libtgvoip...
-%global commit3 445433f4f02fb4099a5f6cb64f67c56648c460d8
+%global commit3 de33700312e3676a520b5a79d51e953fcf23cf51
 %global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
 
 Summary: Telegram is a new era of messaging
 Name: telegram-desktop
-Version: 1.1.11
-Release: 2%{?dist}
+Version: 1.1.13
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
@@ -227,6 +227,12 @@ fi
 %{_datadir}/appdata/%{name}.appdata.xml
 
 %changelog
+* Fri Jul 14 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.13-1
+- Updated to 1.1.13 (alpha).
+
+* Wed Jul 12 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.12-1
+- Updated to 1.1.12 (alpha).
+
 * Sun Jul 09 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.11-2
 - Fixed some small bugs.
 

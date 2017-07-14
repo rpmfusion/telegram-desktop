@@ -1,10 +1,10 @@
-From 9da328a48a8b44d9b4c61f60331251788d18e432 Mon Sep 17 00:00:00 2001
+From 969ddbc6cff0decc00d189ee2ec257e4c3f2c0b5 Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Fri, 31 Mar 2017 14:29:58 +0200
 Subject: [PATCH] Fixed build under Fedora using rpmbuild and mock.
 
 ---
- Telegram/SourceFiles/main.cpp               | 11 +++-
+ Telegram/SourceFiles/main.cpp               | 12 +++-
  Telegram/SourceFiles/qt_functions.cpp       | 94 +++++++++++++++++++++++++++++
  Telegram/SourceFiles/qt_static_plugins.cpp  |  9 ---
  Telegram/SourceFiles/ui/text/text.cpp       |  6 +-
@@ -20,11 +20,11 @@ Subject: [PATCH] Fixed build under Fedora using rpmbuild and mock.
  Telegram/gyp/utils.gyp                      |  4 +-
  lib/xdg/telegramdesktop.appdata.xml         |  2 +-
  lib/xdg/telegramdesktop.desktop             |  6 +-
- 16 files changed, 163 insertions(+), 154 deletions(-)
+ 16 files changed, 164 insertions(+), 154 deletions(-)
  create mode 100644 Telegram/SourceFiles/qt_functions.cpp
 
 diff --git a/Telegram/SourceFiles/main.cpp b/Telegram/SourceFiles/main.cpp
-index 6cd942e..d45bf82 100644
+index 6cd942e..d7d1b53 100644
 --- a/Telegram/SourceFiles/main.cpp
 +++ b/Telegram/SourceFiles/main.cpp
 @@ -23,9 +23,10 @@ Copyright (c) 2014-2017 John Preston, https://desktop.telegram.org
@@ -40,7 +40,7 @@ index 6cd942e..d45bf82 100644
  	QCoreApplication::setApplicationName(qsl("TelegramDesktop"));
  
  	settingsParseArgs(argc, argv);
-@@ -38,6 +39,12 @@ int main(int argc, char *argv[]) {
+@@ -38,6 +39,13 @@ int main(int argc, char *argv[]) {
  	// both are finished in Application::closeApplication
  	Logs::start(); // must be started before Platform is started
  	Platform::start(); // must be started before QApplication is created
@@ -50,6 +50,7 @@ index 6cd942e..d45bf82 100644
 +	QCoreApplication::addLibraryPath("/usr/lib/qt5/plugins");
 +#endif
 +	setenv("QT_STYLE_OVERRIDE", "qwerty", false);
++	unsetenv("QT_QPA_PLATFORMTHEME");
  
  	int result = 0;
  	{
@@ -586,10 +587,10 @@ index 2c46492..1b14723 100644
        },
      },
 diff --git a/Telegram/gyp/telegram_sources.txt b/Telegram/gyp/telegram_sources.txt
-index fbe63ec..d7da420 100644
+index 8363ab4..b5f631c 100644
 --- a/Telegram/gyp/telegram_sources.txt
 +++ b/Telegram/gyp/telegram_sources.txt
-@@ -581,13 +581,7 @@
+@@ -579,13 +579,7 @@
  <(src_loc)/structs.h
  
  platforms: !win
