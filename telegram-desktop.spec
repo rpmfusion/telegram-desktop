@@ -16,7 +16,7 @@
 
 Summary: Telegram is a new era of messaging
 Name: telegram-desktop
-Version: 1.1.13
+Version: 1.1.14
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -42,54 +42,37 @@ Provides: libtgvoip = %{voipver}
 Requires: hicolor-icon-theme
 Requires: qt5-qtimageformats%{?_isa}
 Requires: gtk3%{?_isa}
-%if 0%{?fedora} >= 24
+%if 0%{?fedora} && 0%{?fedora} >= 24
 Recommends: libappindicator-gtk3%{?_isa}
 %endif
 
+# Compilers and tools...
 BuildRequires: desktop-file-utils
 BuildRequires: libappstream-glib
-BuildRequires: ffmpeg-devel >= 3.1
-BuildRequires: gcc
 BuildRequires: gcc-c++
-BuildRequires: qt5-qtbase-devel
-BuildRequires: qt5-qtimageformats
 BuildRequires: chrpath
 BuildRequires: cmake
-BuildRequires: libproxy-devel
-BuildRequires: libxcb-devel
-BuildRequires: libogg-devel
-BuildRequires: xz-devel
-BuildRequires: minizip-devel
+BuildRequires: gcc
+
+# Development packages for Telegram Desktop...
 BuildRequires: libappindicator-devel
-BuildRequires: libunity-devel
-BuildRequires: libstdc++-devel
-BuildRequires: libwebp-devel
-BuildRequires: libpng-devel
-BuildRequires: xorg-x11-util-macros
-BuildRequires: gettext-devel
-BuildRequires: libICE-devel
-BuildRequires: libSM-devel
-BuildRequires: libXi-devel
-BuildRequires: zlib-devel
-BuildRequires: opus-devel
-BuildRequires: portaudio-devel
-BuildRequires: openal-soft-devel
-BuildRequires: xcb-util-devel
-BuildRequires: xcb-util-wm-devel
-BuildRequires: xcb-util-xrm-devel
-BuildRequires: xcb-util-image-devel
-BuildRequires: xcb-util-cursor-devel
-BuildRequires: xcb-util-keysyms-devel
-BuildRequires: xcb-util-renderutil-devel
-BuildRequires: libva-devel
-BuildRequires: libvdpau-devel
-BuildRequires: libxkbcommon-devel
-BuildRequires: libxkbcommon-x11-devel
-BuildRequires: harfbuzz-devel
-BuildRequires: gtk3-devel
-BuildRequires: pulseaudio-libs-devel
 BuildRequires: mapbox-variant-devel
-%if 0%{?fedora} >= 26
+BuildRequires: ffmpeg-devel >= 3.1
+BuildRequires: openal-soft-devel
+BuildRequires: qt5-qtbase-devel
+BuildRequires: libstdc++-devel
+BuildRequires: minizip-devel
+BuildRequires: gtk3-devel
+BuildRequires: dee-devel
+BuildRequires: xz-devel
+
+# Development packages for libtgvoip...
+BuildRequires: pulseaudio-libs-devel
+BuildRequires: alsa-lib-devel
+BuildRequires: opus-devel
+
+# Additional development packages...
+%if 0%{?fedora} && 0%{?fedora} >= 26
 BuildRequires: compat-openssl10-devel
 %else
 BuildRequires: openssl-devel
@@ -157,11 +140,11 @@ popd
 # Installing executables...
 mkdir -p "%{buildroot}%{_bindir}"
 chrpath -d out/Release/Telegram
-install -m 755 out/Release/Telegram "%{buildroot}%{_bindir}/%{name}"
+install -m 0755 -p out/Release/Telegram "%{buildroot}%{_bindir}/%{name}"
 
 # Installing shared libraries...
 mkdir -p "%{buildroot}%{_libdir}"
-install -m 755 out/Release/lib.target/libtgvoip.so.%{voipver} "%{buildroot}%{_libdir}/libtgvoip.so.%{voipver}"
+install -m 0755 -p out/Release/lib.target/libtgvoip.so.%{voipver} "%{buildroot}%{_libdir}/libtgvoip.so.%{voipver}"
 ln -s libtgvoip.so.%{voipver} "%{buildroot}%{_libdir}/libtgvoip.so.0"
 ln -s libtgvoip.so.%{voipver} "%{buildroot}%{_libdir}/libtgvoip.so"
 
@@ -173,45 +156,45 @@ desktop-file-install --dir="%{buildroot}%{_datadir}/applications" lib/xdg/%{name
 for size in 16 32 48 64 128 256 512; do
     dir="%{buildroot}%{_datadir}/icons/hicolor/${size}x${size}/apps"
     install -d "$dir"
-    install -m 644 -p Telegram/Resources/art/icon${size}.png "$dir/%{name}.png"
+    install -m 0644 -p Telegram/Resources/art/icon${size}.png "$dir/%{name}.png"
 done
 
 # Installing tg protocol handler...
 install -d "%{buildroot}%{_datadir}/kde4/services"
-install -m 644 -p lib/xdg/tg.protocol "%{buildroot}%{_datadir}/kde4/services/tg.protocol"
+install -m 0644 -p lib/xdg/tg.protocol "%{buildroot}%{_datadir}/kde4/services/tg.protocol"
 
 # Installing appdata for Gnome Software...
 install -d "%{buildroot}%{_datadir}/appdata"
-install -m 644 -p lib/xdg/telegramdesktop.appdata.xml "%{buildroot}%{_datadir}/appdata/%{name}.appdata.xml"
+install -m 0644 -p lib/xdg/telegramdesktop.appdata.xml "%{buildroot}%{_datadir}/appdata/%{name}.appdata.xml"
 
 %check
 appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/appdata/%{name}.appdata.xml"
 
 %post
 /sbin/ldconfig
-%if 0%{?fedora} <= 23 || 0%{?rhel} == 7
+%if (0%{?fedora} && 0%{?fedora} <= 23) || (0%{?rhel} && 0%{?rhel} <= 7)
 /bin/touch --no-create %{_datadir}/mime/packages &>/dev/null || :
 %endif
 /bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
-%if 0%{?fedora} <= 24 || 0%{?rhel} == 7
+%if (0%{?fedora} && 0%{?fedora} <= 24) || (0%{?rhel} && 0%{?rhel} <= 7)
 /usr/bin/update-desktop-database &> /dev/null || :
 %endif
 
 %postun
 /sbin/ldconfig
 if [ $1 -eq 0 ] ; then
-    %if 0%{?fedora} <= 23 || 0%{?rhel} == 7
+    %if (0%{?fedora} && 0%{?fedora} <= 23) || (0%{?rhel} && 0%{?rhel} <= 7)
     /usr/bin/update-mime-database %{_datadir}/mime &> /dev/null || :
     %endif
     /bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null
     /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 fi
-%if 0%{?fedora} <= 24 || 0%{?rhel} == 7
+%if (0%{?fedora} && 0%{?fedora} <= 24) || (0%{?rhel} && 0%{?rhel} <= 7)
 /usr/bin/update-desktop-database &> /dev/null || :
 %endif
 
 %posttrans
-%if 0%{?fedora} <= 23 || 0%{?rhel} == 7
+%if (0%{?fedora} && 0%{?fedora} <= 23) || (0%{?rhel} && 0%{?rhel} <= 7)
 /usr/bin/update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 %endif
 /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
@@ -227,6 +210,9 @@ fi
 %{_datadir}/appdata/%{name}.appdata.xml
 
 %changelog
+* Wed Jul 19 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.14-1
+- Updated to 1.1.14 (alpha).
+
 * Fri Jul 14 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.13-1
 - Updated to 1.1.13 (alpha).
 

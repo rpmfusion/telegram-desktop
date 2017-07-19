@@ -1,4 +1,4 @@
-From 969ddbc6cff0decc00d189ee2ec257e4c3f2c0b5 Mon Sep 17 00:00:00 2001
+From d962adafed6e0b840b507e6c0e7537d5e993dc2f Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Fri, 31 Mar 2017 14:29:58 +0200
 Subject: [PATCH] Fixed build under Fedora using rpmbuild and mock.
@@ -24,7 +24,7 @@ Subject: [PATCH] Fixed build under Fedora using rpmbuild and mock.
  create mode 100644 Telegram/SourceFiles/qt_functions.cpp
 
 diff --git a/Telegram/SourceFiles/main.cpp b/Telegram/SourceFiles/main.cpp
-index 6cd942e..d7d1b53 100644
+index 6cd942ec..d7d1b535 100644
 --- a/Telegram/SourceFiles/main.cpp
 +++ b/Telegram/SourceFiles/main.cpp
 @@ -23,9 +23,10 @@ Copyright (c) 2014-2017 John Preston, https://desktop.telegram.org
@@ -56,7 +56,7 @@ index 6cd942e..d7d1b53 100644
  	{
 diff --git a/Telegram/SourceFiles/qt_functions.cpp b/Telegram/SourceFiles/qt_functions.cpp
 new file mode 100644
-index 0000000..4a722b8
+index 00000000..4a722b8d
 --- /dev/null
 +++ b/Telegram/SourceFiles/qt_functions.cpp
 @@ -0,0 +1,94 @@
@@ -155,7 +155,7 @@ index 0000000..4a722b8
 +        flags |= QTextItem::StrikeOut;
 +}
 diff --git a/Telegram/SourceFiles/qt_static_plugins.cpp b/Telegram/SourceFiles/qt_static_plugins.cpp
-index b975c7a..f2f876b 100644
+index b975c7a8..f2f876b3 100644
 --- a/Telegram/SourceFiles/qt_static_plugins.cpp
 +++ b/Telegram/SourceFiles/qt_static_plugins.cpp
 @@ -28,13 +28,4 @@ Q_IMPORT_PLUGIN(QWebpPlugin)
@@ -173,7 +173,7 @@ index b975c7a..f2f876b 100644
 -Q_IMPORT_PLUGIN(QHimePlatformInputContextPlugin)
  #endif // Q_OS_WIN | Q_OS_MAC | Q_OS_LINUX
 diff --git a/Telegram/SourceFiles/ui/text/text.cpp b/Telegram/SourceFiles/ui/text/text.cpp
-index 9ab1394..cec6589 100644
+index 9ab13940..cec6589e 100644
 --- a/Telegram/SourceFiles/ui/text/text.cpp
 +++ b/Telegram/SourceFiles/ui/text/text.cpp
 @@ -1688,11 +1688,11 @@ private:
@@ -192,7 +192,7 @@ index 9ab1394..cec6589 100644
  		auto blockIndex = _lineStartBlock;
  		auto currentBlock = _t->_blocks[blockIndex].get();
 diff --git a/Telegram/SourceFiles/ui/text/text_block.cpp b/Telegram/SourceFiles/ui/text/text_block.cpp
-index f89644e..35230cf 100644
+index f89644e1..35230cfc 100644
 --- a/Telegram/SourceFiles/ui/text/text_block.cpp
 +++ b/Telegram/SourceFiles/ui/text/text_block.cpp
 @@ -330,7 +330,7 @@ TextBlock::TextBlock(const style::font &font, const QString &str, QFixed minResi
@@ -205,7 +205,7 @@ index f89644e..35230cf 100644
  		layout.createLine();
  
 diff --git a/Telegram/SourceFiles/ui/twidget.cpp b/Telegram/SourceFiles/ui/twidget.cpp
-index e9848ef..dcee47e 100644
+index e9848ef2..dcee47ee 100644
 --- a/Telegram/SourceFiles/ui/twidget.cpp
 +++ b/Telegram/SourceFiles/ui/twidget.cpp
 @@ -191,9 +191,9 @@ void sendSynteticMouseEvent(QWidget *widget, QEvent::Type type, Qt::MouseButton
@@ -221,7 +221,7 @@ index e9848ef..dcee47e 100644
  		ev.setTimestamp(getms());
  		QGuiApplication::sendEvent(windowHandle, &ev);
 diff --git a/Telegram/gyp/PrecompiledHeader.cmake b/Telegram/gyp/PrecompiledHeader.cmake
-index 5d6830e..c3f08d3 100644
+index 5d6830e9..c3f08d3f 100644
 --- a/Telegram/gyp/PrecompiledHeader.cmake
 +++ b/Telegram/gyp/PrecompiledHeader.cmake
 @@ -112,7 +112,7 @@ function(add_precompiled_header _target _input)
@@ -243,7 +243,7 @@ index 5d6830e..c3f08d3 100644
          IMPLICIT_DEPENDS CXX "${_pch_header}"
          COMMENT "Precompiling ${_name} for ${_target} (C++)")
 diff --git a/Telegram/gyp/Telegram.gyp b/Telegram/gyp/Telegram.gyp
-index 80160d1..9dcdeb4 100644
+index 80160d16..9dcdeb4d 100644
 --- a/Telegram/gyp/Telegram.gyp
 +++ b/Telegram/gyp/Telegram.gyp
 @@ -31,7 +31,6 @@
@@ -290,7 +290,7 @@ index 80160d1..9dcdeb4 100644
        '<(submodules_loc)/GSL/include',
        '<(submodules_loc)/variant/include',
 diff --git a/Telegram/gyp/qt.gypi b/Telegram/gyp/qt.gypi
-index 81c13a1..899af14 100644
+index 81c13a18..899af140 100644
 --- a/Telegram/gyp/qt.gypi
 +++ b/Telegram/gyp/qt.gypi
 @@ -27,25 +27,21 @@
@@ -449,7 +449,7 @@ index 81c13a1..899af14 100644
        # Silence "Note: No relevant classes found. No output generated."
        '--no-notes',
 diff --git a/Telegram/gyp/qt_rcc.gypi b/Telegram/gyp/qt_rcc.gypi
-index eebc696..3efa7d0 100644
+index eebc6967..3efa7d05 100644
 --- a/Telegram/gyp/qt_rcc.gypi
 +++ b/Telegram/gyp/qt_rcc.gypi
 @@ -28,7 +28,7 @@
@@ -462,7 +462,7 @@ index eebc696..3efa7d0 100644
        '-no-compress',
        '<(RULE_INPUT_PATH)',
 diff --git a/Telegram/gyp/settings_linux.gypi b/Telegram/gyp/settings_linux.gypi
-index fde88dc..7d60322 100644
+index fde88dcd..7d603220 100644
 --- a/Telegram/gyp/settings_linux.gypi
 +++ b/Telegram/gyp/settings_linux.gypi
 @@ -22,11 +22,6 @@
@@ -495,7 +495,7 @@ index fde88dc..7d60322 100644
          'Debug': {
          },
 diff --git a/Telegram/gyp/telegram_linux.gypi b/Telegram/gyp/telegram_linux.gypi
-index 2c46492..1b14723 100644
+index 2c464928..1b14723d 100644
 --- a/Telegram/gyp/telegram_linux.gypi
 +++ b/Telegram/gyp/telegram_linux.gypi
 @@ -27,73 +27,43 @@
@@ -587,7 +587,7 @@ index 2c46492..1b14723 100644
        },
      },
 diff --git a/Telegram/gyp/telegram_sources.txt b/Telegram/gyp/telegram_sources.txt
-index 8363ab4..b5f631c 100644
+index 8363ab4f..b5f631c2 100644
 --- a/Telegram/gyp/telegram_sources.txt
 +++ b/Telegram/gyp/telegram_sources.txt
 @@ -579,13 +579,7 @@
@@ -606,7 +606,7 @@ index 8363ab4..b5f631c 100644
  platforms: mac
  <(sp_media_key_tap_loc)/SPMediaKeyTap.m
 diff --git a/Telegram/gyp/utils.gyp b/Telegram/gyp/utils.gyp
-index 209c737..27ce77f 100644
+index 209c7370..27ce77f5 100644
 --- a/Telegram/gyp/utils.gyp
 +++ b/Telegram/gyp/utils.gyp
 @@ -134,7 +134,7 @@
@@ -628,7 +628,7 @@ index 209c737..27ce77f 100644
            }]
          ],
 diff --git a/lib/xdg/telegramdesktop.appdata.xml b/lib/xdg/telegramdesktop.appdata.xml
-index 7bcf8d8..4508c01 100644
+index 7bcf8d83..4508c01c 100644
 --- a/lib/xdg/telegramdesktop.appdata.xml
 +++ b/lib/xdg/telegramdesktop.appdata.xml
 @@ -1,6 +1,6 @@
@@ -640,7 +640,7 @@ index 7bcf8d8..4508c01 100644
      <project_license>GPL-3.0</project_license>
      <name>Telegram Desktop</name>
 diff --git a/lib/xdg/telegramdesktop.desktop b/lib/xdg/telegramdesktop.desktop
-index 0a80695..550b9f7 100644
+index 0a806951..550b9f78 100644
 --- a/lib/xdg/telegramdesktop.desktop
 +++ b/lib/xdg/telegramdesktop.desktop
 @@ -1,9 +1,11 @@
@@ -658,5 +658,5 @@ index 0a80695..550b9f7 100644
  StartupWMClass=TelegramDesktop
  Type=Application
 -- 
-2.9.4
+2.13.3
 
