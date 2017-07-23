@@ -1,6 +1,6 @@
 # Telegram Desktop's constants...
 %global appname tdesktop
-%global voipver 0.4.1
+%global voipver 1.0
 
 # Git revision of GYP...
 %global commit1 a478c1ab51ea3e04e79791ac3d1dad01b3f57434
@@ -11,12 +11,12 @@
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
 # Git revision of libtgvoip...
-%global commit3 de33700312e3676a520b5a79d51e953fcf23cf51
+%global commit3 e42287b6f4a520b7ddabc6cdcff205f4e7e216ec
 %global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
 
 Summary: Telegram is a new era of messaging
 Name: telegram-desktop
-Version: 1.1.14
+Version: 1.1.15
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -145,7 +145,7 @@ install -m 0755 -p out/Release/Telegram "%{buildroot}%{_bindir}/%{name}"
 # Installing shared libraries...
 mkdir -p "%{buildroot}%{_libdir}"
 install -m 0755 -p out/Release/lib.target/libtgvoip.so.%{voipver} "%{buildroot}%{_libdir}/libtgvoip.so.%{voipver}"
-ln -s libtgvoip.so.%{voipver} "%{buildroot}%{_libdir}/libtgvoip.so.0"
+ln -s libtgvoip.so.%{voipver} "%{buildroot}%{_libdir}/libtgvoip.so.1"
 ln -s libtgvoip.so.%{voipver} "%{buildroot}%{_libdir}/libtgvoip.so"
 
 # Installing desktop shortcut...
@@ -210,6 +210,9 @@ fi
 %{_datadir}/appdata/%{name}.appdata.xml
 
 %changelog
+* Sun Jul 23 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.15-1
+- Updated to 1.1.15.
+
 * Wed Jul 19 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.14-1
 - Updated to 1.1.14 (alpha).
 
