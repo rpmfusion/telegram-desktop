@@ -1,6 +1,5 @@
 # Telegram Desktop's constants...
 %global appname tdesktop
-%global voipver 1.0
 
 # Git revision of GYP...
 %global commit1 a478c1ab51ea3e04e79791ac3d1dad01b3f57434
@@ -10,20 +9,15 @@
 %global commit2 c5851a8161938798c5594a66420cb814fea92711
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
-# Git revision of libtgvoip...
-%global commit3 e42287b6f4a520b7ddabc6cdcff205f4e7e216ec
-%global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
-
 Summary: Telegram is a new era of messaging
 Name: telegram-desktop
-Version: 1.1.18
-Release: 1%{?dist}
+Version: 1.1.19
+Release: 2%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
 # * S1 (GYP) - BSD -- build-time dependency;
 # * S2 (GSL) - MIT -- build-time dependency;
-# * S3 (libtgvoip) - Public Domain -- shared library;
 # * P0 (qt_functions.cpp) - LGPLv3 -- build-time dependency.
 License: GPLv3+ and LGPLv3 and BSD and MIT
 Group: Applications/Internet
@@ -33,14 +27,11 @@ ExclusiveArch: i686 x86_64
 Source0: %{url}/archive/v%{version}.tar.gz#/%{appname}-%{version}.tar.gz
 Source1: https://chromium.googlesource.com/external/gyp/+archive/%{commit1}.tar.gz#/gyp-%{shortcommit1}.tar.gz
 Source2: https://github.com/Microsoft/GSL/archive/%{commit2}.tar.gz#/GSL-%{shortcommit2}.tar.gz
-Source3: https://github.com/grishka/libtgvoip/archive/%{commit3}.tar.gz#/libtgvoip-%{shortcommit3}.tar.gz
 
-Patch0: fix_build_under_fedora.patch
-Patch1: fix_libtgvoip.patch
+Patch0: %{name}-build-fixes.patch
 
-Provides: libtgvoip = %{voipver}
-Requires: hicolor-icon-theme
 Requires: qt5-qtimageformats%{?_isa}
+Requires: hicolor-icon-theme
 Requires: gtk3%{?_isa}
 %if 0%{?fedora} && 0%{?fedora} >= 24
 Recommends: libappindicator-gtk3%{?_isa}
@@ -60,16 +51,13 @@ BuildRequires: mapbox-variant-devel
 BuildRequires: ffmpeg-devel >= 3.1
 BuildRequires: openal-soft-devel
 BuildRequires: qt5-qtbase-devel
+BuildRequires: libtgvoip-devel
 BuildRequires: libstdc++-devel
 BuildRequires: minizip-devel
+BuildRequires: opus-devel
 BuildRequires: gtk3-devel
 BuildRequires: dee-devel
 BuildRequires: xz-devel
-
-# Development packages for libtgvoip...
-BuildRequires: pulseaudio-libs-devel
-BuildRequires: alsa-lib-devel
-BuildRequires: opus-devel
 
 # Additional development packages...
 %if 0%{?fedora} && 0%{?fedora} >= 26
@@ -92,8 +80,7 @@ personal or business messaging needs.
 
 %prep
 # Unpacking Telegram Desktop source archive...
-%setup -qn %{appname}-%{version}
-%patch0 -p1
+%autosetup -n %{appname}-%{version} -p1
 
 # Unpacking GYP...
 mkdir -p Telegram/ThirdParty/gyp
@@ -109,22 +96,7 @@ pushd Telegram/ThirdParty
     mv GSL-%{commit2} GSL
 popd
 
-# Unpacking libtgvoip...
-pushd Telegram/ThirdParty
-    rm -rf libtgvoip
-    tar -xf %{SOURCE3}
-    mv libtgvoip-%{commit3} libtgvoip
-popd
-
-# Patching libtgvoip...
-pushd Telegram/ThirdParty/libtgvoip
-%patch1 -p1
-popd
-
 %build
-# Exporting some additional constants...
-export VOIPVER="%{voipver}"
-
 # Generating cmake script using GYP...
 pushd Telegram/gyp
     ../ThirdParty/gyp/gyp --depth=. --generator-output=../.. -Goutput_dir=out Telegram.gyp --format=cmake
@@ -141,12 +113,6 @@ popd
 mkdir -p "%{buildroot}%{_bindir}"
 chrpath -d out/Release/Telegram
 install -m 0755 -p out/Release/Telegram "%{buildroot}%{_bindir}/%{name}"
-
-# Installing shared libraries...
-mkdir -p "%{buildroot}%{_libdir}"
-install -m 0755 -p out/Release/lib.target/libtgvoip.so.%{voipver} "%{buildroot}%{_libdir}/libtgvoip.so.%{voipver}"
-ln -s libtgvoip.so.%{voipver} "%{buildroot}%{_libdir}/libtgvoip.so.1"
-ln -s libtgvoip.so.%{voipver} "%{buildroot}%{_libdir}/libtgvoip.so"
 
 # Installing desktop shortcut...
 mv lib/xdg/telegramdesktop.desktop lib/xdg/%{name}.desktop
@@ -171,7 +137,6 @@ install -m 0644 -p lib/xdg/telegramdesktop.appdata.xml "%{buildroot}%{_datadir}/
 appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/appdata/%{name}.appdata.xml"
 
 %post
-/sbin/ldconfig
 %if (0%{?fedora} && 0%{?fedora} <= 23) || (0%{?rhel} && 0%{?rhel} <= 7)
 /bin/touch --no-create %{_datadir}/mime/packages &>/dev/null || :
 %endif
@@ -181,7 +146,6 @@ appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/appdata/%{name}.a
 %endif
 
 %postun
-/sbin/ldconfig
 if [ $1 -eq 0 ] ; then
     %if (0%{?fedora} && 0%{?fedora} <= 23) || (0%{?rhel} && 0%{?rhel} <= 7)
     /usr/bin/update-mime-database %{_datadir}/mime &> /dev/null || :
@@ -201,15 +165,20 @@ fi
 
 %files
 %doc README.md changelog.txt
-%license LICENSE Telegram/ThirdParty/libtgvoip/UNLICENSE
+%license LICENSE
 %{_bindir}/%{name}
-%{_libdir}/libtgvoip.*
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/kde4/services/tg.protocol
 %{_datadir}/icons/hicolor/*/apps/%{name}.png
 %{_datadir}/appdata/%{name}.appdata.xml
 
 %changelog
+* Fri Aug 04 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.19-2
+- Moved VoIP library into a separate package.
+
+* Wed Aug 02 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.19-1
+- Updated to 1.1.19.
+
 * Thu Jul 27 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.18-1
 - Updated to 1.1.18.
 
