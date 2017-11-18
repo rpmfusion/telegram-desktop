@@ -12,7 +12,7 @@
 Summary: Telegram is a new era of messaging
 Name: telegram-desktop
 Version: 1.1.23
-Release: 3%{?dist}
+Release: 4%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
@@ -174,6 +174,9 @@ fi
 %{_datadir}/appdata/%{name}.appdata.xml
 
 %changelog
+* Sat Nov 18 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.23-4
+- Rebuild against libtgvoip 1.0.1.
+
 * Fri Nov 17 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.23-3
 - Rebuild for Qt 5.9 major update. Backported upstream patches.
 
