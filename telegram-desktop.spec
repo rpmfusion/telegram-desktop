@@ -12,7 +12,7 @@
 Summary: Telegram is a new era of messaging
 Name: telegram-desktop
 Version: 1.1.23
-Release: 2%{?dist}
+Release: 3%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
@@ -29,6 +29,13 @@ Source1: https://chromium.googlesource.com/external/gyp/+archive/%{commit1}.tar.
 Source2: https://github.com/Microsoft/GSL/archive/%{commit2}.tar.gz#/GSL-%{shortcommit2}.tar.gz
 
 Patch0: %{name}-build-fixes.patch
+
+Patch101: %{name}-ffmpeg-build-fixes.patch
+Patch102: %{name}-cve-2016-10351.patch
+Patch103: %{name}-openssl11-fix.patch
+Patch104: %{name}-ime-fix.patch
+Patch105: %{name}-gccw.patch
+Patch106: %{name}-gccw2.patch
 
 Requires: qt5-qtimageformats%{?_isa}
 Requires: hicolor-icon-theme
@@ -53,18 +60,12 @@ BuildRequires: openal-soft-devel
 BuildRequires: qt5-qtbase-devel
 BuildRequires: libtgvoip-devel
 BuildRequires: libstdc++-devel
+BuildRequires: openssl-devel
 BuildRequires: minizip-devel
 BuildRequires: opus-devel
 BuildRequires: gtk3-devel
 BuildRequires: dee-devel
 BuildRequires: xz-devel
-
-# Additional development packages...
-%if 0%{?fedora} && 0%{?fedora} >= 26
-BuildRequires: compat-openssl10-devel
-%else
-BuildRequires: openssl-devel
-%endif
 
 %description
 Telegram is a messaging app with a focus on speed and security, it’s super
@@ -173,6 +174,9 @@ fi
 %{_datadir}/appdata/%{name}.appdata.xml
 
 %changelog
+* Fri Nov 17 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.23-3
+- Rebuild for Qt 5.9 major update. Backported upstream patches.
+
 * Tue Oct 17 2017 Leigh Scott <leigh123linux@googlemail.com> - 1.1.23-2
 - Rebuild for ffmpeg update
 

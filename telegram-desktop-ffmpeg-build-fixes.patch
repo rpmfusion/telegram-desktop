@@ -1,0 +1,35 @@
+diff --git a/Telegram/SourceFiles/media/media_audio_capture.cpp b/Telegram/SourceFiles/media/media_audio_capture.cpp
+index 5ac456e58..abc170c58 100644
+--- a/Telegram/SourceFiles/media/media_audio_capture.cpp
++++ b/Telegram/SourceFiles/media/media_audio_capture.cpp
+@@ -263,7 +263,7 @@ void Instance::Inner::onStart() {
+ 	d->codecContext->channels = 1;
+ 
+ 	if (d->fmtContext->oformat->flags & AVFMT_GLOBALHEADER) {
+-		d->codecContext->flags |= CODEC_FLAG_GLOBAL_HEADER;
++		d->codecContext->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
+ 	}
+ 
+ 	// Open audio stream
+@@ -276,7 +276,7 @@ void Instance::Inner::onStart() {
+ 
+ 	// Alloc source samples
+ 
+-	d->srcSamples = (d->codecContext->codec->capabilities & CODEC_CAP_VARIABLE_FRAME_SIZE) ? 10000 : d->codecContext->frame_size;
++	d->srcSamples = (d->codecContext->codec->capabilities & AV_CODEC_CAP_VARIABLE_FRAME_SIZE) ? 10000 : d->codecContext->frame_size;
+ 	//if ((res = av_samples_alloc_array_and_samples(&d->srcSamplesData, 0, d->codecContext->channels, d->srcSamples, d->codecContext->sample_fmt, 0)) < 0) {
+ 	//	LOG(("Audio Error: Unable to av_samples_alloc_array_and_samples for capture, error %1, %2").arg(res).arg(av_make_error_string(err, sizeof(err), res)));
+ 	//	onStop(false);
+diff --git a/Telegram/SourceFiles/media/media_clip_ffmpeg.cpp b/Telegram/SourceFiles/media/media_clip_ffmpeg.cpp
+index 512564ead..ebd47d3db 100644
+--- a/Telegram/SourceFiles/media/media_clip_ffmpeg.cpp
++++ b/Telegram/SourceFiles/media/media_clip_ffmpeg.cpp
+@@ -149,7 +149,7 @@ ReaderImplementation::ReadResult FFMpegReaderImplementation::readNextFrame() {
+ }
+ 
+ void FFMpegReaderImplementation::processReadFrame() {
+-	int64 duration = av_frame_get_pkt_duration(_frame);
++	int64 duration = _frame->pkt_duration;
+ 	int64 framePts = _frame->pts;
+ 	TimeMs frameMs = (framePts * 1000LL * _fmtContext->streams[_streamId]->time_base.num) / _fmtContext->streams[_streamId]->time_base.den;
+ 	_currentFrameDelay = _nextFrameDelay;

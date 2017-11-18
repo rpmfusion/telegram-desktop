@@ -1,0 +1,96 @@
+From 8c92f42de3aef4db889da69d8296fd29a053784d Mon Sep 17 00:00:00 2001
+From: visuve <veli-matti.visuri@cerescon.fi>
+Date: Sun, 17 Sep 2017 14:53:38 +0300
+Subject: [PATCH] Fix uninitialized values
+
+- Use C++11 default member initializers
+
+Signed-off-by: Veli-Matti Visuri <veli-matti.visuri@cerescon.fi> (github: visuve)
+---
+ Telegram/SourceFiles/platform/win/main_window_win.cpp | 12 ++++++------
+ Telegram/SourceFiles/storage/localimageloader.h       |  2 +-
+ Telegram/SourceFiles/ui/text/text.cpp                 | 10 +++++-----
+ 3 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/Telegram/SourceFiles/platform/win/main_window_win.cpp b/Telegram/SourceFiles/platform/win/main_window_win.cpp
+index 45d58237a..33f6b5ae6 100644
+--- a/Telegram/SourceFiles/platform/win/main_window_win.cpp
++++ b/Telegram/SourceFiles/platform/win/main_window_win.cpp
+@@ -113,7 +113,7 @@ class _PsShadowWindows {
+ 	using Change = MainWindow::ShadowsChange;
+ 	using Changes = MainWindow::ShadowsChanges;
+ 
+-	_PsShadowWindows() : screenDC(0), max_w(0), max_h(0), _x(0), _y(0), _w(0), _h(0), hidden(true), r(0), g(0), b(0), noKeyColor(RGB(255, 255, 255)) {
++	_PsShadowWindows() : screenDC(0), noKeyColor(RGB(255, 255, 255)) {
+ 		for (int i = 0; i < 4; ++i) {
+ 			dcs[i] = 0;
+ 			bitmaps[i] = 0;
+@@ -511,19 +511,19 @@ class _PsShadowWindows {
+ 
+ private:
+ 
+-	int _x, _y, _w, _h;
+-	int _metaSize, _fullsize, _size, _shift;
++	int _x = 0, _y = 0, _w = 0, _h = 0;
++	int _metaSize = 0, _fullsize = 0, _size = 0, _shift = 0;
+ 	QVector<BYTE> _alphas, _colors;
+ 
+-	bool hidden;
++	bool hidden = true;
+ 
+ 	HWND hwnds[4];
+ 	HDC dcs[4], screenDC;
+ 	HBITMAP bitmaps[4];
+-	int max_w, max_h;
++	int max_w = 0, max_h = 0;
+ 	BLENDFUNCTION blend;
+ 
+-	BYTE r, g, b;
++	BYTE r = 0, g = 0, b = 0;
+ 	COLORREF noKeyColor;
+ 
+ 	static LRESULT CALLBACK _PsShadowWindows::wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+diff --git a/Telegram/SourceFiles/storage/localimageloader.h b/Telegram/SourceFiles/storage/localimageloader.h
+index 3c98ff54e..281b5603b 100644
+--- a/Telegram/SourceFiles/storage/localimageloader.h
++++ b/Telegram/SourceFiles/storage/localimageloader.h
+@@ -189,7 +189,7 @@ struct FileLoadResult {
+ 
+ 	uint64 id;
+ 	FileLoadTo to;
+-	SendMediaType type;
++	SendMediaType type = SendMediaType::File;
+ 	QString filepath;
+ 	QByteArray content;
+ 
+diff --git a/Telegram/SourceFiles/ui/text/text.cpp b/Telegram/SourceFiles/ui/text/text.cpp
+index d18a8ea55..9c9378c84 100644
+--- a/Telegram/SourceFiles/ui/text/text.cpp
++++ b/Telegram/SourceFiles/ui/text/text.cpp
+@@ -717,7 +717,7 @@ enum { _MaxItemLength = 4096 };
+ 
+ struct BidiControl {
+ 	inline BidiControl(bool rtl)
+-		: cCtx(0), base(rtl ? 1 : 0), level(rtl ? 1 : 0), override(false) {}
++		: base(rtl ? 1 : 0), level(rtl ? 1 : 0) {}
+ 
+ 	inline void embed(bool rtl, bool o = false) {
+ 		unsigned int toAdd = 1;
+@@ -751,13 +751,13 @@ struct BidiControl {
+ 	}
+ 
+ 	struct {
+-		unsigned int level;
+-		bool override;
++		unsigned int level = 0;
++		bool override = false;
+ 	} ctx[_MaxBidiLevel];
+-	unsigned int cCtx;
++	unsigned int cCtx = 0;
+ 	const unsigned int base;
+ 	unsigned int level;
+-	bool override;
++	bool override = false;
+ };
+ 
+ static void eAppendItems(QScriptAnalysis *analysis, int &start, int &stop, const BidiControl &control, QChar::Direction dir) {
