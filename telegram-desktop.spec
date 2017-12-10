@@ -5,37 +5,30 @@
 %global commit1 a478c1ab51ea3e04e79791ac3d1dad01b3f57434
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 
-# Git revision of GSL...
-%global commit2 c5851a8161938798c5594a66420cb814fea92711
-%global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
+# Decrease debuginfo verbosity to reduce memory consumption...
+%global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Summary: Telegram is a new era of messaging
 Name: telegram-desktop
-Version: 1.1.23
-Release: 4%{?dist}
+Version: 1.2.0
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
 # * S1 (GYP) - BSD -- build-time dependency;
-# * S2 (GSL) - MIT -- build-time dependency;
 # * P0 (qt_functions.cpp) - LGPLv3 -- build-time dependency.
-License: GPLv3+ and LGPLv3 and BSD and MIT
+License: GPLv3+ and LGPLv3 and BSD
 Group: Applications/Internet
 URL: https://github.com/telegramdesktop/%{appname}
+
+# Warning! Builds on i686 may fail due to technical limitations of this
+# architecture: https://github.com/telegramdesktop/tdesktop/issues/4101
 ExclusiveArch: i686 x86_64
 
 Source0: %{url}/archive/v%{version}.tar.gz#/%{appname}-%{version}.tar.gz
 Source1: https://chromium.googlesource.com/external/gyp/+archive/%{commit1}.tar.gz#/gyp-%{shortcommit1}.tar.gz
-Source2: https://github.com/Microsoft/GSL/archive/%{commit2}.tar.gz#/GSL-%{shortcommit2}.tar.gz
 
 Patch0: %{name}-build-fixes.patch
-
-Patch101: %{name}-ffmpeg-build-fixes.patch
-Patch102: %{name}-cve-2016-10351.patch
-Patch103: %{name}-openssl11-fix.patch
-Patch104: %{name}-ime-fix.patch
-Patch105: %{name}-gccw.patch
-Patch106: %{name}-gccw2.patch
 
 Requires: qt5-qtimageformats%{?_isa}
 Requires: hicolor-icon-theme
@@ -53,6 +46,7 @@ BuildRequires: cmake
 BuildRequires: gcc
 
 # Development packages for Telegram Desktop...
+BuildRequires: guidelines-support-library-devel
 BuildRequires: libappindicator-devel
 BuildRequires: mapbox-variant-devel
 BuildRequires: ffmpeg-devel >= 3.1
@@ -60,6 +54,7 @@ BuildRequires: openal-soft-devel
 BuildRequires: qt5-qtbase-devel
 BuildRequires: libtgvoip-devel
 BuildRequires: libstdc++-devel
+BuildRequires: range-v3-devel
 BuildRequires: openssl-devel
 BuildRequires: minizip-devel
 BuildRequires: opus-devel
@@ -88,13 +83,6 @@ mkdir -p Telegram/ThirdParty/gyp
 pushd Telegram/ThirdParty/gyp
     tar -xf %{SOURCE1}
     patch -p1 -i ../../../Telegram/Patches/gyp.diff
-popd
-
-# Unpacking GSL...
-pushd Telegram/ThirdParty
-    rm -rf GSL
-    tar -xf %{SOURCE2}
-    mv GSL-%{commit2} GSL
 popd
 
 %build
@@ -138,30 +126,15 @@ install -m 0644 -p lib/xdg/telegramdesktop.appdata.xml "%{buildroot}%{_datadir}/
 appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/appdata/%{name}.appdata.xml"
 
 %post
-%if (0%{?fedora} && 0%{?fedora} <= 23) || (0%{?rhel} && 0%{?rhel} <= 7)
-/bin/touch --no-create %{_datadir}/mime/packages &>/dev/null || :
-%endif
 /bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
-%if (0%{?fedora} && 0%{?fedora} <= 24) || (0%{?rhel} && 0%{?rhel} <= 7)
-/usr/bin/update-desktop-database &> /dev/null || :
-%endif
 
 %postun
 if [ $1 -eq 0 ] ; then
-    %if (0%{?fedora} && 0%{?fedora} <= 23) || (0%{?rhel} && 0%{?rhel} <= 7)
-    /usr/bin/update-mime-database %{_datadir}/mime &> /dev/null || :
-    %endif
     /bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null
     /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 fi
-%if (0%{?fedora} && 0%{?fedora} <= 24) || (0%{?rhel} && 0%{?rhel} <= 7)
-/usr/bin/update-desktop-database &> /dev/null || :
-%endif
 
 %posttrans
-%if (0%{?fedora} && 0%{?fedora} <= 23) || (0%{?rhel} && 0%{?rhel} <= 7)
-/usr/bin/update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
-%endif
 /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 
 %files
@@ -174,6 +147,27 @@ fi
 %{_datadir}/appdata/%{name}.appdata.xml
 
 %changelog
+* Sun Dec 10 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.2.0-1
+- Updated to 1.2.0.
+
+* Sat Dec 09 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.29-1
+- Updated to 1.1.29 (alpha).
+
+* Sat Dec 09 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.28-1
+- Updated to 1.1.28 (alpha).
+
+* Wed Dec 06 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.27-1
+- Updated to 1.1.27 (alpha).
+
+* Sat Dec 02 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.26-1
+- Updated to 1.1.26 (alpha).
+
+* Fri Dec 01 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.25-1
+- Updated to 1.1.25 (alpha).
+
+* Thu Nov 30 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.24-1
+- Updated to 1.1.24 (alpha).
+
 * Sat Nov 18 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.1.23-4
 - Rebuild against libtgvoip 1.0.1.
 
