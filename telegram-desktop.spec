@@ -1,23 +1,18 @@
 # Telegram Desktop's constants...
 %global appname tdesktop
 
-# Git revision of GYP...
-%global commit1 a478c1ab51ea3e04e79791ac3d1dad01b3f57434
-%global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
-
 # Decrease debuginfo verbosity to reduce memory consumption...
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Summary: Telegram is a new era of messaging
 Name: telegram-desktop
-Version: 1.2.0
+Version: 1.2.1
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
-# * S1 (GYP) - BSD -- build-time dependency;
 # * P0 (qt_functions.cpp) - LGPLv3 -- build-time dependency.
-License: GPLv3+ and LGPLv3 and BSD
+License: GPLv3+ and LGPLv3
 Group: Applications/Internet
 URL: https://github.com/telegramdesktop/%{appname}
 
@@ -26,24 +21,20 @@ URL: https://github.com/telegramdesktop/%{appname}
 ExclusiveArch: i686 x86_64
 
 Source0: %{url}/archive/v%{version}.tar.gz#/%{appname}-%{version}.tar.gz
-Source1: https://chromium.googlesource.com/external/gyp/+archive/%{commit1}.tar.gz#/gyp-%{shortcommit1}.tar.gz
-
 Patch0: %{name}-build-fixes.patch
 
+Recommends: libappindicator-gtk3%{?_isa}
 Requires: qt5-qtimageformats%{?_isa}
 Requires: hicolor-icon-theme
 Requires: gtk3%{?_isa}
-%if 0%{?fedora} && 0%{?fedora} >= 24
-Recommends: libappindicator-gtk3%{?_isa}
-%endif
 
 # Compilers and tools...
 BuildRequires: desktop-file-utils
 BuildRequires: libappstream-glib
 BuildRequires: gcc-c++
-BuildRequires: chrpath
 BuildRequires: cmake
 BuildRequires: gcc
+BuildRequires: gyp
 
 # Development packages for Telegram Desktop...
 BuildRequires: guidelines-support-library-devel
@@ -78,18 +69,15 @@ personal or business messaging needs.
 # Unpacking Telegram Desktop source archive...
 %autosetup -n %{appname}-%{version} -p1
 
-# Unpacking GYP...
-mkdir -p Telegram/ThirdParty/gyp
-pushd Telegram/ThirdParty/gyp
-    tar -xf %{SOURCE1}
-    patch -p1 -i ../../../Telegram/Patches/gyp.diff
-popd
-
 %build
 # Generating cmake script using GYP...
 pushd Telegram/gyp
-    ../ThirdParty/gyp/gyp --depth=. --generator-output=../.. -Goutput_dir=out Telegram.gyp --format=cmake
+    gyp --depth=. --generator-output=../.. -Goutput_dir=out Telegram.gyp --format=cmake
 popd
+
+# Patching generated cmake manifest...
+LEN=$((`wc -l < out/Release/CMakeLists.txt` - 2))
+sed -i "$LEN r Telegram/gyp/CMakeLists.inj" out/Release/CMakeLists.txt
 
 # Building Telegram Desktop using cmake...
 pushd out/Release
@@ -100,7 +88,6 @@ popd
 %install
 # Installing executables...
 mkdir -p "%{buildroot}%{_bindir}"
-chrpath -d out/Release/Telegram
 install -m 0755 -p out/Release/Telegram "%{buildroot}%{_bindir}/%{name}"
 
 # Installing desktop shortcut...
@@ -147,6 +134,9 @@ fi
 %{_datadir}/appdata/%{name}.appdata.xml
 
 %changelog
+* Tue Dec 12 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.2.1-1
+- Updated to 1.2.1.
+
 * Sun Dec 10 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.2.0-1
 - Updated to 1.2.0.
 
