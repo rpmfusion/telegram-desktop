@@ -1,16 +1,21 @@
 # Telegram Desktop's constants...
 %global appname tdesktop
 
+# Git revision of crl...
+%global commit1 9e11a5c9291760d03df559d03d81fa7afdd0a46d
+%global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
+
 # Decrease debuginfo verbosity to reduce memory consumption...
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Summary: Telegram is a new era of messaging
 Name: telegram-desktop
-Version: 1.2.1
+Version: 1.2.6
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
+# * S1 (crl) - GPLv3+ -- build-time dependency;
 # * P0 (qt_functions.cpp) - LGPLv3 -- build-time dependency.
 License: GPLv3+ and LGPLv3
 Group: Applications/Internet
@@ -21,6 +26,7 @@ URL: https://github.com/telegramdesktop/%{appname}
 ExclusiveArch: i686 x86_64
 
 Source0: %{url}/archive/v%{version}.tar.gz#/%{appname}-%{version}.tar.gz
+Source1: https://github.com/telegramdesktop/crl/archive/%{commit1}.tar.gz#/crl-%{shortcommit1}.tar.gz
 Patch0: %{name}-build-fixes.patch
 
 Recommends: libappindicator-gtk3%{?_isa}
@@ -69,14 +75,21 @@ personal or business messaging needs.
 # Unpacking Telegram Desktop source archive...
 %autosetup -n %{appname}-%{version} -p1
 
+# Unpacking crl...
+pushd Telegram/ThirdParty
+    rm -rf crl
+    tar -xf %{SOURCE1}
+    mv crl-%{commit1} crl
+popd
+
 %build
 # Generating cmake script using GYP...
 pushd Telegram/gyp
     gyp --depth=. --generator-output=../.. -Goutput_dir=out Telegram.gyp --format=cmake
 popd
 
-# Patching generated cmake manifest...
-LEN=$((`wc -l < out/Release/CMakeLists.txt` - 2))
+# Patching generated cmake script...
+LEN=$(($(wc -l < out/Release/CMakeLists.txt) - 2))
 sed -i "$LEN r Telegram/gyp/CMakeLists.inj" out/Release/CMakeLists.txt
 
 # Building Telegram Desktop using cmake...
@@ -134,6 +147,18 @@ fi
 %{_datadir}/appdata/%{name}.appdata.xml
 
 %changelog
+* Sat Dec 30 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.2.6-1
+- Updated to 1.2.6.
+
+* Fri Dec 29 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.2.5-1
+- Updated to 1.2.5 (alpha).
+
+* Wed Dec 27 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.2.4-1
+- Updated to 1.2.4 (alpha).
+
+* Sun Dec 17 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.2.3-1
+- Updated to 1.2.3 (alpha).
+
 * Tue Dec 12 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.2.1-1
 - Updated to 1.2.1.
 
