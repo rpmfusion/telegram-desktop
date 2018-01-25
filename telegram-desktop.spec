@@ -2,23 +2,22 @@
 %global appname tdesktop
 
 # Git revision of crl...
-%global commit1 9e11a5c9291760d03df559d03d81fa7afdd0a46d
+%global commit1 344cbde9ae8d89a6530408d3176d2754ae0ff0e2
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 
 # Decrease debuginfo verbosity to reduce memory consumption...
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
-Summary: Telegram is a new era of messaging
+Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.2.6
-Release: 2%{?dist}
+Version: 1.2.8
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
 # * S1 (crl) - GPLv3+ -- build-time dependency;
 # * P0 (qt_functions.cpp) - LGPLv3 -- build-time dependency.
 License: GPLv3+ and LGPLv3
-Group: Applications/Internet
 URL: https://github.com/telegramdesktop/%{appname}
 
 # Warning! Builds on i686 may fail due to technical limitations of this
@@ -62,14 +61,15 @@ BuildRequires: xz-devel
 %description
 Telegram is a messaging app with a focus on speed and security, it’s super
 fast, simple and free. You can use Telegram on all your devices at the same
-time — your messages sync seamlessly across any of your phones, tablets or
-computers.
+time — your messages sync seamlessly across any number of your phones,
+tablets or computers.
 
 With Telegram, you can send messages, photos, videos and files of any type
-(doc, zip, mp3, etc), as well as create groups for up to 200 people. You can
-write to your phone contacts and find people by their usernames. As a result,
-Telegram is like SMS and email combined — and can take care of all your
-personal or business messaging needs.
+(doc, zip, mp3, etc), as well as create groups for up to 50,000 people or
+channels for broadcasting to unlimited audiences. You can write to your
+phone contacts and find people by their usernames. As a result, Telegram is
+like SMS and email combined — and can take care of all your personal or
+business messaging needs.
 
 %prep
 # Unpacking Telegram Desktop source archive...
@@ -119,36 +119,27 @@ install -d "%{buildroot}%{_datadir}/kde4/services"
 install -m 0644 -p lib/xdg/tg.protocol "%{buildroot}%{_datadir}/kde4/services/tg.protocol"
 
 # Installing appdata for Gnome Software...
-install -d "%{buildroot}%{_datadir}/appdata"
-install -m 0644 -p lib/xdg/telegramdesktop.appdata.xml "%{buildroot}%{_datadir}/appdata/%{name}.appdata.xml"
+install -d "%{buildroot}%{_datadir}/metainfo"
+install -m 0644 -p lib/xdg/telegramdesktop.appdata.xml "%{buildroot}%{_datadir}/metainfo/%{name}.appdata.xml"
 
 %check
-appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/appdata/%{name}.appdata.xml"
-
-%post
-/bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
-
-%postun
-if [ $1 -eq 0 ] ; then
-    /bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null
-    /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
-fi
-
-%posttrans
-/usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
+appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/metainfo/%{name}.appdata.xml"
 
 %files
 %doc README.md changelog.txt
-%license LICENSE
+%license LICENSE LEGAL
 %{_bindir}/%{name}
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/kde4/services/tg.protocol
 %{_datadir}/icons/hicolor/*/apps/%{name}.png
-%{_datadir}/appdata/%{name}.appdata.xml
+%{_datadir}/metainfo/%{name}.appdata.xml
 
 %changelog
-* Thu Jan 18 2018 Leigh Scott <leigh123linux@googlemail.com> - 1.2.6-2
-- Rebuilt for ffmpeg-3.5 git
+* Wed Jan 03 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.2.8-1
+- Updated to 1.2.8 (alpha).
+
+* Mon Jan 01 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.2.7-1
+- Updated to 1.2.7 (alpha).
 
 * Sat Dec 30 2017 Vitaly Zaitsev <vitaly@easycoding.org> - 1.2.6-1
 - Updated to 1.2.6.
