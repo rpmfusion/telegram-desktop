@@ -57,6 +57,7 @@ BuildRequires: opus-devel
 BuildRequires: gtk3-devel
 BuildRequires: dee-devel
 BuildRequires: xz-devel
+BuildRequires: python2
 
 %description
 Telegram is a messaging app with a focus on speed and security, it’s super
