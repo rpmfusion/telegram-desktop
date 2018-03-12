@@ -1,11 +1,11 @@
-From 6fa7caa33fa5604dc9099389b8381e3f160320cd Mon Sep 17 00:00:00 2001
+From e9714c3fac047a17156769539dabc43b7f8ccc49 Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Fri, 31 Mar 2017 14:29:58 +0200
 Subject: [PATCH] Fixed build under Fedora using rpmbuild and mock.
 
 ---
  Telegram/Resources/qrc/telegram_linux.qrc |  1 -
- Telegram/SourceFiles/core/launcher.cpp    |  2 +
+ Telegram/SourceFiles/core/launcher.cpp    |  1 +
  Telegram/SourceFiles/qt_functions.cpp     | 94 +++++++++++++++++++++++++++++++
  Telegram/gyp/CMakeLists.inj               |  3 +
  Telegram/gyp/PrecompiledHeader.cmake      |  4 +-
@@ -19,7 +19,7 @@ Subject: [PATCH] Fixed build under Fedora using rpmbuild and mock.
  Telegram/gyp/telegram_sources.txt         |  9 +--
  lib/xdg/telegramdesktop.appdata.xml       |  2 +-
  lib/xdg/telegramdesktop.desktop           |  6 +-
- 15 files changed, 166 insertions(+), 177 deletions(-)
+ 15 files changed, 165 insertions(+), 177 deletions(-)
  create mode 100644 Telegram/SourceFiles/qt_functions.cpp
  create mode 100644 Telegram/gyp/CMakeLists.inj
 
@@ -34,14 +34,13 @@ index 0554fa17..3ea02740 100644
    </qresource>
  </RCC>
 diff --git a/Telegram/SourceFiles/core/launcher.cpp b/Telegram/SourceFiles/core/launcher.cpp
-index 7f173565..68f077d2 100644
+index 7f173565..c70ccc79 100644
 --- a/Telegram/SourceFiles/core/launcher.cpp
 +++ b/Telegram/SourceFiles/core/launcher.cpp
-@@ -51,6 +51,8 @@ int Launcher::exec() {
+@@ -51,6 +51,7 @@ int Launcher::exec() {
  	Logs::start(this); // must be started before Platform is started
  	Platform::start(); // must be started before QApplication is created
  
-+	setenv("QT_STYLE_OVERRIDE", "qwerty", false);
 +	unsetenv("QT_QPA_PLATFORMTHEME");
  	auto result = executeApplication();
  
@@ -496,7 +495,7 @@ index f5624a82..b644ce29 100644
        '-no-compress',
        '<(RULE_INPUT_PATH)',
 diff --git a/Telegram/gyp/settings_linux.gypi b/Telegram/gyp/settings_linux.gypi
-index a4b5f58a..9658b5c3 100644
+index 842b1955..80828037 100644
 --- a/Telegram/gyp/settings_linux.gypi
 +++ b/Telegram/gyp/settings_linux.gypi
 @@ -9,10 +9,6 @@
