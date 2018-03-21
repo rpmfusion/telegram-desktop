@@ -1,4 +1,4 @@
-From e9714c3fac047a17156769539dabc43b7f8ccc49 Mon Sep 17 00:00:00 2001
+From bdfee6cafe16b7b67b0ff61531c0206a2a8f3919 Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Fri, 31 Mar 2017 14:29:58 +0200
 Subject: [PATCH] Fixed build under Fedora using rpmbuild and mock.
@@ -495,7 +495,7 @@ index f5624a82..b644ce29 100644
        '-no-compress',
        '<(RULE_INPUT_PATH)',
 diff --git a/Telegram/gyp/settings_linux.gypi b/Telegram/gyp/settings_linux.gypi
-index 842b1955..80828037 100644
+index 03284c1d..9b6f0c51 100644
 --- a/Telegram/gyp/settings_linux.gypi
 +++ b/Telegram/gyp/settings_linux.gypi
 @@ -9,10 +9,6 @@
