@@ -1,4 +1,4 @@
-From ff1914aaef5cde44f38359ffa2169bf1d0ec2c64 Mon Sep 17 00:00:00 2001
+From c4742c80a5af1f74b34fcd794a214cf3856f0cd8 Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Fri, 31 Mar 2017 14:29:58 +0200
 Subject: [PATCH] Fixed build under Fedora using rpmbuild and mock.
@@ -6,16 +6,16 @@ Subject: [PATCH] Fixed build under Fedora using rpmbuild and mock.
 ---
  Telegram/Resources/qrc/telegram_linux.qrc |  1 -
  Telegram/SourceFiles/core/launcher.cpp    |  1 +
- Telegram/SourceFiles/qt_functions.cpp     | 94 +++++++++++++++++++++++++++++++
+ Telegram/SourceFiles/qt_functions.cpp     | 94 +++++++++++++++++++++++
  Telegram/gyp/CMakeLists.inj               |  3 +
  Telegram/gyp/PrecompiledHeader.cmake      |  4 +-
- Telegram/gyp/Telegram.gyp                 | 29 +++-------
- Telegram/gyp/codegen_rules.gypi           |  8 +--
- Telegram/gyp/qt.gypi                      | 87 ++++++++--------------------
+ Telegram/gyp/Telegram.gyp                 | 29 ++-----
+ Telegram/gyp/codegen_rules.gypi           |  8 +-
+ Telegram/gyp/qt.gypi                      | 87 ++++++---------------
  Telegram/gyp/qt_moc.gypi                  |  5 +-
  Telegram/gyp/qt_rcc.gypi                  |  2 +-
  Telegram/gyp/settings_linux.gypi          |  5 --
- Telegram/gyp/telegram_linux.gypi          | 86 +++++++---------------------
+ Telegram/gyp/telegram_linux.gypi          | 86 +++++----------------
  Telegram/gyp/telegram_sources.txt         |  9 +--
  lib/xdg/telegramdesktop.appdata.xml       |  2 +-
  lib/xdg/telegramdesktop.desktop           |  6 +-
@@ -34,7 +34,7 @@ index 0554fa17..3ea02740 100644
    </qresource>
  </RCC>
 diff --git a/Telegram/SourceFiles/core/launcher.cpp b/Telegram/SourceFiles/core/launcher.cpp
-index 7f173565..c70ccc79 100644
+index 62662277..66598a1d 100644
 --- a/Telegram/SourceFiles/core/launcher.cpp
 +++ b/Telegram/SourceFiles/core/launcher.cpp
 @@ -51,6 +51,7 @@ int Launcher::exec() {
@@ -518,7 +518,7 @@ index 03284c1d..9b6f0c51 100644
        ],
        'cflags_c': [
 diff --git a/Telegram/gyp/telegram_linux.gypi b/Telegram/gyp/telegram_linux.gypi
-index a5b4b197..19aefb6b 100644
+index 22f3e161..10d73e48 100644
 --- a/Telegram/gyp/telegram_linux.gypi
 +++ b/Telegram/gyp/telegram_linux.gypi
 @@ -7,7 +7,7 @@
@@ -530,7 +530,7 @@ index a5b4b197..19aefb6b 100644
        'pkgconfig_libs': [
  # In order to work libxkbcommon must be linked statically,
  # PKGCONFIG links it like "-L/usr/local/lib -lxkbcommon"
-@@ -15,99 +15,53 @@
+@@ -15,50 +15,29 @@
  # QApplication() -> createPlatformIntegration -> QXcbIntegrationPlugin::create
          #'xkbcommon',
        ],
@@ -598,7 +598,8 @@ index a5b4b197..19aefb6b 100644
  #      '<!(pkg-config 2> /dev/null --libs <@(pkgconfig_libs))',
      ],
      'cflags_cc': [
-       '-Wno-strict-overflow',
+@@ -66,49 +45,24 @@
+       '-Wno-maybe-uninitialized',
      ],
      'ldflags': [
 -      '-Wl,-wrap,aligned_alloc',
@@ -650,10 +651,10 @@ index a5b4b197..19aefb6b 100644
          ],
        }]
 diff --git a/Telegram/gyp/telegram_sources.txt b/Telegram/gyp/telegram_sources.txt
-index a9c36e09..40b8eb15 100644
+index f60aba58..d01a9eff 100644
 --- a/Telegram/gyp/telegram_sources.txt
 +++ b/Telegram/gyp/telegram_sources.txt
-@@ -750,7 +750,7 @@
+@@ -753,7 +753,7 @@
  <(src_loc)/observer_peer.h
  <(src_loc)/passcodewidget.cpp
  <(src_loc)/passcodewidget.h
@@ -662,7 +663,7 @@ index a9c36e09..40b8eb15 100644
  <(src_loc)/settings.cpp
  <(src_loc)/settings.h
  <(src_loc)/shortcuts.cpp
-@@ -761,13 +761,6 @@
+@@ -764,13 +764,6 @@
  <(emoji_suggestions_loc)/emoji_suggestions.h
  
  platforms: !win
@@ -707,5 +708,5 @@ index 0a806951..550b9f78 100644
  StartupWMClass=TelegramDesktop
  Type=Application
 -- 
-2.14.3
+2.17.0
 

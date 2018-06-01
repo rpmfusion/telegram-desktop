@@ -10,8 +10,8 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.2.17
-Release: 2%{?dist}
+Version: 1.3.0
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
@@ -28,10 +28,12 @@ Source0: %{url}/archive/v%{version}.tar.gz#/%{appname}-%{version}.tar.gz
 Source1: https://github.com/telegramdesktop/crl/archive/%{commit1}.tar.gz#/crl-%{shortcommit1}.tar.gz
 Patch0: %{name}-build-fixes.patch
 Patch1: %{name}-api-tokens.patch
+Patch2: %{name}-system-fonts.patch
 
 Recommends: libappindicator-gtk3%{?_isa}
 Requires: qt5-qtimageformats%{?_isa}
 Requires: hicolor-icon-theme
+Requires: open-sans-fonts
 Requires: gtk3%{?_isa}
 
 # Compilers and tools...
@@ -116,10 +118,6 @@ for size in 16 32 48 64 128 256 512; do
     install -m 0644 -p Telegram/Resources/art/icon${size}.png "$dir/%{name}.png"
 done
 
-# Installing tg protocol handler...
-install -d "%{buildroot}%{_datadir}/kde4/services"
-install -m 0644 -p lib/xdg/tg.protocol "%{buildroot}%{_datadir}/kde4/services/tg.protocol"
-
 # Installing appdata for Gnome Software...
 install -d "%{buildroot}%{_datadir}/metainfo"
 install -m 0644 -p lib/xdg/telegramdesktop.appdata.xml "%{buildroot}%{_datadir}/metainfo/%{name}.appdata.xml"
@@ -132,11 +130,34 @@ appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/metainfo/%{name}.
 %license LICENSE LEGAL
 %{_bindir}/%{name}
 %{_datadir}/applications/%{name}.desktop
-%{_datadir}/kde4/services/tg.protocol
 %{_datadir}/icons/hicolor/*/apps/%{name}.png
 %{_datadir}/metainfo/%{name}.appdata.xml
 
 %changelog
+* Fri Jun 01 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.0-1
+- Updated to 1.3.0.
+
+* Sat May 26 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.2.24-1
+- Updated to 1.2.24 (alpha).
+
+* Fri May 25 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.2.23-1
+- Updated to 1.2.23 (alpha).
+
+* Thu May 24 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.2.22-1
+- Updated to 1.2.22 (alpha).
+
+* Sat May 19 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.2.21-2
+- Updated to 1.2.21 (alpha).
+
+* Sun May 13 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.2.20-1
+- Updated to 1.2.20 (alpha).
+
+* Tue May 08 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.2.19-1
+- Updated to 1.2.19 (alpha).
+
+* Sat May 05 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.2.18-1
+- Updated to 1.2.18 (alpha).
+
 * Mon Apr 09 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.2.17-2
 - Added custom API tokens.
 
