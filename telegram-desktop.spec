@@ -2,7 +2,7 @@
 %global appname tdesktop
 
 # Git revision of crl...
-%global commit1 344cbde9ae8d89a6530408d3176d2754ae0ff0e2
+%global commit1 c739b14bc04ca3ce740893fef9bffe2bcca99629
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 
 # Decrease debuginfo verbosity to reduce memory consumption...
@@ -10,7 +10,7 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.3.0
+Version: 1.3.7
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -46,12 +46,12 @@ BuildRequires: gyp
 
 # Development packages for Telegram Desktop...
 BuildRequires: guidelines-support-library-devel
+BuildRequires: libtgvoip-devel >= 2.1
 BuildRequires: libappindicator-devel
 BuildRequires: mapbox-variant-devel
 BuildRequires: ffmpeg-devel >= 3.1
 BuildRequires: openal-soft-devel
 BuildRequires: qt5-qtbase-devel
-BuildRequires: libtgvoip-devel
 BuildRequires: libstdc++-devel
 BuildRequires: range-v3-devel
 BuildRequires: openssl-devel
@@ -134,6 +134,24 @@ appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/metainfo/%{name}.
 %{_datadir}/metainfo/%{name}.appdata.xml
 
 %changelog
+* Mon Jun 11 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.7-1
+- Updated to 1.3.7.
+
+* Mon Jun 11 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.6-1
+- Updated to 1.3.6 (alpha).
+
+* Sat Jun 09 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.5-1
+- Updated to 1.3.5 (alpha).
+
+* Fri Jun 08 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.4-1
+- Updated to 1.3.4 (alpha).
+
+* Thu Jun 07 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.3-1
+- Updated to 1.3.3 (alpha).
+
+* Tue Jun 05 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.1-1
+- Updated to 1.3.1 (alpha).
+
 * Fri Jun 01 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.0-1
 - Updated to 1.3.0.
 
