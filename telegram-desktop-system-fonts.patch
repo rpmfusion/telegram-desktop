@@ -1,14 +1,22 @@
-Description: Remove links to packaged Open Sans font
- This makes Telegram Desktop use system-wide fonts.
- Warnings about non-existent fonts in resources are also disabled.
-Author: Nicholas Guriev <guriev-ns@ya.ru>
-Bug-Debian: https://bugs.debian.org/890341
-Last-Update: Sat, 31 Mar 2018 14:36:39 +0300
+From b2dc2e3a61740b7a61ec1f7c916eeff49f849bd5 Mon Sep 17 00:00:00 2001
+From: Vitaly Zaitsev <vitaly@easycoding.org>
+Date: Sun, 24 Jun 2018 22:59:34 +0200
+Subject: [PATCH] Backported and rebased patch from Debian maintainer Nicholas
+ Guriev. Removed links to packaged Open Sans fonts. Telegram Desktop will use
+ packaged versions.
 
+---
+ Telegram/Resources/qrc/telegram.qrc | 3 ---
+ Telegram/SourceFiles/ui/twidget.cpp | 6 +++---
+ 2 files changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/Telegram/Resources/qrc/telegram.qrc b/Telegram/Resources/qrc/telegram.qrc
+index 48b4398eb..be995db75 100644
 --- a/Telegram/Resources/qrc/telegram.qrc
 +++ b/Telegram/Resources/qrc/telegram.qrc
-@@ -1,8 +1,5 @@
- <RCC>
+@@ -3,9 +3,6 @@
+     <file alias="css/style.css">../css/export_style.css</file>
+   </qresource>
    <qresource prefix="/gui">
 -    <file alias="fonts/OpenSans-Regular.ttf">../fonts/OpenSans-Regular.ttf</file>
 -    <file alias="fonts/OpenSans-Bold.ttf">../fonts/OpenSans-Bold.ttf</file>
@@ -16,6 +24,8 @@ Last-Update: Sat, 31 Mar 2018 14:36:39 +0300
      <file alias="art/bg.jpg">../art/bg.jpg</file>
      <file alias="art/bg_initial.jpg">../art/bg_initial.jpg</file>
      <file alias="art/logo_256.png">../art/logo_256.png</file>
+diff --git a/Telegram/SourceFiles/ui/twidget.cpp b/Telegram/SourceFiles/ui/twidget.cpp
+index 0f610cb8a..3b06f27cd 100644
 --- a/Telegram/SourceFiles/ui/twidget.cpp
 +++ b/Telegram/SourceFiles/ui/twidget.cpp
 @@ -70,9 +70,9 @@ void Start() {
@@ -31,3 +41,6 @@ Last-Update: Sat, 31 Mar 2018 14:36:39 +0300
  
  #ifdef Q_OS_WIN
  	// Attempt to workaround a strange font bug with Open Sans Semibold not loading.
+-- 
+2.17.1
+

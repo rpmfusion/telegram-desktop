@@ -2,7 +2,7 @@
 %global appname tdesktop
 
 # Git revision of crl...
-%global commit1 c739b14bc04ca3ce740893fef9bffe2bcca99629
+%global commit1 9bc641f2d4ab140a84aea64c7f2d4669f7633246
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 
 # Decrease debuginfo verbosity to reduce memory consumption...
@@ -10,7 +10,7 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.3.7
+Version: 1.3.8
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -134,6 +134,9 @@ appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/metainfo/%{name}.
 %{_datadir}/metainfo/%{name}.appdata.xml
 
 %changelog
+* Sun Jun 24 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.8-1
+- Updated to 1.3.8.
+
 * Mon Jun 11 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.7-1
 - Updated to 1.3.7.
 
