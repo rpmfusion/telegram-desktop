@@ -1,4 +1,4 @@
-From 68611ba0b2a923df5dd3b711c2db386c472e138a Mon Sep 17 00:00:00 2001
+From f159a390f8441980776e3fa1e3ed3dedc0b9e32c Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Mon, 9 Apr 2018 16:57:13 +0200
 Subject: [PATCH] Changed default Telegram Desktop's test API keys to obtained
@@ -10,10 +10,10 @@ Subject: [PATCH] Changed default Telegram Desktop's test API keys to obtained
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/Telegram/SourceFiles/config.h b/Telegram/SourceFiles/config.h
-index 5bcb92472..484cbecbb 100644
+index e77b81092..b5856d949 100644
 --- a/Telegram/SourceFiles/config.h
 +++ b/Telegram/SourceFiles/config.h
-@@ -199,8 +199,8 @@ w/CVnbwQOw0g5GBwwFV3r0uTTvy44xx8XXxk+Qknu4eBCsmrAFNnAgMBAAE=\n\
+@@ -197,8 +197,8 @@ w/CVnbwQOw0g5GBwwFV3r0uTTvy44xx8XXxk+Qknu4eBCsmrAFNnAgMBAAE=\n\
  #ifdef CUSTOM_API_ID
  #include "../../../TelegramPrivate/custom_api_id.h" // Custom API id and API hash
  #else
