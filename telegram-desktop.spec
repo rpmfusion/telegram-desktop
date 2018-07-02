@@ -11,7 +11,7 @@
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
 Version: 1.3.9
-Release: 1%{?dist}
+Release: 2%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
@@ -47,7 +47,7 @@ BuildRequires: gyp
 # Development packages for Telegram Desktop...
 BuildRequires: guidelines-support-library-devel >= 1.0.0
 BuildRequires: mapbox-variant-devel >= 0.3.6
-BuildRequires: libtgvoip-devel >= 2.1
+BuildRequires: libtgvoip-devel >= 2.1.1
 BuildRequires: libappindicator-devel
 BuildRequires: ffmpeg-devel >= 3.1
 BuildRequires: openal-soft-devel
@@ -134,6 +134,9 @@ appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/metainfo/%{name}.
 %{_datadir}/metainfo/%{name}.appdata.xml
 
 %changelog
+* Mon Jul 02 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.9-2
+- Rebuild for libtgvoip update.
+
 * Fri Jun 29 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.9-1
 - Updated to 1.3.9.
 
