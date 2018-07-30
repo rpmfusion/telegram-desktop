@@ -5,6 +5,9 @@
 %global commit1 9bc641f2d4ab140a84aea64c7f2d4669f7633246
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 
+# Decrease debuginfo verbosity to reduce memory consumption...
+%global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
+
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
 Version: 1.3.10
