@@ -1,4 +1,4 @@
-From 6c0ca234f917cb21372ea1e88042a344092d8ab4 Mon Sep 17 00:00:00 2001
+From 929f0fe17dbbc8c551505a689135c7ae3c46477f Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Sun, 24 Jun 2018 22:59:34 +0200
 Subject: [PATCH 3/3] Backported and rebased patch from Debian maintainer
@@ -11,11 +11,11 @@ Subject: [PATCH 3/3] Backported and rebased patch from Debian maintainer
  2 files changed, 3 insertions(+), 6 deletions(-)
 
 diff --git a/Telegram/Resources/qrc/telegram.qrc b/Telegram/Resources/qrc/telegram.qrc
-index e96b25780..f6270c5a3 100644
+index 91cbeee5c..fbffd8abb 100644
 --- a/Telegram/Resources/qrc/telegram.qrc
 +++ b/Telegram/Resources/qrc/telegram.qrc
-@@ -41,9 +41,6 @@
-     <file alias="images/section_web@2x.png">../export_html/images/section_web@2x.png</file>
+@@ -42,9 +42,6 @@
+     <file alias="js/script.js">../export_html/js/script.js</file>
    </qresource>
    <qresource prefix="/gui">
 -    <file alias="fonts/OpenSans-Regular.ttf">../fonts/OpenSans-Regular.ttf</file>

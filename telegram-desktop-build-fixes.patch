@@ -1,4 +1,4 @@
-From cf2f66bdea32ba5ea77f9a172e6506be07e3cbdd Mon Sep 17 00:00:00 2001
+From 8d018042fa261d193342b8f73c98d5a162895765 Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Fri, 31 Mar 2017 14:29:58 +0200
 Subject: [PATCH 1/3] Fixed build under Fedora using rpmbuild and mock.
@@ -180,7 +180,7 @@ index a0e1e0489..bd9bce0c1 100644
          IMPLICIT_DEPENDS CXX "${_pch_header}"
          COMMENT "Precompiling header ${_name} for ${_target} (C++)")
 diff --git a/Telegram/gyp/Telegram.gyp b/Telegram/gyp/Telegram.gyp
-index f959b65f0..5a5860805 100644
+index 43cce710f..9ca6c68c8 100644
 --- a/Telegram/gyp/Telegram.gyp
 +++ b/Telegram/gyp/Telegram.gyp
 @@ -18,7 +18,6 @@
@@ -250,7 +250,7 @@ index f959b65f0..5a5860805 100644
        '<(submodules_loc)/crl/src',
      ],
      'sources': [
-@@ -122,7 +108,6 @@
+@@ -123,7 +109,6 @@
            'CUSTOM_API_ID',
          ],
          'dependencies': [

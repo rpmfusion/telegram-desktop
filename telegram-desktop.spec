@@ -10,8 +10,8 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.3.10
-Release: 3%{?dist}
+Version: 1.3.11
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
@@ -135,6 +135,9 @@ appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/metainfo/%{name}.
 %{_datadir}/metainfo/%{name}.appdata.xml
 
 %changelog
+* Thu Aug 02 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.11-1
+- Updated to 1.3.11 (alpha).
+
 * Mon Jul 30 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.10-3
 - Rebuild for libtgvoip update and issue with binutils.
 
