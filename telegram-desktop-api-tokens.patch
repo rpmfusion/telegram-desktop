@@ -1,4 +1,4 @@
-From a97960c40d239b950db94191b026ebd1e2027986 Mon Sep 17 00:00:00 2001
+From 1d1d5e98f2e5b262376b4bb3065a5d5d38066aa0 Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Mon, 9 Apr 2018 16:57:13 +0200
 Subject: [PATCH 2/3] Changed default Telegram Desktop's test API keys to

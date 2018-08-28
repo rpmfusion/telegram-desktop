@@ -2,7 +2,7 @@
 %global appname tdesktop
 
 # Git revision of crl...
-%global commit1 9bc641f2d4ab140a84aea64c7f2d4669f7633246
+%global commit1 4291015efab76bda5886a56b5007f4531be17d46
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 
 # Decrease debuginfo verbosity to reduce memory consumption...
@@ -10,7 +10,7 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.3.12
+Version: 1.3.14
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -47,7 +47,7 @@ BuildRequires: gyp
 # Development packages for Telegram Desktop...
 BuildRequires: guidelines-support-library-devel >= 1.0.0
 BuildRequires: mapbox-variant-devel >= 0.3.6
-BuildRequires: libtgvoip-devel >= 2.1.1
+BuildRequires: libtgvoip-devel >= 2.2.3
 BuildRequires: libappindicator-devel
 BuildRequires: ffmpeg-devel >= 3.1
 BuildRequires: openal-soft-devel
@@ -135,6 +135,12 @@ appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/metainfo/%{name}.
 %{_datadir}/metainfo/%{name}.appdata.xml
 
 %changelog
+* Tue Aug 28 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.14-1
+- Updated to 1.3.14.
+
+* Mon Aug 27 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.13-1
+- Updated to 1.3.13.
+
 * Sat Aug 04 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.12-1
 - Updated to 1.3.12 (alpha).
 
