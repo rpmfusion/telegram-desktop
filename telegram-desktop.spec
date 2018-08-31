@@ -30,6 +30,9 @@ Patch0: %{name}-build-fixes.patch
 Patch1: %{name}-api-tokens.patch
 Patch2: %{name}-system-fonts.patch
 
+# https://github.com/telegramdesktop/tdesktop/pull/5124
+Patch100: %{name}-fix-regression.patch
+
 Recommends: libappindicator-gtk3%{?_isa}
 Requires: qt5-qtimageformats%{?_isa}
 Requires: hicolor-icon-theme
