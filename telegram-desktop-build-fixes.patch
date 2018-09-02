@@ -1,4 +1,4 @@
-From 72961fff5d683383a9269e796fef20a3a8044dc3 Mon Sep 17 00:00:00 2001
+From f31a8bbeca59889a98ee1416f6d1ebe26f3a5723 Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Fri, 31 Mar 2017 14:29:58 +0200
 Subject: [PATCH 1/3] Fixed build under Fedora using rpmbuild and mock.
@@ -7,21 +7,23 @@ Subject: [PATCH 1/3] Fixed build under Fedora using rpmbuild and mock.
  Telegram/Resources/qrc/telegram_linux.qrc |  1 -
  Telegram/SourceFiles/core/launcher.cpp    |  1 +
  Telegram/SourceFiles/qt_functions.cpp     | 94 +++++++++++++++++++++++
- Telegram/gyp/CMakeLists.inj               |  4 +
+ Telegram/gyp/CMakeLists.inj               |  6 ++
  Telegram/gyp/PrecompiledHeader.cmake      |  4 +-
- Telegram/gyp/Telegram.gyp                 | 29 ++-----
+ Telegram/gyp/Telegram.gyp                 | 31 ++------
  Telegram/gyp/codegen_rules.gypi           |  6 +-
+ Telegram/gyp/lib_base.gyp                 | 11 +--
  Telegram/gyp/lib_export.gyp               |  9 +--
  Telegram/gyp/lib_scheme.gyp               |  4 +-
+ Telegram/gyp/lib_storage.gyp              | 11 +--
  Telegram/gyp/qt.gypi                      | 87 ++++++---------------
  Telegram/gyp/qt_moc.gypi                  |  5 +-
  Telegram/gyp/qt_rcc.gypi                  |  2 +-
  Telegram/gyp/settings_linux.gypi          | 25 +-----
- Telegram/gyp/telegram_linux.gypi          | 74 +++++-------------
+ Telegram/gyp/telegram_linux.gypi          | 75 ++++++------------
  Telegram/gyp/telegram_sources.txt         |  9 +--
  lib/xdg/telegramdesktop.appdata.xml       |  2 +-
  lib/xdg/telegramdesktop.desktop           |  6 +-
- 17 files changed, 172 insertions(+), 190 deletions(-)
+ 19 files changed, 183 insertions(+), 206 deletions(-)
  create mode 100644 Telegram/SourceFiles/qt_functions.cpp
  create mode 100644 Telegram/gyp/CMakeLists.inj
 
@@ -36,10 +38,10 @@ index 0554fa179..3ea027406 100644
    </qresource>
  </RCC>
 diff --git a/Telegram/SourceFiles/core/launcher.cpp b/Telegram/SourceFiles/core/launcher.cpp
-index 0a58df067..ce4db4dc6 100644
+index d4bdadc17..728b6b2fe 100644
 --- a/Telegram/SourceFiles/core/launcher.cpp
 +++ b/Telegram/SourceFiles/core/launcher.cpp
-@@ -58,6 +58,7 @@ int Launcher::exec() {
+@@ -59,6 +59,7 @@ int Launcher::exec() {
  	Logs::start(this); // must be started before Platform is started
  	Platform::start(); // must be started before QApplication is created
  
@@ -149,14 +151,16 @@ index 000000000..4a722b8d7
 +}
 diff --git a/Telegram/gyp/CMakeLists.inj b/Telegram/gyp/CMakeLists.inj
 new file mode 100644
-index 000000000..bbee42894
+index 000000000..a04c9c3c9
 --- /dev/null
 +++ b/Telegram/gyp/CMakeLists.inj
-@@ -0,0 +1,4 @@
+@@ -0,0 +1,6 @@
 +set_target_properties(Telegram PROPERTIES SKIP_BUILD_RPATH TRUE)
 +include(../../Telegram/gyp/PrecompiledHeader.cmake)
 +add_precompiled_header(Telegram ../../Telegram/SourceFiles/stdafx.h)
 +add_precompiled_header(lib_export ../../Telegram/SourceFiles/export/export_pch.h)
++add_precompiled_header(lib_base ../../Telegram/SourceFiles/base/base_pch.h)
++add_precompiled_header(lib_storage ../../Telegram/SourceFiles/storage/storage_pch.h)
 diff --git a/Telegram/gyp/PrecompiledHeader.cmake b/Telegram/gyp/PrecompiledHeader.cmake
 index a0e1e0489..bd9bce0c1 100644
 --- a/Telegram/gyp/PrecompiledHeader.cmake
@@ -180,7 +184,7 @@ index a0e1e0489..bd9bce0c1 100644
          IMPLICIT_DEPENDS CXX "${_pch_header}"
          COMMENT "Precompiling header ${_name} for ${_target} (C++)")
 diff --git a/Telegram/gyp/Telegram.gyp b/Telegram/gyp/Telegram.gyp
-index 831214704..23cc83d5e 100644
+index 1cab5ae29..e0b1ebf1d 100644
 --- a/Telegram/gyp/Telegram.gyp
 +++ b/Telegram/gyp/Telegram.gyp
 @@ -18,7 +18,6 @@
@@ -206,9 +210,9 @@ index 831214704..23cc83d5e 100644
 -      'telegram_win.gypi',
 -      'telegram_mac.gypi',
        'telegram_linux.gypi',
+       'openssl.gypi',
        'qt.gypi',
-       'qt_moc.gypi',
-@@ -73,35 +70,24 @@
+@@ -74,9 +71,6 @@
        'codegen.gyp:codegen_lang',
        'codegen.gyp:codegen_numbers',
        'codegen.gyp:codegen_style',
@@ -216,13 +220,16 @@ index 831214704..23cc83d5e 100644
 -      'utils.gyp:Updater',
 -      '../ThirdParty/libtgvoip/libtgvoip.gyp:libtgvoip',
        'crl.gyp:crl',
+       'lib_base.gyp:lib_base',
        'lib_export.gyp:lib_export',
+@@ -84,30 +78,20 @@
      ],
  
      'defines': [
 -      'AL_LIBTYPE_STATIC',
 -      'AL_ALEXT_PROTOTYPES',
        'TGVOIP_USE_CXX11_LIB',
+-      'XXH_INLINE_ALL',
 -      '<!@(python -c "for s in \'<(build_defines)\'.split(\',\'): print(s)")',
 +      '__STDC_FORMAT_MACROS',
 +      'TDESKTOP_DISABLE_AUTOUPDATE',
@@ -248,9 +255,11 @@ index 831214704..23cc83d5e 100644
 -      '<(submodules_loc)/GSL/include',
 -      '<(submodules_loc)/variant/include',
        '<(submodules_loc)/crl/src',
+-      '<(submodules_loc)/xxHash',
      ],
      'sources': [
-@@ -124,7 +110,6 @@
+       '<@(qrc_files)',
+@@ -129,7 +113,6 @@
            'CUSTOM_API_ID',
          ],
          'dependencies': [
@@ -287,6 +296,43 @@ index a901db3bb..424f70eea 100644
        '-o', '<(SHARED_INTERMEDIATE_DIR)/update_dependent_qrc.timestamp',
        '<@(qrc_files)',
      ],
+diff --git a/Telegram/gyp/lib_base.gyp b/Telegram/gyp/lib_base.gyp
+index 1f3e9c34e..dcb34b536 100644
+--- a/Telegram/gyp/lib_base.gyp
++++ b/Telegram/gyp/lib_base.gyp
+@@ -15,8 +15,6 @@
+       'common.gypi',
+ 	  'openssl.gypi',
+       'qt.gypi',
+-      'telegram_win.gypi',
+-      'telegram_mac.gypi',
+       'telegram_linux.gypi',
+       'pch.gypi',
+     ],
+@@ -30,7 +28,6 @@
+       'pch_header': '<(src_loc)/base/base_pch.h',
+     },
+     'defines': [
+-      'XXH_INLINE_ALL',
+     ],
+     'dependencies': [
+       'crl.gyp:crl',
+@@ -38,11 +35,11 @@
+     'include_dirs': [
+       '<(src_loc)',
+       '<(SHARED_INTERMEDIATE_DIR)',
+-      '<(libs_loc)/range-v3/include',
+-      '<(submodules_loc)/GSL/include',
+-      '<(submodules_loc)/variant/include',
++      '<!(rpm --eval "%{_includedir}")/range-v3',
++      '<!(rpm --eval "%{_includedir}")/guidelines-support-library',
++      '<!(rpm --eval "%{_includedir}")/mapbox',
+       '<(submodules_loc)/crl/src',
+-      '<(submodules_loc)/xxHash',
++      '<!(rpm --eval "%{_includedir}")',
+     ],
+     'sources': [
+       '<(src_loc)/base/algorithm.h',
 diff --git a/Telegram/gyp/lib_export.gyp b/Telegram/gyp/lib_export.gyp
 index 2d1ac6c56..c81930f80 100644
 --- a/Telegram/gyp/lib_export.gyp
@@ -336,6 +382,43 @@ index b52a9d071..32b126682 100644
          '-o', '<(SHARED_INTERMEDIATE_DIR)', '<(res_loc)/scheme.tl',
        ],
        'message': 'codegen_scheme-ing scheme.tl..',
+diff --git a/Telegram/gyp/lib_storage.gyp b/Telegram/gyp/lib_storage.gyp
+index d24a105d0..be52e4a1f 100644
+--- a/Telegram/gyp/lib_storage.gyp
++++ b/Telegram/gyp/lib_storage.gyp
+@@ -15,8 +15,6 @@
+       'common.gypi',
+ 	  'openssl.gypi',
+       'qt.gypi',
+-      'telegram_win.gypi',
+-      'telegram_mac.gypi',
+       'telegram_linux.gypi',
+       'pch.gypi',
+     ],
+@@ -30,7 +28,6 @@
+       'pch_header': '<(src_loc)/storage/storage_pch.h',
+     },
+     'defines': [
+-      'XXH_INLINE_ALL',
+     ],
+     'dependencies': [
+       'crl.gyp:crl',
+@@ -43,11 +40,11 @@
+     'include_dirs': [
+       '<(src_loc)',
+       '<(SHARED_INTERMEDIATE_DIR)',
+-      '<(libs_loc)/range-v3/include',
+-      '<(submodules_loc)/GSL/include',
+-      '<(submodules_loc)/variant/include',
++      '<!(rpm --eval "%{_includedir}")/range-v3',
++      '<!(rpm --eval "%{_includedir}")/guidelines-support-library',
++      '<!(rpm --eval "%{_includedir}")/mapbox',
+       '<(submodules_loc)/crl/src',
+-      '<(submodules_loc)/xxHash',
++      '<!(rpm --eval "%{_includedir}")',
+     ],
+     'sources': [
+       '<(src_loc)/storage/storage_databases.cpp',
 diff --git a/Telegram/gyp/qt.gypi b/Telegram/gyp/qt.gypi
 index 0b783ec21..653562ffb 100644
 --- a/Telegram/gyp/qt.gypi
@@ -594,7 +677,7 @@ index 17219fa2c..9b6f0c510 100644
          'Debug': {
          },
 diff --git a/Telegram/gyp/telegram_linux.gypi b/Telegram/gyp/telegram_linux.gypi
-index 80259c687..eea3a862e 100644
+index 80259c687..1e1b14748 100644
 --- a/Telegram/gyp/telegram_linux.gypi
 +++ b/Telegram/gyp/telegram_linux.gypi
 @@ -10,7 +10,7 @@
@@ -606,7 +689,7 @@ index 80259c687..eea3a862e 100644
        'pkgconfig_libs': [
  # In order to work libxkbcommon must be linked statically,
  # PKGCONFIG links it like "-L/usr/local/lib -lxkbcommon"
-@@ -18,50 +18,30 @@
+@@ -18,50 +18,31 @@
  # QApplication() -> createPlatformIntegration -> QXcbIntegrationPlugin::create
          #'xkbcommon',
        ],
@@ -672,10 +755,11 @@ index 80259c687..eea3a862e 100644
 +      'minizip',
 +      'tgvoip',
 +      'lzma',
++      'xxhash',
  #      '<!(pkg-config 2> /dev/null --libs <@(pkgconfig_libs))',
      ],
      'cflags_cc': [
-@@ -69,36 +49,24 @@
+@@ -69,36 +50,24 @@
        '-Wno-maybe-uninitialized',
      ],
      'ldflags': [
@@ -715,10 +799,10 @@ index 80259c687..eea3a862e 100644
          ],
        }]
 diff --git a/Telegram/gyp/telegram_sources.txt b/Telegram/gyp/telegram_sources.txt
-index 61dda8609..803d614fc 100644
+index dd4f848db..faeda672b 100644
 --- a/Telegram/gyp/telegram_sources.txt
 +++ b/Telegram/gyp/telegram_sources.txt
-@@ -793,7 +793,7 @@
+@@ -757,7 +757,7 @@
  <(src_loc)/messenger.h
  <(src_loc)/observer_peer.cpp
  <(src_loc)/observer_peer.h
@@ -727,7 +811,7 @@ index 61dda8609..803d614fc 100644
  <(src_loc)/settings.cpp
  <(src_loc)/settings.h
  <(src_loc)/shortcuts.cpp
-@@ -802,13 +802,6 @@
+@@ -766,13 +766,6 @@
  <(emoji_suggestions_loc)/emoji_suggestions.h
  
  platforms: !win
@@ -739,8 +823,8 @@ index 61dda8609..803d614fc 100644
 -<(minizip_loc)/unzip.c
 -<(minizip_loc)/unzip.h
  
- platforms: mac
- <(sp_media_key_tap_loc)/SPMediaKeyTap.m
+ platforms: win
+ <(res_loc)/winrc/Telegram.rc
 diff --git a/lib/xdg/telegramdesktop.appdata.xml b/lib/xdg/telegramdesktop.appdata.xml
 index 7bcf8d835..4508c01cd 100644
 --- a/lib/xdg/telegramdesktop.appdata.xml

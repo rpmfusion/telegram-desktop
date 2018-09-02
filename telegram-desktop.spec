@@ -10,7 +10,7 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.3.14
+Version: 1.3.15
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -30,9 +30,6 @@ Patch0: %{name}-build-fixes.patch
 Patch1: %{name}-api-tokens.patch
 Patch2: %{name}-system-fonts.patch
 
-# https://github.com/telegramdesktop/tdesktop/pull/5124
-Patch100: %{name}-fix-regression.patch
-
 Recommends: libappindicator-gtk3%{?_isa}
 Requires: qt5-qtimageformats%{?_isa}
 Requires: hicolor-icon-theme
@@ -50,7 +47,7 @@ BuildRequires: gyp
 # Development packages for Telegram Desktop...
 BuildRequires: guidelines-support-library-devel >= 1.0.0
 BuildRequires: mapbox-variant-devel >= 0.3.6
-BuildRequires: libtgvoip-devel >= 2.2.3
+BuildRequires: libtgvoip-devel >= 2.2.4
 BuildRequires: libappindicator-devel
 BuildRequires: ffmpeg-devel >= 3.1
 BuildRequires: openal-soft-devel
@@ -59,6 +56,7 @@ BuildRequires: libstdc++-devel
 BuildRequires: range-v3-devel
 BuildRequires: openssl-devel
 BuildRequires: minizip-devel
+BuildRequires: xxhash-devel
 BuildRequires: lzma-devel
 BuildRequires: opus-devel
 BuildRequires: gtk3-devel
@@ -138,6 +136,9 @@ appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/metainfo/%{name}.
 %{_datadir}/metainfo/%{name}.appdata.xml
 
 %changelog
+* Sat Sep 01 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.15-1
+- Updated to 1.3.15 (alpha).
+
 * Tue Aug 28 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.14-1
 - Updated to 1.3.14.
 
