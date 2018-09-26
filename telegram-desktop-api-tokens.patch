@@ -1,4 +1,4 @@
-From bbf9a796ebdd702b7b91e71679853e0b787fcb15 Mon Sep 17 00:00:00 2001
+From f9f6831f8c40b4e3426820ac8b23b27494fd9f84 Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Mon, 9 Apr 2018 16:57:13 +0200
 Subject: [PATCH 2/3] Changed default Telegram Desktop's test API keys to
@@ -10,7 +10,7 @@ Subject: [PATCH 2/3] Changed default Telegram Desktop's test API keys to
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/Telegram/SourceFiles/config.h b/Telegram/SourceFiles/config.h
-index e77b81092..b5856d949 100644
+index 863d0280e..255afd80c 100644
 --- a/Telegram/SourceFiles/config.h
 +++ b/Telegram/SourceFiles/config.h
 @@ -197,8 +197,8 @@ w/CVnbwQOw0g5GBwwFV3r0uTTvy44xx8XXxk+Qknu4eBCsmrAFNnAgMBAAE=\n\

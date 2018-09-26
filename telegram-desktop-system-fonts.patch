@@ -1,4 +1,4 @@
-From 0fcc17fc216642941e5139299ab21fbac786d10e Mon Sep 17 00:00:00 2001
+From 100fbd3222bcd4040f59439dbd4cf1c2ca598dfa Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Sun, 24 Jun 2018 22:59:34 +0200
 Subject: [PATCH 3/3] Backported and rebased patch from Debian maintainer
@@ -11,7 +11,7 @@ Subject: [PATCH 3/3] Backported and rebased patch from Debian maintainer
  2 files changed, 3 insertions(+), 6 deletions(-)
 
 diff --git a/Telegram/Resources/qrc/telegram.qrc b/Telegram/Resources/qrc/telegram.qrc
-index 91cbeee5c..fbffd8abb 100644
+index 5d4433627..26bc20807 100644
 --- a/Telegram/Resources/qrc/telegram.qrc
 +++ b/Telegram/Resources/qrc/telegram.qrc
 @@ -42,9 +42,6 @@
