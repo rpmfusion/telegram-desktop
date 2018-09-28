@@ -10,8 +10,8 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.3.14
-Release: 2%{?dist}
+Version: 1.4.0
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
@@ -30,9 +30,7 @@ Patch0: %{name}-build-fixes.patch
 Patch1: %{name}-api-tokens.patch
 Patch2: %{name}-system-fonts.patch
 
-# https://github.com/telegramdesktop/tdesktop/pull/5124
-Patch100: %{name}-fix-regression.patch
-
+%{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
 Recommends: libappindicator-gtk3%{?_isa}
 Requires: qt5-qtimageformats%{?_isa}
 Requires: hicolor-icon-theme
@@ -50,7 +48,8 @@ BuildRequires: gyp
 # Development packages for Telegram Desktop...
 BuildRequires: guidelines-support-library-devel >= 1.0.0
 BuildRequires: mapbox-variant-devel >= 0.3.6
-BuildRequires: libtgvoip-devel >= 2.2.3
+BuildRequires: libtgvoip-devel >= 2.2.4
+BuildRequires: qt5-qtbase-private-devel
 BuildRequires: libappindicator-devel
 BuildRequires: ffmpeg-devel >= 3.1
 BuildRequires: openal-soft-devel
@@ -58,13 +57,19 @@ BuildRequires: qt5-qtbase-devel
 BuildRequires: libstdc++-devel
 BuildRequires: range-v3-devel
 BuildRequires: openssl-devel
-BuildRequires: minizip-devel
+BuildRequires: xxhash-devel
 BuildRequires: lzma-devel
 BuildRequires: opus-devel
 BuildRequires: gtk3-devel
 BuildRequires: dee-devel
 BuildRequires: xz-devel
 BuildRequires: python2
+
+%if 0%{?fedora} >= 30
+BuildRequires: minizip-compat-devel
+%else
+BuildRequires: minizip-devel
+%endif
 
 %description
 Telegram is a messaging app with a focus on speed and security, it’s super
@@ -138,8 +143,17 @@ appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/metainfo/%{name}.
 %{_datadir}/metainfo/%{name}.appdata.xml
 
 %changelog
-* Wed Sep 12 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.14-2
-- Rebuilt for Qt update.
+* Fri Sep 28 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.4.0-1
+- Updated to 1.4.0.
+
+* Wed Sep 26 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.17-1
+- Updated to 1.3.17 (alpha).
+
+* Wed Sep 05 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.16-1
+- Updated to 1.3.16 (alpha).
+
+* Sat Sep 01 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.15-1
+- Updated to 1.3.15 (alpha).
 
 * Tue Aug 28 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.3.14-1
 - Updated to 1.3.14.
