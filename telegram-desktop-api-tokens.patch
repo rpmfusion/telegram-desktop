@@ -1,4 +1,4 @@
-From 73ea570088802ae28b3a7ac2f950f3dd965c61af Mon Sep 17 00:00:00 2001
+From 0e54a8970ec3aaf9411be0948f7aed9df72cd25a Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Mon, 9 Apr 2018 16:57:13 +0200
 Subject: [PATCH 2/3] Changed default Telegram Desktop's test API keys to
@@ -25,5 +25,5 @@ index 863d0280e..255afd80c 100644
  
  #if Q_BYTE_ORDER == Q_BIG_ENDIAN
 -- 
-2.17.1
+2.17.2
 
