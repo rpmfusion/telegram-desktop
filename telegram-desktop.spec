@@ -10,8 +10,8 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.4.2
-Release: 2%{?dist}
+Version: 1.4.3
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
@@ -29,8 +29,6 @@ Source1: https://github.com/telegramdesktop/crl/archive/%{commit1}.tar.gz#/crl-%
 Patch0: %{name}-build-fixes.patch
 Patch1: %{name}-api-tokens.patch
 Patch2: %{name}-system-fonts.patch
-
-Patch100: %{name}-logout-crash-fix.patch
 
 %{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
 Recommends: libappindicator-gtk3%{?_isa}
@@ -145,6 +143,9 @@ appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/metainfo/%{name}.
 %{_datadir}/metainfo/%{name}.appdata.xml
 
 %changelog
+* Sat Oct 13 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.4.3-1
+- Updated to 1.4.3.
+
 * Wed Oct 10 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.4.2-2
 - Backported patch with crash fix on logout.
 
