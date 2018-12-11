@@ -1,0 +1,72 @@
+From 2501c4ab40a418a24d0f462dc1044fb9618e5970 Mon Sep 17 00:00:00 2001
+From: Vitaly Zaitsev <vitaly@easycoding.org>
+Date: Wed, 17 Oct 2018 17:57:59 +0200
+Subject: [PATCH 3/3] Use packaged version of minizip on Fedora <= 29.
+
+---
+ Telegram/gyp/Telegram.gyp         | 2 --
+ Telegram/gyp/telegram_linux.gypi  | 2 ++
+ Telegram/gyp/telegram_sources.txt | 7 -------
+ 3 files changed, 2 insertions(+), 9 deletions(-)
+
+diff --git a/Telegram/gyp/Telegram.gyp b/Telegram/gyp/Telegram.gyp
+index 783ad1da2..5a8a53557 100644
+--- a/Telegram/gyp/Telegram.gyp
++++ b/Telegram/gyp/Telegram.gyp
+@@ -18,7 +18,6 @@
+       'src_loc': '../SourceFiles',
+       'res_loc': '../Resources',
+       'submodules_loc': '../ThirdParty',
+-      'minizip_loc': '<(submodules_loc)/minizip',
+       'sp_media_key_tap_loc': '<(submodules_loc)/SPMediaKeyTap',
+       'emoji_suggestions_loc': '<(submodules_loc)/emoji_suggestions',
+       'style_files': [
+@@ -88,7 +87,6 @@
+     'include_dirs': [
+       '<(src_loc)',
+       '<(SHARED_INTERMEDIATE_DIR)',
+-      '<(minizip_loc)',
+       '<(emoji_suggestions_loc)',
+       '<(submodules_loc)/crl/src',
+     ],
+diff --git a/Telegram/gyp/telegram_linux.gypi b/Telegram/gyp/telegram_linux.gypi
+index 9bc686d44..806374202 100644
+--- a/Telegram/gyp/telegram_linux.gypi
++++ b/Telegram/gyp/telegram_linux.gypi
+@@ -22,6 +22,7 @@
+     'include_dirs': [
+       '<!(rpm --eval "%{_includedir}")',
+       '<!(rpm --eval "%{_includedir}")/ffmpeg',
++      '<!(rpm --eval "%{_includedir}")/minizip',
+       '<!(rpm --eval "%{_includedir}")/opus',
+       '<!(rpm --eval "%{_includedir}")/libtgvoip',
+       '<!(rpm --eval "%{_includedir}")/guidelines-support-library',
+@@ -37,6 +38,7 @@
+       'swscale',
+       'avutil',
+       'z',
++      'minizip',
+       'tgvoip',
+       'lzma',
+       'xxhash',
+diff --git a/Telegram/gyp/telegram_sources.txt b/Telegram/gyp/telegram_sources.txt
+index b3a385064..10895dc5e 100644
+--- a/Telegram/gyp/telegram_sources.txt
++++ b/Telegram/gyp/telegram_sources.txt
+@@ -776,13 +776,6 @@
+ <(emoji_suggestions_loc)/emoji_suggestions.h
+ 
+ platforms: !win
+-<(minizip_loc)/crypt.h
+-<(minizip_loc)/ioapi.c
+-<(minizip_loc)/ioapi.h
+-<(minizip_loc)/zip.c
+-<(minizip_loc)/zip.h
+-<(minizip_loc)/unzip.c
+-<(minizip_loc)/unzip.h
+ 
+ platforms: win
+ <(res_loc)/winrc/Telegram.rc
+-- 
+2.19.2
+

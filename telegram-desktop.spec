@@ -1,5 +1,7 @@
 # Telegram Desktop's constants...
 %global appname tdesktop
+%global apiid 208164
+%global apihash dfbe1bc42dc9d20507e17d1814cc2f0a
 
 # Git revision of crl...
 %global commit1 4291015efab76bda5886a56b5007f4531be17d46
@@ -10,7 +12,7 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.4.3
+Version: 1.5.1
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -27,8 +29,8 @@ ExclusiveArch: i686 x86_64
 Source0: %{url}/archive/v%{version}.tar.gz#/%{appname}-%{version}.tar.gz
 Source1: https://github.com/telegramdesktop/crl/archive/%{commit1}.tar.gz#/crl-%{shortcommit1}.tar.gz
 Patch0: %{name}-build-fixes.patch
-Patch1: %{name}-api-tokens.patch
-Patch2: %{name}-system-fonts.patch
+Patch1: %{name}-system-fonts.patch
+Patch2: %{name}-unbundle-minizip.patch
 
 %{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
 Recommends: libappindicator-gtk3%{?_isa}
@@ -48,8 +50,8 @@ BuildRequires: gyp
 # Development packages for Telegram Desktop...
 BuildRequires: guidelines-support-library-devel >= 1.0.0
 BuildRequires: mapbox-variant-devel >= 0.3.6
-BuildRequires: libtgvoip-devel >= 2.2.4
 BuildRequires: qt5-qtbase-private-devel
+BuildRequires: libtgvoip-devel >= 2.4
 BuildRequires: libappindicator-devel
 BuildRequires: ffmpeg-devel >= 3.1
 BuildRequires: openal-soft-devel
@@ -58,12 +60,11 @@ BuildRequires: libstdc++-devel
 BuildRequires: range-v3-devel
 BuildRequires: openssl-devel
 BuildRequires: xxhash-devel
-BuildRequires: lzma-devel
 BuildRequires: opus-devel
 BuildRequires: gtk3-devel
 BuildRequires: dee-devel
 BuildRequires: xz-devel
-BuildRequires: python2
+BuildRequires: python3
 
 %if 0%{?fedora} >= 30
 BuildRequires: minizip-compat-devel
@@ -96,9 +97,19 @@ pushd Telegram/ThirdParty
 popd
 
 %build
+# Setting build definitions...
+%if 0%{?fedora} < 30
+TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_OPENAL_EFFECTS,'
+%endif
+TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_AUTOUPDATE,'
+TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_REGISTER_CUSTOM_SCHEME,'
+TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_DESKTOP_FILE_GENERATION,'
+TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_CRASH_REPORTS,'
+TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_UNITY_INTEGRATION'
+
 # Generating cmake script using GYP...
 pushd Telegram/gyp
-    gyp --depth=. --generator-output=../.. -Goutput_dir=out Telegram.gyp --format=cmake
+    gyp --depth=. --generator-output=../.. -Goutput_dir=out -Dapi_id=%{apiid} -Dapi_hash=%{apihash} -Dbuild_defines=$TDESKTOP_BUILD_DEFINES Telegram.gyp --format=cmake
 popd
 
 # Patching generated cmake script...
@@ -143,6 +154,24 @@ appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/metainfo/%{name}.
 %{_datadir}/metainfo/%{name}.appdata.xml
 
 %changelog
+* Tue Dec 11 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.5.1-1
+- Updated to 1.5.1.
+
+* Mon Dec 10 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.5.0-1
+- Updated to 1.5.0.
+
+* Wed Dec 05 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.4.8-1
+- Updated to 1.4.8 (beta).
+
+* Sat Nov 10 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.4.7-1
+- Updated to 1.4.7 (beta).
+
+* Thu Nov 08 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.4.5-1
+- Updated to 1.4.5 (beta).
+
+* Wed Oct 17 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.4.4-1
+- Updated to 1.4.4 (beta).
+
 * Sat Oct 13 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.4.3-1
 - Updated to 1.4.3.
 
