@@ -12,7 +12,7 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.5.1
+Version: 1.5.2
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -98,9 +98,7 @@ popd
 
 %build
 # Setting build definitions...
-%if 0%{?fedora} < 30
 TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_OPENAL_EFFECTS,'
-%endif
 TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_AUTOUPDATE,'
 TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_REGISTER_CUSTOM_SCHEME,'
 TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_DESKTOP_FILE_GENERATION,'
@@ -154,6 +152,9 @@ appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/metainfo/%{name}.
 %{_datadir}/metainfo/%{name}.appdata.xml
 
 %changelog
+* Fri Dec 14 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.5.2-1
+- Updated to 1.5.2.
+
 * Tue Dec 11 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.5.1-1
 - Updated to 1.5.1.
 
