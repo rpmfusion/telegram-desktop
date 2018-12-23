@@ -1,0 +1,21 @@
+From 4e692e2c1e10538d7fd3e7c0e0a66e0ba474fe76 Mon Sep 17 00:00:00 2001
+From: John Preston <johnprestonmail@gmail.com>
+Date: Sun, 23 Dec 2018 01:31:12 +0400
+Subject: [PATCH] Version 1.5.3: Fix build for GCC.
+
+---
+ Telegram/SourceFiles/window/window_peer_menu.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Telegram/SourceFiles/window/window_peer_menu.cpp b/Telegram/SourceFiles/window/window_peer_menu.cpp
+index c6425e763..f8729948a 100644
+--- a/Telegram/SourceFiles/window/window_peer_menu.cpp
++++ b/Telegram/SourceFiles/window/window_peer_menu.cpp
+@@ -33,6 +33,7 @@ For license and copyright information please follow this link:
+ #include "info/profile/info_profile_values.h"
+ #include "data/data_session.h"
+ #include "data/data_feed.h"
++#include "data/data_poll.h"
+ #include "dialogs/dialogs_key.h"
+ 
+ namespace Window {
