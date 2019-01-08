@@ -12,7 +12,7 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.5.3
+Version: 1.5.4
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -31,9 +31,6 @@ Source1: https://github.com/telegramdesktop/crl/archive/%{commit1}.tar.gz#/crl-%
 Patch0: %{name}-build-fixes.patch
 Patch1: %{name}-system-fonts.patch
 Patch2: %{name}-unbundle-minizip.patch
-
-# Temporary patches
-Patch100: %{name}-gcc-fix.patch
 
 %{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
 Recommends: libappindicator-gtk3%{?_isa}
@@ -155,6 +152,9 @@ appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/metainfo/%{name}.
 %{_datadir}/metainfo/%{name}.appdata.xml
 
 %changelog
+* Mon Dec 24 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.5.4-1
+- Updated to 1.5.4.
+
 * Sun Dec 23 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.5.3-1
 - Updated to 1.5.3.
 
