@@ -4,7 +4,7 @@
 %global apihash dfbe1bc42dc9d20507e17d1814cc2f0a
 
 # Git revision of crl...
-%global commit1 4291015efab76bda5886a56b5007f4531be17d46
+%global commit1 9b7c6b5d9f1b59d2160bf6e9c4e74510f955efe1
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 
 # Decrease debuginfo verbosity to reduce memory consumption...
@@ -12,7 +12,7 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.5.4
+Version: 1.5.7
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -51,7 +51,7 @@ BuildRequires: gyp
 BuildRequires: guidelines-support-library-devel >= 1.0.0
 BuildRequires: mapbox-variant-devel >= 0.3.6
 BuildRequires: qt5-qtbase-private-devel
-BuildRequires: libtgvoip-devel >= 2.4
+BuildRequires: libtgvoip-devel >= 2.4.2
 BuildRequires: libappindicator-devel
 BuildRequires: ffmpeg-devel >= 3.1
 BuildRequires: openal-soft-devel
@@ -60,6 +60,7 @@ BuildRequires: libstdc++-devel
 BuildRequires: range-v3-devel
 BuildRequires: openssl-devel
 BuildRequires: xxhash-devel
+BuildRequires: json11-devel
 BuildRequires: opus-devel
 BuildRequires: gtk3-devel
 BuildRequires: dee-devel
@@ -152,6 +153,15 @@ appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/metainfo/%{name}.
 %{_datadir}/metainfo/%{name}.appdata.xml
 
 %changelog
+* Fri Jan 11 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.5.7-1
+- Updated to 1.5.7 (beta).
+
+* Fri Dec 28 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.5.6-1
+- Updated to 1.5.6 (beta).
+
+* Thu Dec 27 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.5.5-1
+- Updated to 1.5.5 (beta).
+
 * Mon Dec 24 2018 Vitaly Zaitsev <vitaly@easycoding.org> - 1.5.4-1
 - Updated to 1.5.4.
 
