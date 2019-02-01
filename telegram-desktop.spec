@@ -12,7 +12,7 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.5.8
+Version: 1.5.11
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -104,7 +104,6 @@ TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_AUTOUPDATE,'
 TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_REGISTER_CUSTOM_SCHEME,'
 TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_DESKTOP_FILE_GENERATION,'
 TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_CRASH_REPORTS,'
-TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_UNITY_INTEGRATION'
 
 # Generating cmake script using GYP...
 pushd Telegram/gyp
@@ -114,6 +113,11 @@ popd
 # Patching generated cmake script...
 LEN=$(($(wc -l < out/Release/CMakeLists.txt) - 2))
 sed -i "$LEN r Telegram/gyp/CMakeLists.inj" out/Release/CMakeLists.txt
+
+# Exporting correct paths to AR and RANLIB in order to use FLTO optimizations...
+%ifarch x86_64
+sed -e '/set(configuration "Release")/a\' -e 'set(CMAKE_AR "%{_bindir}/gcc-ar")\' -e 'set(CMAKE_RANLIB "%{_bindir}/gcc-ranlib")\' -e 'set(CMAKE_NM "%{_bindir}/gcc-nm")' -i out/Release/CMakeLists.txt
+%endif
 
 # Building Telegram Desktop using cmake...
 pushd out/Release
@@ -153,6 +157,13 @@ appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/metainfo/%{name}.
 %{_datadir}/metainfo/%{name}.appdata.xml
 
 %changelog
+* Fri Feb 01 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.5.11-1
+- Updated to 1.5.11.
+- Enabled LTO optimizations.
+
+* Fri Feb 01 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.5.10-1
+- Updated to 1.5.10.
+
 * Mon Jan 21 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.5.8-1
 - Updated to 1.5.8.
 
