@@ -1,4 +1,4 @@
-From 5df0ad653d929b6e441965b72e34e80254e014aa Mon Sep 17 00:00:00 2001
+From 377e1806e56709257a3655948536ef35a4cf96bb Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Wed, 17 Oct 2018 17:57:59 +0200
 Subject: [PATCH 3/3] Use packaged version of minizip on Fedora <= 29.
@@ -50,7 +50,7 @@ index 9bc686d44..806374202 100644
        'lzma',
        'xxhash',
 diff --git a/Telegram/gyp/telegram_sources.txt b/Telegram/gyp/telegram_sources.txt
-index e292f82ca..21d0706dd 100644
+index 090134d31..9de94f749 100644
 --- a/Telegram/gyp/telegram_sources.txt
 +++ b/Telegram/gyp/telegram_sources.txt
 @@ -835,13 +835,6 @@
