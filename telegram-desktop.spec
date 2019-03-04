@@ -13,7 +13,7 @@
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
 Version: 1.5.15
-Release: 1%{?dist}
+Release: 2%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
@@ -157,6 +157,9 @@ appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/metainfo/%{name}.
 %{_datadir}/metainfo/%{name}.appdata.xml
 
 %changelog
+* Mon Mar 04 2019 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 1.5.15-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
 * Wed Feb 13 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.5.15-1
 - Updated to 1.5.15.
 
