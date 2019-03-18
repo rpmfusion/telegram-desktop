@@ -4,7 +4,7 @@
 %global apihash dfbe1bc42dc9d20507e17d1814cc2f0a
 
 # Git revision of crl...
-%global commit1 40063abec74e560220891443f6d5157de15e1b62
+%global commit1 84072fba75f14620935e5e91788ce603daeb1988
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 
 # Decrease debuginfo verbosity to reduce memory consumption...
@@ -12,8 +12,8 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.5.15
-Release: 2%{?dist}
+Version: 1.6.0
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
@@ -51,7 +51,7 @@ BuildRequires: gyp
 BuildRequires: guidelines-support-library-devel >= 1.0.0
 BuildRequires: mapbox-variant-devel >= 0.3.6
 BuildRequires: qt5-qtbase-private-devel
-BuildRequires: libtgvoip-devel >= 2.4.2
+BuildRequires: libtgvoip-devel >= 2.4.4
 BuildRequires: libappindicator-devel
 BuildRequires: ffmpeg-devel >= 3.1
 BuildRequires: openal-soft-devel
@@ -157,6 +157,18 @@ appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/metainfo/%{name}.
 %{_datadir}/metainfo/%{name}.appdata.xml
 
 %changelog
+* Mon Mar 18 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.6.0-1
+- Updated to 1.6.0.
+
+* Fri Mar 15 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.5.18-1
+- Updated to 1.5.18 (beta).
+
+* Wed Mar 13 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.5.17-1
+- Updated to 1.5.17 (beta).
+
+* Tue Mar 12 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.5.16-1
+- Updated to 1.5.16 (beta).
+
 * Mon Mar 04 2019 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 1.5.15-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
