@@ -4,7 +4,7 @@
 %global apihash dfbe1bc42dc9d20507e17d1814cc2f0a
 
 # Git revision of crl...
-%global commit1 40063abec74e560220891443f6d5157de15e1b62
+%global commit1 84072fba75f14620935e5e91788ce603daeb1988
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 
 # Decrease debuginfo verbosity to reduce memory consumption...
@@ -12,7 +12,7 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.5.15
+Version: 1.6.0
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -51,7 +51,7 @@ BuildRequires: gyp
 BuildRequires: guidelines-support-library-devel >= 1.0.0
 BuildRequires: mapbox-variant-devel >= 0.3.6
 BuildRequires: qt5-qtbase-private-devel
-BuildRequires: libtgvoip-devel >= 2.4.2
+BuildRequires: libtgvoip-devel >= 2.4.4
 BuildRequires: libappindicator-devel
 BuildRequires: ffmpeg-devel >= 3.1
 BuildRequires: openal-soft-devel
@@ -114,7 +114,7 @@ popd
 LEN=$(($(wc -l < out/Release/CMakeLists.txt) - 2))
 sed -i "$LEN r Telegram/gyp/CMakeLists.inj" out/Release/CMakeLists.txt
 
-# Exporting correct paths to AR and RANLIB in order to use FLTO optimizations...
+# Exporting correct paths to AR and RANLIB in order to use LTO optimizations...
 %ifarch x86_64
 sed -e '/set(configuration "Release")/a\' -e 'set(CMAKE_AR "%{_bindir}/gcc-ar")\' -e 'set(CMAKE_RANLIB "%{_bindir}/gcc-ranlib")\' -e 'set(CMAKE_NM "%{_bindir}/gcc-nm")' -i out/Release/CMakeLists.txt
 %endif
@@ -127,23 +127,23 @@ popd
 
 %install
 # Installing executables...
-mkdir -p "%{buildroot}%{_bindir}"
-install -m 0755 -p out/Release/Telegram "%{buildroot}%{_bindir}/%{name}"
+%{__mkdir_p} "%{buildroot}%{_bindir}"
+%{__install} -m 0755 -p out/Release/Telegram "%{buildroot}%{_bindir}/%{name}"
 
 # Installing desktop shortcut...
-mv lib/xdg/telegramdesktop.desktop lib/xdg/%{name}.desktop
+%{__mv} lib/xdg/telegramdesktop.desktop lib/xdg/%{name}.desktop
 desktop-file-install --dir="%{buildroot}%{_datadir}/applications" lib/xdg/%{name}.desktop
 
 # Installing icons...
 for size in 16 32 48 64 128 256 512; do
     dir="%{buildroot}%{_datadir}/icons/hicolor/${size}x${size}/apps"
-    install -d "$dir"
-    install -m 0644 -p Telegram/Resources/art/icon${size}.png "$dir/%{name}.png"
+    %{__install} -d "$dir"
+    %{__install} -m 0644 -p Telegram/Resources/art/icon${size}.png "$dir/%{name}.png"
 done
 
 # Installing appdata for Gnome Software...
-install -d "%{buildroot}%{_datadir}/metainfo"
-install -m 0644 -p lib/xdg/telegramdesktop.appdata.xml "%{buildroot}%{_datadir}/metainfo/%{name}.appdata.xml"
+%{__install} -d "%{buildroot}%{_datadir}/metainfo"
+%{__install} -m 0644 -p lib/xdg/telegramdesktop.appdata.xml "%{buildroot}%{_datadir}/metainfo/%{name}.appdata.xml"
 
 %check
 appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/metainfo/%{name}.appdata.xml"
@@ -157,6 +157,21 @@ appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/metainfo/%{name}.
 %{_datadir}/metainfo/%{name}.appdata.xml
 
 %changelog
+* Mon Mar 18 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.6.0-1
+- Updated to 1.6.0.
+
+* Fri Mar 15 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.5.18-1
+- Updated to 1.5.18 (beta).
+
+* Wed Mar 13 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.5.17-1
+- Updated to 1.5.17 (beta).
+
+* Tue Mar 12 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.5.16-1
+- Updated to 1.5.16 (beta).
+
+* Mon Mar 04 2019 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 1.5.15-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
 * Wed Feb 13 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.5.15-1
 - Updated to 1.5.15.
 
