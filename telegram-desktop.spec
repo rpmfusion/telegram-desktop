@@ -1,3 +1,6 @@
+# Build conditionals...
+%bcond_without gtk3
+
 # Telegram Desktop's constants...
 %global appname tdesktop
 %global apiid 208164
@@ -12,7 +15,7 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.6.0
+Version: 1.6.1
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -33,11 +36,9 @@ Patch1: %{name}-system-fonts.patch
 Patch2: %{name}-unbundle-minizip.patch
 
 %{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
-Recommends: libappindicator-gtk3%{?_isa}
 Requires: qt5-qtimageformats%{?_isa}
 Requires: hicolor-icon-theme
 Requires: open-sans-fonts
-Requires: gtk3%{?_isa}
 
 # Compilers and tools...
 BuildRequires: desktop-file-utils
@@ -52,7 +53,6 @@ BuildRequires: guidelines-support-library-devel >= 1.0.0
 BuildRequires: mapbox-variant-devel >= 0.3.6
 BuildRequires: qt5-qtbase-private-devel
 BuildRequires: libtgvoip-devel >= 2.4.4
-BuildRequires: libappindicator-devel
 BuildRequires: ffmpeg-devel >= 3.1
 BuildRequires: openal-soft-devel
 BuildRequires: qt5-qtbase-devel
@@ -61,11 +61,18 @@ BuildRequires: range-v3-devel
 BuildRequires: openssl-devel
 BuildRequires: xxhash-devel
 BuildRequires: json11-devel
+BuildRequires: glib2-devel
 BuildRequires: opus-devel
-BuildRequires: gtk3-devel
-BuildRequires: dee-devel
 BuildRequires: xz-devel
 BuildRequires: python3
+
+%if %{with gtk3}
+Recommends: libappindicator-gtk3%{?_isa}
+BuildRequires: libappindicator-devel
+BuildRequires: gtk3-devel
+BuildRequires: dee-devel
+Requires: gtk3%{?_isa}
+%endif
 
 %if 0%{?fedora} >= 30
 BuildRequires: minizip-compat-devel
@@ -99,6 +106,9 @@ popd
 
 %build
 # Setting build definitions...
+%if %{without gtk3}
+TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_GTK_INTEGRATION,'
+%endif
 TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_OPENAL_EFFECTS,'
 TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_AUTOUPDATE,'
 TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_REGISTER_CUSTOM_SCHEME,'
@@ -157,6 +167,9 @@ appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/metainfo/%{name}.
 %{_datadir}/metainfo/%{name}.appdata.xml
 
 %changelog
+* Wed Mar 20 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.6.1-1
+- Updated to 1.6.1.
+
 * Mon Mar 18 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.6.0-1
 - Updated to 1.6.0.
 
