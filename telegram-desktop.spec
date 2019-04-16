@@ -16,7 +16,7 @@
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
 Version: 1.6.7
-Release: 1%{?dist}
+Release: 2%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
@@ -167,6 +167,9 @@ appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/metainfo/%{name}.
 %{_datadir}/metainfo/%{name}.appdata.xml
 
 %changelog
+* Tue Apr 16 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.6.7-2
+- Rebuilt due to Qt 5.12.1 update.
+
 * Sat Apr 13 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.6.7-1
 - Updated to 1.6.7.
 
