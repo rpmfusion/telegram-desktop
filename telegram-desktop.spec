@@ -15,8 +15,8 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.6.7
-Release: 2%{?dist}
+Version: 1.7.0
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
@@ -109,7 +109,9 @@ popd
 %if %{without gtk3}
 TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_GTK_INTEGRATION,'
 %endif
+%if 0%{?fedora} && 0%{?fedora} < 30
 TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_OPENAL_EFFECTS,'
+%endif
 TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_AUTOUPDATE,'
 TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_REGISTER_CUSTOM_SCHEME,'
 TDESKTOP_BUILD_DEFINES+='TDESKTOP_DISABLE_DESKTOP_FILE_GENERATION,'
@@ -167,6 +169,9 @@ appstream-util validate-relax --nonet "%{buildroot}%{_datadir}/metainfo/%{name}.
 %{_datadir}/metainfo/%{name}.appdata.xml
 
 %changelog
+* Thu May 09 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.7.0-1
+- Updated to 1.7.0.
+
 * Tue Apr 16 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.6.7-2
 - Rebuilt due to Qt 5.12.1 update.
 

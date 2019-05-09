@@ -1,4 +1,4 @@
-From fd2263aa3ff825f096c8fd4f20f93be27b4f5d00 Mon Sep 17 00:00:00 2001
+From da1d8b4e977d9b9d834fe2392bfd260d3ce85f57 Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Fri, 31 Mar 2017 14:29:58 +0200
 Subject: [PATCH 1/3] Fixed build under Fedora using rpmbuild and mock.
@@ -6,11 +6,11 @@ Subject: [PATCH 1/3] Fixed build under Fedora using rpmbuild and mock.
 ---
  Telegram/Resources/qrc/telegram.qrc       |  3 -
  Telegram/Resources/qrc/telegram_linux.qrc |  6 --
- Telegram/SourceFiles/core/launcher.cpp    |  1 +
+ Telegram/SourceFiles/core/launcher.cpp    |  3 +-
  Telegram/SourceFiles/qt_functions.cpp     | 94 +++++++++++++++++++++++
  Telegram/gyp/CMakeLists.inj               |  6 ++
  Telegram/gyp/PrecompiledHeader.cmake      |  4 +-
- Telegram/gyp/Telegram.gyp                 | 24 +-----
+ Telegram/gyp/Telegram.gyp                 | 23 +-----
  Telegram/gyp/codegen_rules.gypi           |  6 +-
  Telegram/gyp/lib_base.gyp                 |  8 +-
  Telegram/gyp/lib_export.gyp               |  7 +-
@@ -24,7 +24,7 @@ Subject: [PATCH 1/3] Fixed build under Fedora using rpmbuild and mock.
  Telegram/gyp/telegram_sources.txt         |  2 +-
  lib/xdg/telegramdesktop.appdata.xml       |  2 +-
  lib/xdg/telegramdesktop.desktop           |  5 +-
- 20 files changed, 172 insertions(+), 188 deletions(-)
+ 20 files changed, 172 insertions(+), 189 deletions(-)
  create mode 100644 Telegram/SourceFiles/qt_functions.cpp
  create mode 100644 Telegram/gyp/CMakeLists.inj
 
@@ -56,10 +56,19 @@ index 164e8d4f2..03585ec03 100644
 -  </qresource>
  </RCC>
 diff --git a/Telegram/SourceFiles/core/launcher.cpp b/Telegram/SourceFiles/core/launcher.cpp
-index 129407523..0b5a1c3ef 100644
+index 3efa53eba..098b1f4c0 100644
 --- a/Telegram/SourceFiles/core/launcher.cpp
 +++ b/Telegram/SourceFiles/core/launcher.cpp
-@@ -228,6 +228,7 @@ int Launcher::exec() {
+@@ -242,7 +242,7 @@ void Launcher::init() {
+ 	QApplication::setApplicationName(qsl("TelegramDesktop"));
+ 
+ #if defined(Q_OS_LINUX) && QT_VERSION >= QT_VERSION_CHECK(5, 7, 0)
+-	QApplication::setDesktopFileName(qsl("telegramdesktop.desktop"));
++	QApplication::setDesktopFileName(qsl("telegram-desktop.desktop"));
+ #endif
+ #ifndef OS_MAC_OLD
+ 	QApplication::setAttribute(Qt::AA_DisableHighDpiScaling, true);
+@@ -264,6 +264,7 @@ int Launcher::exec() {
  	Logs::start(this); // must be started before Platform is started
  	Platform::start(); // must be started before Sandbox is created
  
@@ -202,7 +211,7 @@ index a0e1e0489..bd9bce0c1 100644
          IMPLICIT_DEPENDS CXX "${_pch_header}"
          COMMENT "Precompiling header ${_name} for ${_target} (C++)")
 diff --git a/Telegram/gyp/Telegram.gyp b/Telegram/gyp/Telegram.gyp
-index ac7696e1d..f95d88a72 100644
+index e329d06d9..837943bbe 100644
 --- a/Telegram/gyp/Telegram.gyp
 +++ b/Telegram/gyp/Telegram.gyp
 @@ -51,15 +51,13 @@
@@ -232,13 +241,12 @@ index ac7696e1d..f95d88a72 100644
        'crl.gyp:crl',
        'lib_base.gyp:lib_base',
        'lib_export.gyp:lib_export',
-@@ -84,32 +79,20 @@
+@@ -84,32 +79,19 @@
      ],
  
      'defines': [
 -      'AL_LIBTYPE_STATIC',
        'AL_ALEXT_PROTOTYPES',
-+      'ALC_EXT_EFX',
        'TGVOIP_USE_CXX11_LIB',
 -      'XXH_INLINE_ALL',
        'TDESKTOP_API_ID=<(api_id)',
@@ -267,14 +275,14 @@ index ac7696e1d..f95d88a72 100644
      ],
      'sources': [
        '<@(qrc_files)',
-@@ -131,7 +114,6 @@
+@@ -131,7 +113,6 @@
            'TDESKTOP_OFFICIAL_TARGET=<(official_build_target)',
          ],
          'dependencies': [
 -          'utils.gyp:Packer',
          ],
        }], [ 'build_mac', {
-         'mac_bundle': '1',
+         'mac_hardened_runtime': 1,
 diff --git a/Telegram/gyp/codegen_rules.gypi b/Telegram/gyp/codegen_rules.gypi
 index a901db3bb..28873f8dc 100644
 --- a/Telegram/gyp/codegen_rules.gypi
@@ -774,10 +782,10 @@ index ffe0e5a96..9bc686d44 100644
          ],
        }], ['<!(pkg-config ayatana-appindicator3-0.1; echo $?) == 0', {
 diff --git a/Telegram/gyp/telegram_sources.txt b/Telegram/gyp/telegram_sources.txt
-index 3f8547dcf..43c12927a 100644
+index ed2e3bc14..45e3e019e 100644
 --- a/Telegram/gyp/telegram_sources.txt
 +++ b/Telegram/gyp/telegram_sources.txt
-@@ -851,7 +851,7 @@
+@@ -855,7 +855,7 @@
  <(src_loc)/mainwindow.h
  <(src_loc)/observer_peer.cpp
  <(src_loc)/observer_peer.h
@@ -816,5 +824,5 @@ index bb2a8ea79..960eaef0f 100644
  StartupWMClass=TelegramDesktop
  Type=Application
 -- 
-2.20.1
+2.21.0
 
