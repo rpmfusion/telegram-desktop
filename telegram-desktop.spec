@@ -201,7 +201,8 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.appdat
 
 %changelog
 * Sat May 18 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.7.0-2
-- Switched to clang as temporary workaround.
+- Switched to clang as a temporary workaround on Fedora 30+.
+- Disabled LTO optimizations.
 
 * Thu May 09 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.7.0-1
 - Updated to 1.7.0.
