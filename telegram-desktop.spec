@@ -1,5 +1,6 @@
 # Build conditionals...
 %bcond_without gtk3
+%bcond_without clang
 
 # Telegram Desktop's constants...
 %global appname tdesktop
@@ -13,10 +14,15 @@
 # Decrease debuginfo verbosity to reduce memory consumption...
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
+# Applying workaround to RHBZ#1559007...
+%if %{with clang}
+%global optflags %(echo %{optflags} | sed -e 's/-mcet//g' -e 's/-fcf-protection//g' -e 's/-fstack-clash-protection//g')
+%endif
+
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
 Version: 1.7.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
@@ -34,6 +40,9 @@ Source1: https://github.com/telegramdesktop/crl/archive/%{commit1}.tar.gz#/crl-%
 Patch0: %{name}-build-fixes.patch
 Patch1: %{name}-system-fonts.patch
 Patch2: %{name}-unbundle-minizip.patch
+
+Patch100: %{name}-pr-6025.patch
+Patch101: %{name}-rr-ddb9c8.patch
 
 %{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
 Requires: qt5-qtimageformats%{?_isa}
@@ -72,6 +81,12 @@ BuildRequires: libappindicator-devel
 BuildRequires: gtk3-devel
 BuildRequires: dee-devel
 Requires: gtk3%{?_isa}
+%endif
+
+%if %{with clang}
+BuildRequires: compiler-rt
+BuildRequires: clang
+BuildRequires: llvm
 %endif
 
 %if 0%{?fedora} >= 30
@@ -127,14 +142,23 @@ popd
 LEN=$(($(wc -l < out/Release/CMakeLists.txt) - 2))
 sed -i "$LEN r Telegram/gyp/CMakeLists.inj" out/Release/CMakeLists.txt
 
-# Exporting correct paths to AR and RANLIB in order to use LTO optimizations...
-%ifarch x86_64
-sed -e '/set(configuration "Release")/a\' -e 'set(CMAKE_AR "%{_bindir}/gcc-ar")\' -e 'set(CMAKE_RANLIB "%{_bindir}/gcc-ranlib")\' -e 'set(CMAKE_NM "%{_bindir}/gcc-nm")' -i out/Release/CMakeLists.txt
-%endif
-
 # Building Telegram Desktop using cmake...
 pushd out/Release
-    %cmake .
+    %cmake \
+%if %{with clang}
+    -DCMAKE_C_COMPILER=clang \
+    -DCMAKE_CXX_COMPILER=clang++ \
+    -DCMAKE_AR=%{_bindir}/llvm-ar \
+    -DCMAKE_RANLIB=%{_bindir}/llvm-ranlib \
+    -DCMAKE_LINKER=%{_bindir}/llvm-ld \
+    -DCMAKE_OBJDUMP=%{_bindir}/llvm-objdump \
+    -DCMAKE_NM=%{_bindir}/llvm-nm \
+%else
+    -DCMAKE_AR=%{_bindir}/gcc-ar \
+    -DCMAKE_RANLIB=%{_bindir}/gcc-ranlib \
+    -DCMAKE_NM=%{_bindir}/gcc-nm \
+%endif
+    .
     %make_build
 popd
 
@@ -170,6 +194,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.appdat
 %{_metainfodir}/%{name}.appdata.xml
 
 %changelog
+* Sat May 18 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.7.0-2
+- Switched to clang as temporary workaround.
+
 * Thu May 09 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.7.0-1
 - Updated to 1.7.0.
 
