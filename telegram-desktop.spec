@@ -1,6 +1,12 @@
-# Build conditionals...
+# Enable or disable build with GTK support...
 %bcond_without gtk3
+
+# Enable or disable build using clang instead of gcc...
+%if 0%{?fedora} && 0%{?fedora} >= 30
 %bcond_without clang
+%else
+%bcond_with clang
+%endif
 
 # Telegram Desktop's constants...
 %global appname tdesktop
@@ -89,7 +95,7 @@ BuildRequires: clang
 BuildRequires: llvm
 %endif
 
-%if 0%{?fedora} >= 30
+%if 0%{?fedora} && 0%{?fedora} >= 30
 BuildRequires: minizip-compat-devel
 %else
 BuildRequires: minizip-devel
