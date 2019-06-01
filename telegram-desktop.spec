@@ -19,7 +19,7 @@
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 
 # Git revision of qtlottie...
-%global commit2 6cd5e323645746620f96450487e05900a0fbc7ce
+%global commit2 ddccffed3c87ce6763dd73a6453b1edfb1389743
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
 # Decrease debuginfo verbosity to reduce memory consumption...
@@ -32,20 +32,24 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.7.1
+Version: 1.7.3
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
 # * S1 (crl) - GPLv3+ -- build-time dependency;
+# * S2 (qtlottie) - GPLv3+ -- build-time dependency;
 # * P0 (qt_functions.cpp) - LGPLv3 -- build-time dependency.
 License: GPLv3+ and LGPLv3
 URL: %{upstreambase}/%{appname}
 ExclusiveArch: i686 x86_64
 
+# Source files...
 Source0: %{url}/archive/v%{version}.tar.gz#/%{appname}-%{version}.tar.gz
 Source1: %{upstreambase}/crl/archive/%{commit1}.tar.gz#/crl-%{shortcommit1}.tar.gz
 Source2: %{upstreambase}/qtlottie/archive/%{commit2}.tar.gz#/qtlottie-%{shortcommit2}.tar.gz
+
+# Downstream patches...
 Patch0: %{name}-build-fixes.patch
 Patch1: %{name}-system-fonts.patch
 Patch2: %{name}-unbundle-minizip.patch
@@ -54,6 +58,9 @@ Patch2: %{name}-unbundle-minizip.patch
 Requires: qt5-qtimageformats%{?_isa}
 Requires: hicolor-icon-theme
 Requires: open-sans-fonts
+
+# Special patched version of qtlottie required.
+Provides: bundled(qtlottie) = 0
 
 # Compilers and tools...
 BuildRequires: desktop-file-utils
@@ -208,6 +215,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.appdat
 %{_metainfodir}/%{name}.appdata.xml
 
 %changelog
+* Sat Jun 01 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.7.3-1
+- Updated to 1.7.3.
+
 * Wed May 29 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.7.1-1
 - Updated to 1.7.1 (beta).
 
