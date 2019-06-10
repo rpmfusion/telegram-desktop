@@ -19,7 +19,7 @@
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 
 # Git revision of qtlottie...
-%global commit2 ddccffed3c87ce6763dd73a6453b1edfb1389743
+%global commit2 a3fac9db920b167a5f91d678ee7968f100f6fe51
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
 # Decrease debuginfo verbosity to reduce memory consumption...
@@ -32,7 +32,7 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.7.3
+Version: 1.7.7
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -215,6 +215,12 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.appdat
 %{_metainfodir}/%{name}.appdata.xml
 
 %changelog
+* Mon Jun 10 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.7.7-1
+- Updated to 1.7.7.
+
+* Fri Jun 07 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.7.6-1
+- Updated to 1.7.6 (beta).
+
 * Sat Jun 01 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.7.3-1
 - Updated to 1.7.3.
 
