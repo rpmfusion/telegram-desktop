@@ -1,0 +1,84 @@
+From 9c85d582359135a323f7b81ffeb333d08fe6190c Mon Sep 17 00:00:00 2001
+From: John Preston <johnprestonmail@gmail.com>
+Date: Mon, 24 Jun 2019 10:59:21 +0200
+Subject: [PATCH] Fix crash in closing export panel.
+
+---
+ Telegram/SourceFiles/mainwindow.cpp                | 13 ++++++++-----
+ Telegram/SourceFiles/ui/widgets/separate_panel.cpp |  4 +++-
+ Telegram/SourceFiles/window/layer_widget.cpp       |  2 +-
+ 3 files changed, 12 insertions(+), 7 deletions(-)
+
+diff --git a/Telegram/SourceFiles/mainwindow.cpp b/Telegram/SourceFiles/mainwindow.cpp
+index e4ee2f3dd..d4cdba90f 100644
+--- a/Telegram/SourceFiles/mainwindow.cpp
++++ b/Telegram/SourceFiles/mainwindow.cpp
+@@ -306,7 +306,9 @@ void MainWindow::ensureLayerCreated() {
+ 		bodyWidget());
+ 
+ 	_layer->hideFinishEvents(
+-	) | rpl::start_with_next([=] {
++	) | rpl::filter([=] {
++		return _layer != nullptr; // Last hide finish is sent from destructor.
++	}) | rpl::start_with_next([=] {
+ 		destroyLayer();
+ 	}, _layer->lifetime());
+ 
+@@ -319,12 +321,14 @@ void MainWindow::destroyLayer() {
+ 	if (!_layer) {
+ 		return;
+ 	}
++
+ 	auto layer = base::take(_layer);
+ 	const auto resetFocus = Ui::InFocusChain(layer);
+ 	if (resetFocus) {
+ 		setFocus();
+ 	}
+ 	layer = nullptr;
++
+ 	if (const auto controller = sessionController()) {
+ 		controller->disableGifPauseReason(Window::GifPauseReason::Layer);
+ 	}
+@@ -337,11 +341,10 @@ void MainWindow::destroyLayer() {
+ }
+ 
+ void MainWindow::ui_hideSettingsAndLayer(anim::type animated) {
+-	if (_layer) {
++	if (animated == anim::type::instant) {
++		destroyLayer();
++	} else if (_layer) {
+ 		_layer->hideAll(animated);
+-		if (animated == anim::type::instant) {
+-			destroyLayer();
+-		}
+ 	}
+ }
+ 
+diff --git a/Telegram/SourceFiles/ui/widgets/separate_panel.cpp b/Telegram/SourceFiles/ui/widgets/separate_panel.cpp
+index 3de767913..8877ce53d 100644
+--- a/Telegram/SourceFiles/ui/widgets/separate_panel.cpp
++++ b/Telegram/SourceFiles/ui/widgets/separate_panel.cpp
+@@ -285,7 +285,9 @@ void SeparatePanel::ensureLayerCreated() {
+ 		_layer->resize(size);
+ 	}, _layer->lifetime());
+ 	_layer->hideFinishEvents(
+-	) | rpl::start_with_next([=]{
++	) | rpl::filter([=] {
++		return _layer != nullptr; // Last hide finish is sent from destructor.
++	}) | rpl::start_with_next([=] {
+ 		if (Ui::InFocusChain(_layer)) {
+ 			setFocus();
+ 		}
+diff --git a/Telegram/SourceFiles/window/layer_widget.cpp b/Telegram/SourceFiles/window/layer_widget.cpp
+index aad6772c9..fbcbb880a 100644
+--- a/Telegram/SourceFiles/window/layer_widget.cpp
++++ b/Telegram/SourceFiles/window/layer_widget.cpp
+@@ -397,7 +397,7 @@ void LayerStackWidget::hideCurrent(anim::type animated) {
+ }
+ 
+ void LayerStackWidget::hideLayers(anim::type animated) {
+-	startAnimation([] {}, [this] {
++	startAnimation([] {}, [&] {
+ 		clearLayers();
+ 	}, Action::HideLayer, animated);
+ }

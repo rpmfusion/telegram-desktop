@@ -19,7 +19,7 @@
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 
 # Git revision of qtlottie...
-%global commit2 a3fac9db920b167a5f91d678ee7968f100f6fe51
+%global commit2 eeeb4edb2a087c3f8175dafafcad330864d3efc0
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
 # Decrease debuginfo verbosity to reduce memory consumption...
@@ -32,7 +32,7 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.7.7
+Version: 1.7.9
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -53,6 +53,11 @@ Source2: %{upstreambase}/qtlottie/archive/%{commit2}.tar.gz#/qtlottie-%{shortcom
 Patch0: %{name}-build-fixes.patch
 Patch1: %{name}-system-fonts.patch
 Patch2: %{name}-unbundle-minizip.patch
+
+# Upstream patches...
+Patch100: %{name}-upstream-5c49701.patch
+Patch101: %{name}-upstream-e5cfa3f.patch
+Patch102: %{name}-upstream-9c85d58.patch
 
 %{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
 Requires: qt5-qtimageformats%{?_isa}
@@ -215,6 +220,12 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.appdat
 %{_metainfodir}/%{name}.appdata.xml
 
 %changelog
+* Mon Jun 24 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.7.9-1
+- Updated to 1.7.9.
+
+* Tue Jun 18 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.7.8-1
+- Updated to 1.7.8 (beta).
+
 * Mon Jun 10 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.7.7-1
 - Updated to 1.7.7.
 

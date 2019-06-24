@@ -1,0 +1,45 @@
+From 5c497016037a41f85e0e5e0df1ab9305a72d45fb Mon Sep 17 00:00:00 2001
+From: John Preston <johnprestonmail@gmail.com>
+Date: Mon, 24 Jun 2019 09:55:10 +0200
+Subject: [PATCH] Fix 2SV setup.
+
+Regression was introduced in 0dddb7694f.
+---
+ Telegram/SourceFiles/boxes/passcode_box.cpp | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/Telegram/SourceFiles/boxes/passcode_box.cpp b/Telegram/SourceFiles/boxes/passcode_box.cpp
+index 684cb82b2..a9ba2109e 100644
+--- a/Telegram/SourceFiles/boxes/passcode_box.cpp
++++ b/Telegram/SourceFiles/boxes/passcode_box.cpp
+@@ -343,7 +343,7 @@ void PasscodeBox::validateEmail(
+ 	const auto errors = std::make_shared<rpl::event_stream<QString>>();
+ 	const auto resent = std::make_shared<rpl::event_stream<QString>>();
+ 	const auto set = std::make_shared<bool>(false);
+-	const auto submit = [=](QString code) {
++	const auto submit = crl::guard(this, [=](QString code) {
+ 		if (_setRequest) {
+ 			return;
+ 		}
+@@ -372,8 +372,8 @@ void PasscodeBox::validateEmail(
+ 				errors->fire(Lang::Hard::ServerError());
+ 			}
+ 		}).handleFloodErrors().send();
+-	};
+-	const auto resend = [=] {
++	});
++	const auto resend = crl::guard(this, [=] {
+ 		if (_setRequest) {
+ 			return;
+ 		}
+@@ -385,8 +385,8 @@ void PasscodeBox::validateEmail(
+ 			_setRequest = 0;
+ 			errors->fire(Lang::Hard::ServerError());
+ 		}).send();
+-	};
+-	const auto box = getDelegate()->show(
++	});
++	const auto box = _replacedBy = getDelegate()->show(
+ 		Passport::VerifyEmailBox(
+ 			email,
+ 			codeLength,
