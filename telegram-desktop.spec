@@ -15,12 +15,8 @@
 %global upstreambase https://github.com/telegramdesktop
 
 # Git revision of crl...
-%global commit1 d259aebc11df52cb6ff8c738580dc4d8f245d681
+%global commit1 9ea870038a2a667add7f621be6252db909068386
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
-
-# Git revision of qtlottie...
-%global commit2 eeeb4edb2a087c3f8175dafafcad330864d3efc0
-%global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
 # Decrease debuginfo verbosity to reduce memory consumption...
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
@@ -32,8 +28,8 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.7.10
-Release: 2%{?dist}
+Version: 1.7.14
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
@@ -47,20 +43,20 @@ ExclusiveArch: i686 x86_64
 # Source files...
 Source0: %{url}/archive/v%{version}.tar.gz#/%{appname}-%{version}.tar.gz
 Source1: %{upstreambase}/crl/archive/%{commit1}.tar.gz#/crl-%{shortcommit1}.tar.gz
-Source2: %{upstreambase}/qtlottie/archive/%{commit2}.tar.gz#/qtlottie-%{shortcommit2}.tar.gz
 
 # Downstream patches...
 Patch0: %{name}-build-fixes.patch
 Patch1: %{name}-system-fonts.patch
 Patch2: %{name}-unbundle-minizip.patch
 
+# Upstream patches...
+Patch100: %{name}-upstream-0710dde.patch
+Patch101: %{name}-upstream-9c909c8.patch
+
 %{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
 Requires: qt5-qtimageformats%{?_isa}
 Requires: hicolor-icon-theme
 Requires: open-sans-fonts
-
-# Special patched version of qtlottie required.
-Provides: bundled(qtlottie) = 0
 
 # Compilers and tools...
 BuildRequires: desktop-file-utils
@@ -79,13 +75,14 @@ BuildRequires: ffmpeg-devel >= 3.1
 BuildRequires: openal-soft-devel
 BuildRequires: qt5-qtbase-devel
 BuildRequires: libstdc++-devel
-BuildRequires: rapidjson-devel
 BuildRequires: range-v3-devel
 BuildRequires: openssl-devel
+BuildRequires: rlottie-devel
 BuildRequires: xxhash-devel
 BuildRequires: json11-devel
 BuildRequires: glib2-devel
 BuildRequires: opus-devel
+BuildRequires: lz4-devel
 BuildRequires: xz-devel
 BuildRequires: python3
 
@@ -131,13 +128,6 @@ pushd Telegram/ThirdParty
     rm -rf crl
     tar -xf %{SOURCE1}
     mv crl-%{commit1} crl
-popd
-
-# Unpacking qtlottie...
-pushd Telegram/ThirdParty
-    rm -rf qtlottie
-    tar -xf %{SOURCE2}
-    mv qtlottie-%{commit2} qtlottie
 popd
 
 %build
@@ -215,6 +205,12 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.appdat
 %{_metainfodir}/%{name}.appdata.xml
 
 %changelog
+* Tue Jul 09 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.7.14-1
+- Updated to 1.7.14.
+
+* Fri Jul 05 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.7.11-1
+- Updated to 1.7.11 (beta).
+
 * Wed Jul 03 2019 Vasiliy Glazov <vascom2@gmail.com> - 1.7.10-2
 - Rebuild for new Qt5
 

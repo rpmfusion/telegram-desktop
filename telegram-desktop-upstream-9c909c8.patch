@@ -1,0 +1,88 @@
+From 9c909c8992ab52b278c718ecf50c9ac41fb207a6 Mon Sep 17 00:00:00 2001
+From: John Preston <johnprestonmail@gmail.com>
+Date: Tue, 9 Jul 2019 14:49:24 +0200
+Subject: [PATCH] Lower the animated sticker requirements.
+
+Fixes #6237.
+---
+ Telegram/SourceFiles/lottie/lottie_animation.cpp    | 6 +++++-
+ Telegram/SourceFiles/lottie/lottie_cache.cpp        | 2 +-
+ Telegram/SourceFiles/lottie/lottie_common.h         | 2 +-
+ Telegram/SourceFiles/lottie/lottie_frame_renderer.h | 6 ++++--
+ 4 files changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/Telegram/SourceFiles/lottie/lottie_animation.cpp b/Telegram/SourceFiles/lottie/lottie_animation.cpp
+index ab21f635a..6a37ce534 100644
+--- a/Telegram/SourceFiles/lottie/lottie_animation.cpp
++++ b/Telegram/SourceFiles/lottie/lottie_animation.cpp
+@@ -22,6 +22,8 @@ For license and copyright information please follow this link:
+ namespace Lottie {
+ namespace {
+ 
++const auto kIdealSize = QSize(512, 512);
++
+ std::string UnpackGzip(const QByteArray &bytes) {
+ 	const auto original = [&] {
+ 		return std::string(bytes.constData(), bytes.size());
+@@ -87,7 +89,7 @@ details::InitData Init(
+ 	return animation
+ 		? CheckSharedState(std::make_unique<SharedState>(
+ 			std::move(animation),
+-			request,
++			request.empty() ? FrameRequest{ kIdealSize } : request,
+ 			quality))
+ 		: Error::ParseFailed;
+ }
+@@ -98,6 +100,8 @@ details::InitData Init(
+ 		const QByteArray &cached,
+ 		const FrameRequest &request,
+ 		Quality quality) {
++	Expects(!request.empty());
++
+ 	if (const auto error = ContentError(content)) {
+ 		return *error;
+ 	}
+diff --git a/Telegram/SourceFiles/lottie/lottie_cache.cpp b/Telegram/SourceFiles/lottie/lottie_cache.cpp
+index 10eb55b35..4f742773d 100644
+--- a/Telegram/SourceFiles/lottie/lottie_cache.cpp
++++ b/Telegram/SourceFiles/lottie/lottie_cache.cpp
+@@ -438,7 +438,7 @@ bool Cache::readHeader(const FrameRequest &request) {
+ 		|| (original.width() > kMaxSize)
+ 		|| (original.height() > kMaxSize)
+ 		|| (frameRate <= 0)
+-		|| (frameRate > kMaxFrameRate)
++		|| (frameRate > kNormalFrameRate && frameRate != kMaxFrameRate)
+ 		|| (framesCount <= 0)
+ 		|| (framesCount > kMaxFramesCount)
+ 		|| (framesReady <= 0)
+diff --git a/Telegram/SourceFiles/lottie/lottie_common.h b/Telegram/SourceFiles/lottie/lottie_common.h
+index 7239644bd..53e9c66b6 100644
+--- a/Telegram/SourceFiles/lottie/lottie_common.h
++++ b/Telegram/SourceFiles/lottie/lottie_common.h
+@@ -17,7 +17,7 @@ For license and copyright information please follow this link:
+ namespace Lottie {
+ 
+ inline constexpr auto kTimeUnknown = std::numeric_limits<crl::time>::min();
+-inline constexpr auto kMaxFileSize = 1024 * 1024;
++inline constexpr auto kMaxFileSize = 2 * 1024 * 1024;
+ 
+ class Animation;
+ 
+diff --git a/Telegram/SourceFiles/lottie/lottie_frame_renderer.h b/Telegram/SourceFiles/lottie/lottie_frame_renderer.h
+index a399bc505..abcf778c9 100644
+--- a/Telegram/SourceFiles/lottie/lottie_frame_renderer.h
++++ b/Telegram/SourceFiles/lottie/lottie_frame_renderer.h
+@@ -23,9 +23,11 @@ class Animation;
+ 
+ namespace Lottie {
+ 
++// Frame rate can be 1, 2, ... , 29, 30 or 60.
++inline constexpr auto kNormalFrameRate = 30;
+ inline constexpr auto kMaxFrameRate = 60;
+-inline constexpr auto kMaxSize = 512;
+-inline constexpr auto kMaxFramesCount = 180;
++inline constexpr auto kMaxSize = 4096;
++inline constexpr auto kMaxFramesCount = 210;
+ inline constexpr auto kFrameDisplayTimeAlreadyDone
+ 	= std::numeric_limits<crl::time>::max();
+ inline constexpr auto kDisplayedInitial = crl::time(-1);
