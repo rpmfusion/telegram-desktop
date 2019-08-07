@@ -29,7 +29,7 @@
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
 Version: 1.7.14
-Release: 1%{?dist}
+Release: 2%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
@@ -205,6 +205,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.appdat
 %{_metainfodir}/%{name}.appdata.xml
 
 %changelog
+* Wed Aug 07 2019 Leigh Scott <leigh123linux@gmail.com> - 1.7.14-2
+- Rebuild for new ffmpeg version
+
 * Tue Jul 09 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.7.14-1
 - Updated to 1.7.14.
 
