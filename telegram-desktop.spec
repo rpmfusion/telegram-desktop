@@ -15,8 +15,12 @@
 %global upstreambase https://github.com/telegramdesktop
 
 # Git revision of crl...
-%global commit1 9ea870038a2a667add7f621be6252db909068386
+%global commit1 52baf11aaeb7f5ea6955a438abaa1aee4c4308d8
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
+
+# Git revision of patched rlottie...
+%global commit2 d08a03b6508b390af20491f2dbeee3453594afc8
+%global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
 # Decrease debuginfo verbosity to reduce memory consumption...
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
@@ -28,35 +32,41 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.7.14
-Release: 2%{?dist}
+Version: 1.8.0
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
 # * S1 (crl) - GPLv3+ -- build-time dependency;
-# * S2 (qtlottie) - GPLv3+ -- build-time dependency;
+# * S2 (rlottie) - LGPLv2+ -- static dependency;
 # * P0 (qt_functions.cpp) - LGPLv3 -- build-time dependency.
 License: GPLv3+ and LGPLv3
 URL: %{upstreambase}/%{appname}
+
+%if 0%{?fedora} && 0%{?fedora} < 31
 ExclusiveArch: i686 x86_64
+%else
+ExclusiveArch: x86_64
+%endif
 
 # Source files...
 Source0: %{url}/archive/v%{version}.tar.gz#/%{appname}-%{version}.tar.gz
 Source1: %{upstreambase}/crl/archive/%{commit1}.tar.gz#/crl-%{shortcommit1}.tar.gz
+Source2: https://github.com/john-preston/rlottie/archive/%{commit2}.tar.gz#/rlottie-%{shortcommit2}.tar.gz
 
 # Downstream patches...
 Patch0: %{name}-build-fixes.patch
 Patch1: %{name}-system-fonts.patch
 Patch2: %{name}-unbundle-minizip.patch
 
-# Upstream patches...
-Patch100: %{name}-upstream-0710dde.patch
-Patch101: %{name}-upstream-9c909c8.patch
-
 %{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
 Requires: qt5-qtimageformats%{?_isa}
 Requires: hicolor-icon-theme
 Requires: open-sans-fonts
+
+# Telegram Desktop require patched version of rlottie since 1.8.0.
+# Pull Request pending: https://github.com/Samsung/rlottie/pull/252
+Provides: bundled(rlottie) = 0~git%{shortcommit2}
 
 # Compilers and tools...
 BuildRequires: desktop-file-utils
@@ -77,7 +87,6 @@ BuildRequires: qt5-qtbase-devel
 BuildRequires: libstdc++-devel
 BuildRequires: range-v3-devel
 BuildRequires: openssl-devel
-BuildRequires: rlottie-devel
 BuildRequires: xxhash-devel
 BuildRequires: json11-devel
 BuildRequires: glib2-devel
@@ -128,6 +137,13 @@ pushd Telegram/ThirdParty
     rm -rf crl
     tar -xf %{SOURCE1}
     mv crl-%{commit1} crl
+popd
+
+# Unpacking patched rlottie...
+pushd Telegram/ThirdParty
+    rm -rf rlottie
+    tar -xf %{SOURCE2}
+    mv rlottie-%{commit2} rlottie
 popd
 
 %build
@@ -205,8 +221,11 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.appdat
 %{_metainfodir}/%{name}.appdata.xml
 
 %changelog
-* Wed Aug 07 2019 Leigh Scott <leigh123linux@gmail.com> - 1.7.14-2
-- Rebuild for new ffmpeg version
+* Fri Aug 09 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.0-1
+- Updated to 1.8.0.
+
+* Fri Jul 19 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.7.15-1
+- Updated to 1.7.15 (beta).
 
 * Tue Jul 09 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.7.14-1
 - Updated to 1.7.14.

@@ -1,4 +1,4 @@
-From d56251039a2e13d8dfeefbf70c1aeead6206026e Mon Sep 17 00:00:00 2001
+From ec229dc5d3ee999bbcf715345fc05178c5a1c113 Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Wed, 17 Oct 2018 17:57:59 +0200
 Subject: [PATCH 3/3] Use packaged version of minizip on Fedora <= 29.
@@ -10,7 +10,7 @@ Subject: [PATCH 3/3] Use packaged version of minizip on Fedora <= 29.
  3 files changed, 2 insertions(+), 9 deletions(-)
 
 diff --git a/Telegram/gyp/Telegram.gyp b/Telegram/gyp/Telegram.gyp
-index 737735a9f..4bcf8eb0f 100644
+index fedb782ca..a1caa989b 100644
 --- a/Telegram/gyp/Telegram.gyp
 +++ b/Telegram/gyp/Telegram.gyp
 @@ -18,7 +18,6 @@
@@ -21,7 +21,7 @@ index 737735a9f..4bcf8eb0f 100644
        'sp_media_key_tap_loc': '<(submodules_loc)/SPMediaKeyTap',
        'emoji_suggestions_loc': '<(submodules_loc)/emoji_suggestions',
        'style_files': [
-@@ -91,7 +90,6 @@
+@@ -92,7 +91,6 @@
      'include_dirs': [
        '<(src_loc)',
        '<(SHARED_INTERMEDIATE_DIR)',
@@ -30,7 +30,7 @@ index 737735a9f..4bcf8eb0f 100644
        '<(submodules_loc)/crl/src',
      ],
 diff --git a/Telegram/gyp/telegram_linux.gypi b/Telegram/gyp/telegram_linux.gypi
-index f01692ca3..1287c5e51 100644
+index 4efd97851..b314ba137 100644
 --- a/Telegram/gyp/telegram_linux.gypi
 +++ b/Telegram/gyp/telegram_linux.gypi
 @@ -22,6 +22,7 @@
@@ -50,10 +50,10 @@ index f01692ca3..1287c5e51 100644
        'lzma',
        'xxhash',
 diff --git a/Telegram/gyp/telegram_sources.txt b/Telegram/gyp/telegram_sources.txt
-index c3d6db974..b96a3fa83 100644
+index 03b1baa6d..80bb63299 100644
 --- a/Telegram/gyp/telegram_sources.txt
 +++ b/Telegram/gyp/telegram_sources.txt
-@@ -895,13 +895,6 @@
+@@ -908,13 +908,6 @@
  <(emoji_suggestions_loc)/emoji_suggestions.h
  
  platforms: !win
