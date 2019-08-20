@@ -132,6 +132,7 @@ business messaging needs.
 Summary: Additional KDE handlers for %{name}
 BuildArch: noarch
 Supplements: (%{name} and kf5-filesystem)
+Requires: kf5-filesystem
 Requires: %{name} = %{?epoch:%{epoch}:}%{version}-%{release}
 
 %description kde
