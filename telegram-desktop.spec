@@ -33,7 +33,7 @@
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
 Version: 1.8.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
@@ -128,17 +128,6 @@ phone contacts and find people by their usernames. As a result, Telegram is
 like SMS and email combined — and can take care of all your personal or
 business messaging needs.
 
-%package kde
-Summary: Additional KDE handlers for %{name}
-BuildArch: noarch
-Supplements: (%{name} and kf5-filesystem)
-Requires: kf5-filesystem
-Requires: %{name} = %{?epoch:%{epoch}:}%{version}-%{release}
-
-%description kde
-This package contains additional KDE plugins and handlers
-for %{name}.
-
 %prep
 # Unpacking Telegram Desktop source archive...
 %autosetup -n %{appname}-%{version} -p1
@@ -216,10 +205,6 @@ for size in 16 32 48 64 128 256 512; do
     %{__install} -m 0644 -p Telegram/Resources/art/icon${size}.png "$dir/%{name}.png"
 done
 
-# Installing protocol handler for KDE...
-%{__install} -d %{buildroot}%{_datadir}/kservices5
-%{__install} -m 0644 -p lib/xdg/tg.protocol %{buildroot}%{_datadir}/kservices5/tg.protocol
-
 # Installing appdata for Gnome Software...
 %{__install} -d %{buildroot}%{_metainfodir}
 %{__install} -m 0644 -p lib/xdg/telegramdesktop.appdata.xml %{buildroot}%{_metainfodir}/%{name}.appdata.xml
@@ -235,10 +220,10 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.appdat
 %{_datadir}/icons/hicolor/*/apps/%{name}.png
 %{_metainfodir}/%{name}.appdata.xml
 
-%files kde
-%{_datadir}/kservices5/tg.protocol
-
 %changelog
+* Thu Aug 22 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.2-2
+- Removed kde subpackage.
+
 * Tue Aug 20 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.2-1
 - Updated to 1.8.2.
 
