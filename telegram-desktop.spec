@@ -2,7 +2,7 @@
 %bcond_without gtk3
 
 # Enable or disable build using clang instead of gcc...
-%if 0%{?fedora} && 0%{?fedora} >= 30
+%if 0%{?fedora} && 0%{?fedora} == 31
 %bcond_without clang
 %else
 %bcond_with clang
@@ -32,8 +32,8 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.8.2
-Release: 2%{?dist}
+Version: 1.8.3
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
@@ -221,6 +221,10 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.appdat
 %{_metainfodir}/%{name}.appdata.xml
 
 %changelog
+* Fri Sep 06 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.3-1
+- Updated to 1.8.3.
+- Switched back to GCC compiler (except Fedora 31 due to beta freeze).
+
 * Thu Aug 22 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.2-2
 - Removed kde subpackage.
 
