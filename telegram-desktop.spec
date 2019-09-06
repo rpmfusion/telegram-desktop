@@ -19,7 +19,7 @@
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 
 # Git revision of patched rlottie...
-%global commit2 d08a03b6508b390af20491f2dbeee3453594afc8
+%global commit2 589db026ec211bc4979e3bffe074f6e48ce7cedc
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
 # Decrease debuginfo verbosity to reduce memory consumption...
