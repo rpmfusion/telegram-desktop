@@ -1,4 +1,4 @@
-From d89cacaa1c9cb361202aaa13541c3ab69aae4d09 Mon Sep 17 00:00:00 2001
+From 8d70de0234368e30b11299a31f7efaab1a83861b Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Sun, 24 Jun 2018 22:59:34 +0200
 Subject: [PATCH 2/3] Backported and rebased patch from Debian maintainer
@@ -25,10 +25,10 @@ index 4db29b204..52028412c 100644
      <file alias="art/bg_initial.jpg">../art/bg_initial.jpg</file>
      <file alias="art/logo_256.png">../art/logo_256.png</file>
 diff --git a/Telegram/SourceFiles/ui/twidget.cpp b/Telegram/SourceFiles/ui/twidget.cpp
-index 3113e597b..7d0b25b55 100644
+index 37b2872a0..e48354e0e 100644
 --- a/Telegram/SourceFiles/ui/twidget.cpp
 +++ b/Telegram/SourceFiles/ui/twidget.cpp
-@@ -71,9 +71,9 @@ void Start() {
+@@ -75,9 +75,9 @@ void Start() {
  	}
  	Started = true;
  

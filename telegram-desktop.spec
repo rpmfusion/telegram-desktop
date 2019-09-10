@@ -32,7 +32,7 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.8.4
+Version: 1.8.8
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -166,8 +166,7 @@ pushd Telegram/gyp
 popd
 
 # Patching generated cmake script...
-LEN=$(($(wc -l < out/Release/CMakeLists.txt) - 2))
-sed -i "$LEN r Telegram/gyp/CMakeLists.inj" out/Release/CMakeLists.txt
+sed -i "$(($(wc -l < out/Release/CMakeLists.txt) - 2)) r Telegram/gyp/CMakeLists.inj" out/Release/CMakeLists.txt
 
 # Building Telegram Desktop using cmake...
 pushd out/Release
@@ -191,23 +190,23 @@ popd
 
 %install
 # Installing executables...
-%{__mkdir_p} "%{buildroot}%{_bindir}"
-%{__install} -m 0755 -p out/Release/Telegram "%{buildroot}%{_bindir}/%{name}"
+mkdir -p %{buildroot}%{_bindir}
+install -m 0755 -p out/Release/Telegram %{buildroot}%{_bindir}/%{name}
 
 # Installing desktop shortcut...
-%{__mv} lib/xdg/telegramdesktop.desktop lib/xdg/%{name}.desktop
-desktop-file-install --dir="%{buildroot}%{_datadir}/applications" lib/xdg/%{name}.desktop
+mv lib/xdg/telegramdesktop.desktop lib/xdg/%{name}.desktop
+desktop-file-install --dir=%{buildroot}%{_datadir}/applications lib/xdg/%{name}.desktop
 
 # Installing icons...
 for size in 16 32 48 64 128 256 512; do
-    dir="%{buildroot}%{_datadir}/icons/hicolor/${size}x${size}/apps"
-    %{__install} -d "$dir"
-    %{__install} -m 0644 -p Telegram/Resources/art/icon${size}.png "$dir/%{name}.png"
+    dir=%{buildroot}%{_datadir}/icons/hicolor/${size}x${size}/apps
+    install -d $dir
+    install -m 0644 -p Telegram/Resources/art/icon${size}.png $dir/%{name}.png
 done
 
 # Installing appdata for Gnome Software...
-%{__install} -d %{buildroot}%{_metainfodir}
-%{__install} -m 0644 -p lib/xdg/telegramdesktop.appdata.xml %{buildroot}%{_metainfodir}/%{name}.appdata.xml
+install -d %{buildroot}%{_metainfodir}
+install -m 0644 -p lib/xdg/telegramdesktop.appdata.xml %{buildroot}%{_metainfodir}/%{name}.appdata.xml
 
 %check
 appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.appdata.xml
@@ -221,6 +220,15 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.appdat
 %{_metainfodir}/%{name}.appdata.xml
 
 %changelog
+* Tue Sep 10 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.8-1
+- Updated to 1.8.8.
+
+* Tue Sep 10 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.7-1
+- Updated to 1.8.7 (beta).
+
+* Mon Sep 09 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.5-1
+- Updated to 1.8.5 (beta).
+
 * Fri Sep 06 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.4-1
 - Updated to 1.8.4.
 
