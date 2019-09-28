@@ -2,11 +2,7 @@
 %bcond_without gtk3
 
 # Enable or disable build using clang instead of gcc...
-%if 0%{?fedora} && 0%{?fedora} == 31
-%bcond_without clang
-%else
 %bcond_with clang
-%endif
 
 # Telegram Desktop's constants...
 %global appname tdesktop
@@ -32,7 +28,7 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.8.8
+Version: 1.8.9
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -220,6 +216,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.appdat
 %{_metainfodir}/%{name}.appdata.xml
 
 %changelog
+* Sat Sep 28 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.9-1
+- Updated to 1.8.9.
+
 * Tue Sep 10 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.8-1
 - Updated to 1.8.8.
 
