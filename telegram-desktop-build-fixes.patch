@@ -1,54 +1,42 @@
-From 4d3c2d64578f6b191020d214ca2777abcf91a306 Mon Sep 17 00:00:00 2001
+From 5d5a55b143522c6ea7f705454b888537f0c4c594 Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Fri, 31 Mar 2017 14:29:58 +0200
 Subject: [PATCH 1/3] Fixed build under Fedora using rpmbuild and mock.
 
 ---
- Telegram/Resources/qrc/telegram.qrc       |  3 -
- Telegram/Resources/qrc/telegram_linux.qrc |  6 --
- Telegram/SourceFiles/core/launcher.cpp    |  1 +
- Telegram/SourceFiles/qt_functions.cpp     | 97 +++++++++++++++++++++++
- Telegram/gyp/CMakeLists.inj               |  7 ++
- Telegram/gyp/PrecompiledHeader.cmake      |  4 +-
- Telegram/gyp/Telegram.gyp                 | 23 +-----
- Telegram/gyp/codegen_rules.gypi           |  6 +-
- Telegram/gyp/lib_base.gyp                 |  8 +-
- Telegram/gyp/lib_export.gyp               |  7 +-
- Telegram/gyp/lib_ffmpeg.gyp               |  7 +-
- Telegram/gyp/lib_lottie.gyp               | 11 +--
- Telegram/gyp/lib_mtproto.gyp              |  6 +-
- Telegram/gyp/lib_scheme.gyp               |  4 +-
- Telegram/gyp/lib_storage.gyp              |  8 +-
- Telegram/gyp/qt.gypi                      | 87 ++++++--------------
- Telegram/gyp/qt_moc.gypi                  |  5 +-
- Telegram/gyp/qt_rcc.gypi                  |  2 +-
- Telegram/gyp/settings_linux.gypi          | 25 +-----
- Telegram/gyp/telegram_linux.gypi          | 74 +++++------------
- Telegram/gyp/telegram_sources.txt         |  2 +-
- lib/xdg/telegramdesktop.appdata.xml       |  2 +-
- lib/xdg/telegramdesktop.desktop           |  5 +-
- 23 files changed, 186 insertions(+), 214 deletions(-)
+ Telegram/Resources/qrc/linux.qrc             |  6 --
+ Telegram/Resources/qrc/telegram/telegram.qrc |  3 -
+ Telegram/SourceFiles/core/launcher.cpp       |  1 +
+ Telegram/SourceFiles/qt_functions.cpp        | 97 ++++++++++++++++++++
+ Telegram/gyp/CMakeLists.inj                  |  8 ++
+ Telegram/gyp/PrecompiledHeader.cmake         |  4 +-
+ Telegram/gyp/codegen/rules.gypi              |  4 +-
+ Telegram/gyp/codegen/styles_rule.gypi        |  2 +-
+ Telegram/gyp/common/linux.gypi               | 50 ++--------
+ Telegram/gyp/lib_base.gyp                    |  8 +-
+ Telegram/gyp/lib_export.gyp                  |  6 +-
+ Telegram/gyp/lib_ffmpeg.gyp                  |  7 +-
+ Telegram/gyp/lib_lottie.gyp                  | 11 +--
+ Telegram/gyp/lib_mtproto.gyp                 |  6 +-
+ Telegram/gyp/lib_scheme.gyp                  |  4 +-
+ Telegram/gyp/lib_storage.gyp                 |  8 +-
+ Telegram/gyp/lib_ui.gyp                      |  8 +-
+ Telegram/gyp/modules/qt.gypi                 | 87 +++++-------------
+ Telegram/gyp/modules/qt_moc.gypi             |  5 +-
+ Telegram/gyp/modules/qt_rcc.gypi             |  2 +-
+ Telegram/gyp/telegram/linux.gypi             | 36 ++------
+ Telegram/gyp/telegram/sources.txt            |  2 +-
+ Telegram/gyp/telegram/telegram.gypi          | 23 +----
+ lib/xdg/telegramdesktop.appdata.xml          |  2 +-
+ lib/xdg/telegramdesktop.desktop              |  5 +-
+ 25 files changed, 184 insertions(+), 211 deletions(-)
  create mode 100644 Telegram/SourceFiles/qt_functions.cpp
  create mode 100644 Telegram/gyp/CMakeLists.inj
 
-diff --git a/Telegram/Resources/qrc/telegram.qrc b/Telegram/Resources/qrc/telegram.qrc
-index bd88f8aa4..4db29b204 100644
---- a/Telegram/Resources/qrc/telegram.qrc
-+++ b/Telegram/Resources/qrc/telegram.qrc
-@@ -62,9 +62,6 @@
-     <file alias="call_connect.mp3">../sounds/call_connect.mp3</file>
-     <file alias="call_end.mp3">../sounds/call_end.mp3</file>
-   </qresource>
--  <qresource prefix="/qt-project.org">
--    <file>qmime/freedesktop.org.xml</file>
--  </qresource>
-   <qresource prefix="/misc">
-     <file alias="default_shortcuts-custom.json">../default_shortcuts-custom.json</file>
-   </qresource>
-diff --git a/Telegram/Resources/qrc/telegram_linux.qrc b/Telegram/Resources/qrc/telegram_linux.qrc
+diff --git a/Telegram/Resources/qrc/linux.qrc b/Telegram/Resources/qrc/linux.qrc
 index 164e8d4f2..03585ec03 100644
---- a/Telegram/Resources/qrc/telegram_linux.qrc
-+++ b/Telegram/Resources/qrc/telegram_linux.qrc
+--- a/Telegram/Resources/qrc/linux.qrc
++++ b/Telegram/Resources/qrc/linux.qrc
 @@ -1,8 +1,2 @@
  <RCC>
 -  <qresource prefix="/qt">
@@ -58,11 +46,25 @@ index 164e8d4f2..03585ec03 100644
 -    <file alias="fc-custom.conf">../fc-custom.conf</file>
 -  </qresource>
  </RCC>
+diff --git a/Telegram/Resources/qrc/telegram/telegram.qrc b/Telegram/Resources/qrc/telegram/telegram.qrc
+index 87ee77587..ae30de1a9 100644
+--- a/Telegram/Resources/qrc/telegram/telegram.qrc
++++ b/Telegram/Resources/qrc/telegram/telegram.qrc
+@@ -51,9 +51,6 @@
+     <file alias="night.tdesktop-theme">../../night.tdesktop-theme</file>
+     <file alias="night-green.tdesktop-theme">../../night-green.tdesktop-theme</file>
+   </qresource>
+-  <qresource prefix="/qt-project.org">
+-    <file>../qmime/freedesktop.org.xml</file>
+-  </qresource>
+   <qresource prefix="/misc">
+     <file alias="default_shortcuts-custom.json">../../default_shortcuts-custom.json</file>
+   </qresource>
 diff --git a/Telegram/SourceFiles/core/launcher.cpp b/Telegram/SourceFiles/core/launcher.cpp
-index 9237e629d..3e4b1d6a5 100644
+index 3ba28309b..0fc14253d 100644
 --- a/Telegram/SourceFiles/core/launcher.cpp
 +++ b/Telegram/SourceFiles/core/launcher.cpp
-@@ -271,6 +271,7 @@ int Launcher::exec() {
+@@ -272,6 +272,7 @@ int Launcher::exec() {
  	Logs::start(this); // must be started before Platform is started
  	Platform::start(); // must be started before Sandbox is created
  
@@ -175,10 +177,10 @@ index 000000000..a7c697f25
 +}
 diff --git a/Telegram/gyp/CMakeLists.inj b/Telegram/gyp/CMakeLists.inj
 new file mode 100644
-index 000000000..6dd1a2a18
+index 000000000..f3ddb8880
 --- /dev/null
 +++ b/Telegram/gyp/CMakeLists.inj
-@@ -0,0 +1,7 @@
+@@ -0,0 +1,8 @@
 +set_target_properties(Telegram PROPERTIES SKIP_BUILD_RPATH TRUE)
 +include(../../Telegram/gyp/PrecompiledHeader.cmake)
 +add_precompiled_header(Telegram ../../Telegram/SourceFiles/stdafx.h)
@@ -186,6 +188,7 @@ index 000000000..6dd1a2a18
 +add_precompiled_header(lib_base ../../Telegram/SourceFiles/base/base_pch.h)
 +add_precompiled_header(lib_storage ../../Telegram/SourceFiles/storage/storage_pch.h)
 +add_precompiled_header(lib_mtproto ../../Telegram/SourceFiles/mtproto/mtp_pch.h)
++add_precompiled_header(lib_ui ../../Telegram/SourceFiles/ui/ui_pch.h)
 diff --git a/Telegram/gyp/PrecompiledHeader.cmake b/Telegram/gyp/PrecompiledHeader.cmake
 index dfe1193be..75bcd675d 100644
 --- a/Telegram/gyp/PrecompiledHeader.cmake
@@ -208,93 +211,11 @@ index dfe1193be..75bcd675d 100644
          DEPENDS "${_pchfile}" "${_pch_cpp_flags_file}"
          IMPLICIT_DEPENDS CXX "${_pch_header}"
          COMMENT "Precompiling header ${_name} for ${_target} (C++)")
-diff --git a/Telegram/gyp/Telegram.gyp b/Telegram/gyp/Telegram.gyp
-index ec2ed28b7..fedb782ca 100644
---- a/Telegram/gyp/Telegram.gyp
-+++ b/Telegram/gyp/Telegram.gyp
-@@ -51,15 +51,13 @@
-         'pt-BR',
-       ],
-       'build_defines%': '',
--      'list_sources_command': 'python <(DEPTH)/list_sources.py --input <(DEPTH)/telegram_sources.txt --replace src_loc=<(src_loc)',
-+      'list_sources_command': 'python3 <(DEPTH)/list_sources.py --input <(DEPTH)/telegram_sources.txt --replace src_loc=<(src_loc)',
-       'pch_source': '<(src_loc)/stdafx.cpp',
-       'pch_header': '<(src_loc)/stdafx.h',
-     },
-     'includes': [
-       'common_executable.gypi',
-       'telegram_qrc.gypi',
--      'telegram_win.gypi',
--      'telegram_mac.gypi',
-       'telegram_linux.gypi',
-       'openssl.gypi',
-       'qt.gypi',
-@@ -74,9 +72,6 @@
-       'codegen.gyp:codegen_lang',
-       'codegen.gyp:codegen_numbers',
-       'codegen.gyp:codegen_style',
--      'tests/tests.gyp:tests',
--      'utils.gyp:Updater',
--      '../ThirdParty/libtgvoip/libtgvoip.gyp:libtgvoip',
-       'crl.gyp:crl',
-       'lib_base.gyp:lib_base',
-       'lib_export.gyp:lib_export',
-@@ -87,32 +82,19 @@
-     ],
- 
-     'defines': [
--      'AL_LIBTYPE_STATIC',
-       'AL_ALEXT_PROTOTYPES',
-       'TGVOIP_USE_CXX11_LIB',
--      'XXH_INLINE_ALL',
-       'TDESKTOP_API_ID=<(api_id)',
-       'TDESKTOP_API_HASH=<(api_hash)',
--      '<!@(python -c "for s in \'<(build_defines)\'.split(\',\'): print(s)")',
-+      '<!@(python3 -c "for s in \'<(build_defines)\'.split(\',\'): print(s)")',
-     ],
- 
-     'include_dirs': [
-       '<(src_loc)',
-       '<(SHARED_INTERMEDIATE_DIR)',
--      '<(libs_loc)/breakpad/src',
--      '<(libs_loc)/lzma/C',
--      '<(libs_loc)/zlib',
--      '<(libs_loc)/ffmpeg',
--      '<(libs_loc)/openal-soft/include',
--      '<(libs_loc)/opus/include',
--      '<(libs_loc)/range-v3/include',
-       '<(minizip_loc)',
--      '<(sp_media_key_tap_loc)',
-       '<(emoji_suggestions_loc)',
--      '<(submodules_loc)/GSL/include',
--      '<(submodules_loc)/variant/include',
-       '<(submodules_loc)/crl/src',
--      '<(submodules_loc)/xxHash',
-     ],
-     'sources': [
-       '<@(qrc_files)',
-@@ -135,7 +117,6 @@
-           'TDESKTOP_FORCE_GTK_FILE_DIALOG',
-         ],
-         'dependencies': [
--          'utils.gyp:Packer',
-         ],
-       }], [ 'build_mac', {
-         'mac_hardened_runtime': 1,
-diff --git a/Telegram/gyp/codegen_rules.gypi b/Telegram/gyp/codegen_rules.gypi
-index a901db3bb..28873f8dc 100644
---- a/Telegram/gyp/codegen_rules.gypi
-+++ b/Telegram/gyp/codegen_rules.gypi
-@@ -15,7 +15,7 @@
-       '<(SHARED_INTERMEDIATE_DIR)/update_dependent_styles.timestamp',
-     ],
-     'action': [
--      'python', '<(DEPTH)/update_dependent.py', '--styles',
-+      'python3', '<(DEPTH)/update_dependent.py', '--styles',
-       '-I', '<(res_loc)', '-I', '<(src_loc)',
-       '-o', '<(SHARED_INTERMEDIATE_DIR)/update_dependent_styles.timestamp',
-       '<@(style_files)',
-@@ -26,13 +26,13 @@
+diff --git a/Telegram/gyp/codegen/rules.gypi b/Telegram/gyp/codegen/rules.gypi
+index 9cad3ee41..b77ffe9f4 100644
+--- a/Telegram/gyp/codegen/rules.gypi
++++ b/Telegram/gyp/codegen/rules.gypi
+@@ -10,13 +10,13 @@
      'inputs': [
        '<(DEPTH)/update_dependent.py',
        '<@(qrc_files)',
@@ -310,11 +231,113 @@ index a901db3bb..28873f8dc 100644
        '-o', '<(SHARED_INTERMEDIATE_DIR)/update_dependent_qrc.timestamp',
        '<@(qrc_files)',
      ],
+diff --git a/Telegram/gyp/codegen/styles_rule.gypi b/Telegram/gyp/codegen/styles_rule.gypi
+index 5c47e9260..9ef0ef360 100644
+--- a/Telegram/gyp/codegen/styles_rule.gypi
++++ b/Telegram/gyp/codegen/styles_rule.gypi
+@@ -16,7 +16,7 @@
+       '<(style_timestamp)',
+     ],
+     'action': [
+-      'python', '<(DEPTH)/update_dependent.py', '--styles',
++      'python3', '<(DEPTH)/update_dependent.py', '--styles',
+       '-I', '<(res_loc)', '-I', '<(src_loc)',
+       '-o', '<(style_timestamp)',
+       '<@(style_files)',
+diff --git a/Telegram/gyp/common/linux.gypi b/Telegram/gyp/common/linux.gypi
+index cdcdef1dc..919eb3c8a 100644
+--- a/Telegram/gyp/common/linux.gypi
++++ b/Telegram/gyp/common/linux.gypi
+@@ -9,10 +9,6 @@
+     [ 'build_linux', {
+       'variables': {
+         'linux_common_flags': [
+-          '-pipe',
+-          '-Wall',
+-          '-Werror',
+-          '-W',
+           '-fPIC',
+           '-Wno-unused-variable',
+           '-Wno-unused-parameter',
+@@ -26,29 +22,16 @@
+           '-Wno-error=class-memaccess',
+           '-Wno-error=parentheses',
+         ],
+-        'linux_path_ffmpeg%': '/usr/local',
+-        'linux_path_openal%': '/usr/local',
+-        'linux_path_va%': '/usr/local',
+-        'linux_path_vdpau%': '/usr/local',
+-        'linux_path_breakpad%': '/usr/local',
+-        'linux_path_opus_include%': '<(libs_loc)/opus/include',
+-        'linux_path_range%': '/usr/local',
+       },
+       'include_dirs': [
+-        '/usr/local/include',
+-        '<(linux_path_ffmpeg)/include',
+-        '<(linux_path_openal)/include',
+-        '<(linux_path_breakpad)/include/breakpad',
+-        '<(linux_path_opus_include)',
+-        '<(linux_path_range)/include',
++        '<!(rpm --eval "%{_includedir}")',
++        '<!(rpm --eval "%{_includedir}")/ffmpeg',
++        '<!(rpm --eval "%{_includedir}")/opus',
++        '<!(rpm --eval "%{_includedir}")/libtgvoip',
++        '<!(rpm --eval "%{_includedir}")/guidelines-support-library',
+       ],
+       'library_dirs': [
+-        '/usr/local/lib',
+-        '<(linux_path_ffmpeg)/lib',
+-        '<(linux_path_openal)/lib',
+-        '<(linux_path_va)/lib',
+-        '<(linux_path_vdpau)/lib',
+-        '<(linux_path_breakpad)/lib',
++        '<!(rpm --eval "%{_libdir}")',
+       ],
+       'conditions': [
+         [ '"<!(uname -m)" == "x86_64" or "<!(uname -m)" == "aarch64"', {
+@@ -69,24 +52,10 @@
+               'sources': [ '__Wrong_Official_Build_Target_<(official_build_target)_' ],
+             }],
+           ],
+-        }], [ '"<!(uname -p)" == "x86_64"', {
+-          # 32 bit version can't be linked with debug info or LTO,
+-          # virtual memory exhausted :(
+-          'cflags_c': [ '-g' ],
+-          'cflags_cc': [ '-g' ],
+-          'ldflags': [ '-g' ],
+-          'configurations': {
+-            'Release': {
+-              'cflags_c': [ '-flto' ],
+-              'cflags_cc': [ '-flto' ],
+-              'ldflags': [ '-flto', '-fuse-linker-plugin' ],
+-            },
+-          },
+-        }]
++        }],
+       ],
+       'defines': [
+         '_REENTRANT',
+-        'QT_STATICPLUGIN',
+         'QT_PLUGIN',
+       ],
+       'cflags_c': [
+@@ -98,11 +67,6 @@
+         '-std=c++1z',
+         '-Wno-register',
+       ],
+-      'make_global_settings': [
+-        ['AR', '/usr/bin/gcc-ar'],
+-        ['RANLIB', '/usr/bin/gcc-ranlib'],
+-        ['NM', '/usr/bin/gcc-nm'],
+-      ],
+       'configurations': {
+         'Debug': {
+         },
 diff --git a/Telegram/gyp/lib_base.gyp b/Telegram/gyp/lib_base.gyp
-index 82d42d4ae..92adc6d8e 100644
+index 98c0d885b..c1c9c5a68 100644
 --- a/Telegram/gyp/lib_base.gyp
 +++ b/Telegram/gyp/lib_base.gyp
-@@ -28,7 +28,6 @@
+@@ -25,7 +25,6 @@
        'pch_header': '<(src_loc)/base/base_pch.h',
      },
      'defines': [
@@ -322,7 +345,7 @@ index 82d42d4ae..92adc6d8e 100644
      ],
      'dependencies': [
        'crl.gyp:crl',
-@@ -36,11 +35,10 @@
+@@ -33,11 +32,10 @@
      'include_dirs': [
        '<(src_loc)',
        '<(SHARED_INTERMEDIATE_DIR)',
@@ -338,18 +361,10 @@ index 82d42d4ae..92adc6d8e 100644
      'sources': [
        '<(src_loc)/base/algorithm.h',
 diff --git a/Telegram/gyp/lib_export.gyp b/Telegram/gyp/lib_export.gyp
-index f73aabdb1..24493f159 100644
+index 140ea6b98..bf6f2b6b0 100644
 --- a/Telegram/gyp/lib_export.gyp
 +++ b/Telegram/gyp/lib_export.gyp
-@@ -14,7 +14,6 @@
-     'includes': [
-       'common.gypi',
-       'qt.gypi',
--      'telegram_linux.gypi',
-       'pch.gypi',
-     ],
-     'variables': {
-@@ -46,9 +45,9 @@
+@@ -44,9 +44,9 @@
      'include_dirs': [
        '<(src_loc)',
        '<(SHARED_INTERMEDIATE_DIR)',
@@ -363,10 +378,10 @@ index f73aabdb1..24493f159 100644
      ],
      'sources': [
 diff --git a/Telegram/gyp/lib_ffmpeg.gyp b/Telegram/gyp/lib_ffmpeg.gyp
-index b9ada5362..ef5aa200e 100644
+index 22a2a9661..8b4103283 100644
 --- a/Telegram/gyp/lib_ffmpeg.gyp
 +++ b/Telegram/gyp/lib_ffmpeg.gyp
-@@ -36,10 +36,9 @@
+@@ -33,10 +33,9 @@
      'include_dirs': [
        '<(src_loc)',
        '<(SHARED_INTERMEDIATE_DIR)',
@@ -381,10 +396,10 @@ index b9ada5362..ef5aa200e 100644
      ],
      'sources': [
 diff --git a/Telegram/gyp/lib_lottie.gyp b/Telegram/gyp/lib_lottie.gyp
-index 9767651f2..181577828 100644
+index ee2bb0f04..87de3ef3f 100644
 --- a/Telegram/gyp/lib_lottie.gyp
 +++ b/Telegram/gyp/lib_lottie.gyp
-@@ -31,14 +31,12 @@
+@@ -28,14 +28,12 @@
        'lib_base.gyp:lib_base',
        'lib_rlottie.gyp:lib_rlottie',
        'lib_ffmpeg.gyp:lib_ffmpeg',
@@ -399,7 +414,7 @@ index 9767651f2..181577828 100644
      ],
      'defines': [
        'LOT_BUILD',
-@@ -46,13 +44,10 @@
+@@ -43,13 +41,10 @@
      'include_dirs': [
        '<(src_loc)',
        '<(SHARED_INTERMEDIATE_DIR)',
@@ -417,10 +432,10 @@ index 9767651f2..181577828 100644
      ],
      'sources': [
 diff --git a/Telegram/gyp/lib_mtproto.gyp b/Telegram/gyp/lib_mtproto.gyp
-index b592cb796..464168ede 100644
+index 6adcd346f..9a7830f88 100644
 --- a/Telegram/gyp/lib_mtproto.gyp
 +++ b/Telegram/gyp/lib_mtproto.gyp
-@@ -47,9 +47,9 @@
+@@ -44,9 +44,9 @@
      'include_dirs': [
        '<(src_loc)',
        '<(SHARED_INTERMEDIATE_DIR)',
@@ -434,10 +449,10 @@ index b592cb796..464168ede 100644
      ],
      'sources': [
 diff --git a/Telegram/gyp/lib_scheme.gyp b/Telegram/gyp/lib_scheme.gyp
-index 0c12f240b..629e58da7 100644
+index a2826735e..cf05f4d29 100644
 --- a/Telegram/gyp/lib_scheme.gyp
 +++ b/Telegram/gyp/lib_scheme.gyp
-@@ -35,7 +35,7 @@
+@@ -34,7 +34,7 @@
      'include_dirs': [
        '<(src_loc)',
        '<(SHARED_INTERMEDIATE_DIR)',
@@ -446,20 +461,20 @@ index 0c12f240b..629e58da7 100644
      ],
      'actions': [{
        'action_name': 'codegen_scheme',
-@@ -49,7 +49,7 @@
+@@ -48,7 +48,7 @@
          '<(SHARED_INTERMEDIATE_DIR)/scheme.h',
        ],
        'action': [
 -        'python', '<(src_loc)/codegen/scheme/codegen_scheme.py',
 +        'python3', '<(src_loc)/codegen/scheme/codegen_scheme.py',
          '-o', '<(SHARED_INTERMEDIATE_DIR)',
- 		'<(res_loc)/tl/mtproto.tl',
- 		'<(res_loc)/tl/api.tl',
+         '<(res_loc)/tl/mtproto.tl',
+         '<(res_loc)/tl/api.tl',
 diff --git a/Telegram/gyp/lib_storage.gyp b/Telegram/gyp/lib_storage.gyp
-index d72f4b5a7..f34340d50 100644
+index cd3b6d30c..5c4eab5c0 100644
 --- a/Telegram/gyp/lib_storage.gyp
 +++ b/Telegram/gyp/lib_storage.gyp
-@@ -28,7 +28,6 @@
+@@ -25,7 +25,6 @@
        'pch_header': '<(src_loc)/storage/storage_pch.h',
      },
      'defines': [
@@ -467,7 +482,7 @@ index d72f4b5a7..f34340d50 100644
      ],
      'dependencies': [
        'crl.gyp:crl',
-@@ -41,11 +40,10 @@
+@@ -38,11 +37,10 @@
      'include_dirs': [
        '<(src_loc)',
        '<(SHARED_INTERMEDIATE_DIR)',
@@ -482,10 +497,36 @@ index d72f4b5a7..f34340d50 100644
      ],
      'sources': [
        '<(src_loc)/storage/storage_clear_legacy.cpp',
-diff --git a/Telegram/gyp/qt.gypi b/Telegram/gyp/qt.gypi
+diff --git a/Telegram/gyp/lib_ui.gyp b/Telegram/gyp/lib_ui.gyp
+index fa6bd4ea3..a99cbc9c0 100644
+--- a/Telegram/gyp/lib_ui.gyp
++++ b/Telegram/gyp/lib_ui.gyp
+@@ -39,7 +39,7 @@
+       'dependent_style_files': [
+       ],
+       'style_timestamp': '<(SHARED_INTERMEDIATE_DIR)/update_dependent_styles_ui.timestamp',
+-      'list_sources_command': 'python <(DEPTH)/list_sources.py --input <(DEPTH)/lib_ui/sources.txt --replace src_loc=<(src_loc)',
++      'list_sources_command': 'python3 <(DEPTH)/list_sources.py --input <(DEPTH)/lib_ui/sources.txt --replace src_loc=<(src_loc)',
+       'pch_source': '<(src_loc)/ui/ui_pch.cpp',
+       'pch_header': '<(src_loc)/ui/ui_pch.h',
+     },
+@@ -56,9 +56,9 @@
+     'include_dirs': [
+       '<(src_loc)',
+       '<(SHARED_INTERMEDIATE_DIR)',
+-      '<(libs_loc)/range-v3/include',
+-      '<(submodules_loc)/GSL/include',
+-      '<(submodules_loc)/variant/include',
++      '<!(rpm --eval "%{_includedir}")',
++      '<!(rpm --eval "%{_includedir}")/guidelines-support-library',
++      '<!(rpm --eval "%{_includedir}")/mapbox',
+       '<(submodules_loc)/crl/src',
+       '<(emoji_suggestions_loc)',
+     ],
+diff --git a/Telegram/gyp/modules/qt.gypi b/Telegram/gyp/modules/qt.gypi
 index 0b783ec21..125ab2513 100644
---- a/Telegram/gyp/qt.gypi
-+++ b/Telegram/gyp/qt.gypi
+--- a/Telegram/gyp/modules/qt.gypi
++++ b/Telegram/gyp/modules/qt.gypi
 @@ -14,25 +14,21 @@
                [ 'build_macold', {
                  'qt_version%': '5.3.2',
@@ -653,10 +694,10 @@ index 0b783ec21..125ab2513 100644
          '-pthread',
          '-rdynamic',
        ],
-diff --git a/Telegram/gyp/qt_moc.gypi b/Telegram/gyp/qt_moc.gypi
+diff --git a/Telegram/gyp/modules/qt_moc.gypi b/Telegram/gyp/modules/qt_moc.gypi
 index ebee90a15..3cfb49f25 100644
---- a/Telegram/gyp/qt_moc.gypi
-+++ b/Telegram/gyp/qt_moc.gypi
+--- a/Telegram/gyp/modules/qt_moc.gypi
++++ b/Telegram/gyp/modules/qt_moc.gypi
 @@ -15,12 +15,13 @@
        '<(SHARED_INTERMEDIATE_DIR)/<(_target_name)/moc/moc_<(RULE_INPUT_ROOT).cpp',
      ],
@@ -673,10 +714,10 @@ index ebee90a15..3cfb49f25 100644
        # '<!@(python -c "for s in \'<@(_include_dirs)\'.split(\' \'): print(\'-I\' + s)")',
        '<(RULE_INPUT_PATH)',
        '-o', '<(SHARED_INTERMEDIATE_DIR)/<(_target_name)/moc/moc_<(RULE_INPUT_ROOT).cpp',
-diff --git a/Telegram/gyp/qt_rcc.gypi b/Telegram/gyp/qt_rcc.gypi
+diff --git a/Telegram/gyp/modules/qt_rcc.gypi b/Telegram/gyp/modules/qt_rcc.gypi
 index f5624a82b..b644ce29f 100644
---- a/Telegram/gyp/qt_rcc.gypi
-+++ b/Telegram/gyp/qt_rcc.gypi
+--- a/Telegram/gyp/modules/qt_rcc.gypi
++++ b/Telegram/gyp/modules/qt_rcc.gypi
 @@ -15,7 +15,7 @@
        '<(SHARED_INTERMEDIATE_DIR)/<(_target_name)/qrc/qrc_<(RULE_INPUT_ROOT).cpp',
      ],
@@ -686,63 +727,10 @@ index f5624a82b..b644ce29f 100644
        '-name', '<(RULE_INPUT_ROOT)',
        '-no-compress',
        '<(RULE_INPUT_PATH)',
-diff --git a/Telegram/gyp/settings_linux.gypi b/Telegram/gyp/settings_linux.gypi
-index 17f7a5c9c..726b689ac 100644
---- a/Telegram/gyp/settings_linux.gypi
-+++ b/Telegram/gyp/settings_linux.gypi
-@@ -9,10 +9,6 @@
-     [ 'build_linux', {
-       'variables': {
-         'linux_common_flags': [
--          '-pipe',
--          '-Wall',
--          '-Werror',
--          '-W',
-           '-fPIC',
-           '-Wno-unused-variable',
-           '-Wno-unused-parameter',
-@@ -46,24 +42,10 @@
-               'sources': [ '__Wrong_Official_Build_Target_<(official_build_target)_' ],
-             }],
-           ],
--        }], [ '"<!(uname -p)" == "x86_64"', {
--          # 32 bit version can't be linked with debug info or LTO,
--          # virtual memory exhausted :(
--          'cflags_c': [ '-g' ],
--          'cflags_cc': [ '-g' ],
--          'ldflags': [ '-g' ],
--          'configurations': {
--            'Release': {
--              'cflags_c': [ '-flto' ],
--              'cflags_cc': [ '-flto' ],
--              'ldflags': [ '-flto', '-fuse-linker-plugin' ],
--            },
--          },
--        }]
-+        }],
-       ],
-       'defines': [
-         '_REENTRANT',
--        'QT_STATICPLUGIN',
-         'QT_PLUGIN',
-       ],
-       'cflags_c': [
-@@ -75,11 +57,6 @@
-         '-std=c++1z',
-         '-Wno-register',
-       ],
--      'make_global_settings': [
--        ['AR', '/usr/bin/gcc-ar'],
--        ['RANLIB', '/usr/bin/gcc-ranlib'],
--        ['NM', '/usr/bin/gcc-nm'],
--      ],
-       'configurations': {
-         'Debug': {
-         },
-diff --git a/Telegram/gyp/telegram_linux.gypi b/Telegram/gyp/telegram_linux.gypi
-index ffe0e5a96..4efd97851 100644
---- a/Telegram/gyp/telegram_linux.gypi
-+++ b/Telegram/gyp/telegram_linux.gypi
+diff --git a/Telegram/gyp/telegram/linux.gypi b/Telegram/gyp/telegram/linux.gypi
+index 385f2b89f..9875d7bf8 100644
+--- a/Telegram/gyp/telegram/linux.gypi
++++ b/Telegram/gyp/telegram/linux.gypi
 @@ -10,7 +10,7 @@
        'variables': {
          'build_defines%': '',
@@ -752,76 +740,38 @@ index ffe0e5a96..4efd97851 100644
        'pkgconfig_libs': [
  # In order to work libxkbcommon must be linked statically,
  # PKGCONFIG links it like "-L/usr/local/lib -lxkbcommon"
-@@ -18,51 +18,29 @@
- # QApplication() -> createPlatformIntegration -> QXcbIntegrationPlugin::create
-         #'xkbcommon',
+@@ -20,26 +20,17 @@
        ],
--      'linux_path_ffmpeg%': '/usr/local',
--      'linux_path_openal%': '/usr/local',
--      'linux_path_va%': '/usr/local',
--      'linux_path_vdpau%': '/usr/local',
--      'linux_path_breakpad%': '/usr/local',
--      'linux_path_opus_include%': '<(libs_loc)/opus/include',
--      'linux_path_range%': '/usr/local',
      },
-     'include_dirs': [
--      '/usr/local/include',
--      '<(linux_path_ffmpeg)/include',
--      '<(linux_path_openal)/include',
--      '<(linux_path_breakpad)/include/breakpad',
--      '<(linux_path_opus_include)',
--      '<(linux_path_range)/include',
-+      '<!(rpm --eval "%{_includedir}")',
-+      '<!(rpm --eval "%{_includedir}")/ffmpeg',
-+      '<!(rpm --eval "%{_includedir}")/opus',
-+      '<!(rpm --eval "%{_includedir}")/libtgvoip',
-+      '<!(rpm --eval "%{_includedir}")/guidelines-support-library',
-     ],
-     'library_dirs': [
--      '/usr/local/lib',
--      '<(linux_path_ffmpeg)/lib',
--      '<(linux_path_openal)/lib',
--      '<(linux_path_va)/lib',
--      '<(linux_path_vdpau)/lib',
--      '<(linux_path_breakpad)/lib',
-+      '<!(rpm --eval "%{_libdir}")',
-     ],
      'libraries': [
--      'breakpad_client',
--      'composeplatforminputcontextplugin',
--      'ibusplatforminputcontextplugin',
--      'fcitxplatforminputcontextplugin',
--      'himeplatforminputcontextplugin',
--      'nimfplatforminputcontextplugin',
--      'liblzma.a',
--      'libopenal.a',
--      'libavformat.a',
--      'libavcodec.a',
--      'libswresample.a',
--      'libswscale.a',
--      'libavutil.a',
--      'libopus.a',
--      'libva-x11.a',
--      'libva-drm.a',
--      'libva.a',
--      'libvdpau.a',
--      'libdrm.a',
--      'libz.a',
-+      'openal',
-+      'avformat',
-+      'avcodec',
-+      'swresample',
-+      'swscale',
-+      'avutil',
-+      'z',
-+      'tgvoip',
-+      'lzma',
-+      'xxhash',
-+      'lz4',
+-      '-lbreakpad_client',
+-      '-lcomposeplatforminputcontextplugin',
+-      '-libusplatforminputcontextplugin',
+-      '-lfcitxplatforminputcontextplugin',
+-      '-lhimeplatforminputcontextplugin',
+-      '-lnimfplatforminputcontextplugin',
+-      '-llzma',
+       '-lopenal',
+       '-lavformat',
+       '-lavcodec',
+       '-lswresample',
+       '-lswscale',
+       '-lavutil',
+-      '-lopus',
+-      '-lva-x11',
+-      '-lva-drm',
+-      '-lva',
+-      '-lvdpau',
+-      '-ldrm',
+       '-lz',
++      '-ltgvoip',
++      '-llzma',
++      '-lxxhash',
++      '-llz4',
  #      '<!(pkg-config 2> /dev/null --libs <@(pkgconfig_libs))',
      ],
      'cflags_cc': [
-@@ -70,35 +48,23 @@
+@@ -47,36 +38,23 @@
        '-Wno-maybe-uninitialized',
      ],
      'ldflags': [
@@ -829,6 +779,7 @@ index ffe0e5a96..4efd97851 100644
 -      '-Wl,-wrap,secure_getenv',
 -      '-Wl,-wrap,clock_gettime',
 -      '-Wl,--no-as-needed,-lrt',
+-      '-Wl,-Bstatic',
      ],
      'configurations': {
        'Release': {
@@ -859,11 +810,11 @@ index ffe0e5a96..4efd97851 100644
            '<!(pkg-config 2> /dev/null --cflags dee-1.0)',
          ],
        }], ['<!(pkg-config ayatana-appindicator3-0.1; echo $?) == 0', {
-diff --git a/Telegram/gyp/telegram_sources.txt b/Telegram/gyp/telegram_sources.txt
-index 68da81d05..5ef947a78 100644
---- a/Telegram/gyp/telegram_sources.txt
-+++ b/Telegram/gyp/telegram_sources.txt
-@@ -925,7 +925,7 @@
+diff --git a/Telegram/gyp/telegram/sources.txt b/Telegram/gyp/telegram/sources.txt
+index 38d9d0e64..e69292202 100644
+--- a/Telegram/gyp/telegram/sources.txt
++++ b/Telegram/gyp/telegram/sources.txt
+@@ -859,7 +859,7 @@
  <(src_loc)/mainwindow.h
  <(src_loc)/observer_peer.cpp
  <(src_loc)/observer_peer.h
@@ -871,7 +822,80 @@ index 68da81d05..5ef947a78 100644
 +<(src_loc)/qt_functions.cpp
  <(src_loc)/settings.cpp
  <(src_loc)/settings.h
- <(emoji_suggestions_loc)/emoji_suggestions.cpp
+ 
+diff --git a/Telegram/gyp/telegram/telegram.gypi b/Telegram/gyp/telegram/telegram.gypi
+index c207db637..fe4df2c2d 100644
+--- a/Telegram/gyp/telegram/telegram.gypi
++++ b/Telegram/gyp/telegram/telegram.gypi
+@@ -47,15 +47,13 @@
+         'pt-BR',
+       ],
+       'build_defines%': '',
+-      'list_sources_command': 'python <(DEPTH)/list_sources.py --input <(DEPTH)/telegram/sources.txt --replace src_loc=<(src_loc)',
++      'list_sources_command': 'python3 <(DEPTH)/list_sources.py --input <(DEPTH)/telegram/sources.txt --replace src_loc=<(src_loc)',
+       'pch_source': '<(src_loc)/stdafx.cpp',
+       'pch_header': '<(src_loc)/stdafx.h',
+     },
+     'includes': [
+       '../common/executable.gypi',
+       'qrc.gypi',
+-      'win.gypi',
+-      'mac.gypi',
+       'linux.gypi',
+       '../modules/openssl.gypi',
+       '../modules/qt.gypi',
+@@ -71,9 +69,6 @@
+       'codegen.gyp:codegen_lang',
+       'codegen.gyp:codegen_numbers',
+       'codegen.gyp:codegen_style',
+-      'tests/tests.gyp:tests',
+-      'utils.gyp:Updater',
+-      '../ThirdParty/libtgvoip/libtgvoip.gyp:libtgvoip',
+       'crl.gyp:crl',
+       'lib_base.gyp:lib_base',
+       'lib_export.gyp:lib_export',
+@@ -85,32 +80,19 @@
+     ],
+ 
+     'defines': [
+-      'AL_LIBTYPE_STATIC',
+       'AL_ALEXT_PROTOTYPES',
+       'TGVOIP_USE_CXX11_LIB',
+-      'XXH_INLINE_ALL',
+       'TDESKTOP_API_ID=<(api_id)',
+       'TDESKTOP_API_HASH=<(api_hash)',
+-      '<!@(python -c "for s in \'<(build_defines)\'.split(\',\'): print(s)")',
++      '<!@(python3 -c "for s in \'<(build_defines)\'.split(\',\'): print(s)")',
+     ],
+ 
+     'include_dirs': [
+       '<(src_loc)',
+       '<(SHARED_INTERMEDIATE_DIR)',
+-      '<(libs_loc)/breakpad/src',
+-      '<(libs_loc)/lzma/C',
+-      '<(libs_loc)/zlib',
+-      '<(libs_loc)/ffmpeg',
+-      '<(libs_loc)/openal-soft/include',
+-      '<(libs_loc)/opus/include',
+-      '<(libs_loc)/range-v3/include',
+       '<(minizip_loc)',
+-      '<(sp_media_key_tap_loc)',
+       '<(emoji_suggestions_loc)',
+-      '<(submodules_loc)/GSL/include',
+-      '<(submodules_loc)/variant/include',
+       '<(submodules_loc)/crl/src',
+-      '<(submodules_loc)/xxHash',
+     ],
+     'sources': [
+       '<@(qrc_files)',
+@@ -133,7 +115,6 @@
+           'TDESKTOP_FORCE_GTK_FILE_DIALOG',
+         ],
+         'dependencies': [
+-          'utils.gyp:Packer',
+         ],
+       }], [ 'build_mac', {
+         'mac_hardened_runtime': 1,
 diff --git a/lib/xdg/telegramdesktop.appdata.xml b/lib/xdg/telegramdesktop.appdata.xml
 index 9eedae55c..f90a6b8e7 100644
 --- a/lib/xdg/telegramdesktop.appdata.xml

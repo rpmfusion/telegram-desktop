@@ -1,62 +1,48 @@
-From 3aa7a0864c2139e187fef36cbdb1ad697b92e015 Mon Sep 17 00:00:00 2001
+From 0fac3cadbb6ebd61ada3d13c878948bd70df876d Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Wed, 17 Oct 2018 17:57:59 +0200
 Subject: [PATCH 3/3] Use packaged version of minizip on Fedora <= 29.
 
 ---
- Telegram/gyp/Telegram.gyp         | 2 --
- Telegram/gyp/telegram_linux.gypi  | 2 ++
- Telegram/gyp/telegram_sources.txt | 7 -------
- 3 files changed, 2 insertions(+), 9 deletions(-)
+ Telegram/gyp/common/linux.gypi      | 1 +
+ Telegram/gyp/telegram/linux.gypi    | 1 +
+ Telegram/gyp/telegram/sources.txt   | 8 --------
+ Telegram/gyp/telegram/telegram.gypi | 2 --
+ 4 files changed, 2 insertions(+), 10 deletions(-)
 
-diff --git a/Telegram/gyp/Telegram.gyp b/Telegram/gyp/Telegram.gyp
-index fedb782ca..a1caa989b 100644
---- a/Telegram/gyp/Telegram.gyp
-+++ b/Telegram/gyp/Telegram.gyp
-@@ -18,7 +18,6 @@
-       'src_loc': '../SourceFiles',
-       'res_loc': '../Resources',
-       'submodules_loc': '../ThirdParty',
--      'minizip_loc': '<(submodules_loc)/minizip',
-       'sp_media_key_tap_loc': '<(submodules_loc)/SPMediaKeyTap',
-       'emoji_suggestions_loc': '<(submodules_loc)/emoji_suggestions',
-       'style_files': [
-@@ -92,7 +91,6 @@
-     'include_dirs': [
-       '<(src_loc)',
-       '<(SHARED_INTERMEDIATE_DIR)',
--      '<(minizip_loc)',
-       '<(emoji_suggestions_loc)',
-       '<(submodules_loc)/crl/src',
-     ],
-diff --git a/Telegram/gyp/telegram_linux.gypi b/Telegram/gyp/telegram_linux.gypi
-index 4efd97851..b314ba137 100644
---- a/Telegram/gyp/telegram_linux.gypi
-+++ b/Telegram/gyp/telegram_linux.gypi
-@@ -22,6 +22,7 @@
-     'include_dirs': [
-       '<!(rpm --eval "%{_includedir}")',
-       '<!(rpm --eval "%{_includedir}")/ffmpeg',
-+      '<!(rpm --eval "%{_includedir}")/minizip',
-       '<!(rpm --eval "%{_includedir}")/opus',
-       '<!(rpm --eval "%{_includedir}")/libtgvoip',
-       '<!(rpm --eval "%{_includedir}")/guidelines-support-library',
-@@ -37,6 +38,7 @@
-       'swscale',
-       'avutil',
-       'z',
-+      'minizip',
-       'tgvoip',
-       'lzma',
-       'xxhash',
-diff --git a/Telegram/gyp/telegram_sources.txt b/Telegram/gyp/telegram_sources.txt
-index 5ef947a78..c00992189 100644
---- a/Telegram/gyp/telegram_sources.txt
-+++ b/Telegram/gyp/telegram_sources.txt
-@@ -932,13 +932,6 @@
- <(emoji_suggestions_loc)/emoji_suggestions.h
+diff --git a/Telegram/gyp/common/linux.gypi b/Telegram/gyp/common/linux.gypi
+index 919eb3c8a..d7d5f6c12 100644
+--- a/Telegram/gyp/common/linux.gypi
++++ b/Telegram/gyp/common/linux.gypi
+@@ -26,6 +26,7 @@
+       'include_dirs': [
+         '<!(rpm --eval "%{_includedir}")',
+         '<!(rpm --eval "%{_includedir}")/ffmpeg',
++        '<!(rpm --eval "%{_includedir}")/minizip',
+         '<!(rpm --eval "%{_includedir}")/opus',
+         '<!(rpm --eval "%{_includedir}")/libtgvoip',
+         '<!(rpm --eval "%{_includedir}")/guidelines-support-library',
+diff --git a/Telegram/gyp/telegram/linux.gypi b/Telegram/gyp/telegram/linux.gypi
+index 9875d7bf8..694adbc4d 100644
+--- a/Telegram/gyp/telegram/linux.gypi
++++ b/Telegram/gyp/telegram/linux.gypi
+@@ -27,6 +27,7 @@
+       '-lswscale',
+       '-lavutil',
+       '-lz',
++      '-lminizip',
+       '-ltgvoip',
+       '-llzma',
+       '-lxxhash',
+diff --git a/Telegram/gyp/telegram/sources.txt b/Telegram/gyp/telegram/sources.txt
+index e69292202..547e9861a 100644
+--- a/Telegram/gyp/telegram/sources.txt
++++ b/Telegram/gyp/telegram/sources.txt
+@@ -863,14 +863,6 @@
+ <(src_loc)/settings.cpp
+ <(src_loc)/settings.h
  
- platforms: !win
+-platforms: !win
 -<(minizip_loc)/crypt.h
 -<(minizip_loc)/ioapi.c
 -<(minizip_loc)/ioapi.h
@@ -67,6 +53,26 @@ index 5ef947a78..c00992189 100644
  
  platforms: win
  <(res_loc)/winrc/Telegram.rc
+diff --git a/Telegram/gyp/telegram/telegram.gypi b/Telegram/gyp/telegram/telegram.gypi
+index fe4df2c2d..22649c077 100644
+--- a/Telegram/gyp/telegram/telegram.gypi
++++ b/Telegram/gyp/telegram/telegram.gypi
+@@ -11,7 +11,6 @@
+       'src_loc': '../SourceFiles',
+       'res_loc': '../Resources',
+       'submodules_loc': '../ThirdParty',
+-      'minizip_loc': '<(submodules_loc)/minizip',
+       'sp_media_key_tap_loc': '<(submodules_loc)/SPMediaKeyTap',
+       'emoji_suggestions_loc': '<(submodules_loc)/emoji_suggestions',
+       'style_files': [
+@@ -90,7 +89,6 @@
+     'include_dirs': [
+       '<(src_loc)',
+       '<(SHARED_INTERMEDIATE_DIR)',
+-      '<(minizip_loc)',
+       '<(emoji_suggestions_loc)',
+       '<(submodules_loc)/crl/src',
+     ],
 -- 
 2.21.0
 

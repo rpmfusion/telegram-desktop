@@ -1,4 +1,4 @@
-From 8b73e1d91f24f65fa2e75a4ffbfd06ac0fbb9046 Mon Sep 17 00:00:00 2001
+From 7bb2cc4a814035d774ccd46e2b2ac313dcfcef34 Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Sun, 24 Jun 2018 22:59:34 +0200
 Subject: [PATCH 2/3] Backported and rebased patch from Debian maintainer
@@ -6,38 +6,36 @@ Subject: [PATCH 2/3] Backported and rebased patch from Debian maintainer
  will use packaged versions.
 
 ---
- Telegram/Resources/qrc/telegram.qrc | 3 ---
- Telegram/SourceFiles/ui/twidget.cpp | 6 +++---
- 2 files changed, 3 insertions(+), 6 deletions(-)
+ Telegram/Resources/qrc/fonts.qrc                  | 5 -----
+ Telegram/SourceFiles/ui/style/style_core_font.cpp | 6 +++---
+ 2 files changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/Telegram/Resources/qrc/telegram.qrc b/Telegram/Resources/qrc/telegram.qrc
-index 4db29b204..52028412c 100644
---- a/Telegram/Resources/qrc/telegram.qrc
-+++ b/Telegram/Resources/qrc/telegram.qrc
-@@ -42,9 +42,6 @@
-     <file alias="js/script.js">../export_html/js/script.js</file>
-   </qresource>
-   <qresource prefix="/gui">
+diff --git a/Telegram/Resources/qrc/fonts.qrc b/Telegram/Resources/qrc/fonts.qrc
+index 233b8d572..03585ec03 100644
+--- a/Telegram/Resources/qrc/fonts.qrc
++++ b/Telegram/Resources/qrc/fonts.qrc
+@@ -1,7 +1,2 @@
+ <RCC>
+-  <qresource prefix="/gui">
 -    <file alias="fonts/OpenSans-Regular.ttf">../fonts/OpenSans-Regular.ttf</file>
 -    <file alias="fonts/OpenSans-Bold.ttf">../fonts/OpenSans-Bold.ttf</file>
 -    <file alias="fonts/OpenSans-Semibold.ttf">../fonts/OpenSans-Semibold.ttf</file>
-     <file alias="art/bg.jpg">../art/bg.jpg</file>
-     <file alias="art/bg_initial.jpg">../art/bg_initial.jpg</file>
-     <file alias="art/logo_256.png">../art/logo_256.png</file>
-diff --git a/Telegram/SourceFiles/ui/twidget.cpp b/Telegram/SourceFiles/ui/twidget.cpp
-index 37b2872a0..e48354e0e 100644
---- a/Telegram/SourceFiles/ui/twidget.cpp
-+++ b/Telegram/SourceFiles/ui/twidget.cpp
-@@ -75,9 +75,9 @@ void Start() {
+-  </qresource>
+ </RCC>
+diff --git a/Telegram/SourceFiles/ui/style/style_core_font.cpp b/Telegram/SourceFiles/ui/style/style_core_font.cpp
+index 653dbfff0..62527327f 100644
+--- a/Telegram/SourceFiles/ui/style/style_core_font.cpp
++++ b/Telegram/SourceFiles/ui/style/style_core_font.cpp
+@@ -84,9 +84,9 @@ void StartFonts() {
  	}
  	Started = true;
  
--	auto regular = LoadCustomFont(qsl(":/gui/fonts/OpenSans-Regular.ttf"), qsl("Open Sans"));
--	auto bold = LoadCustomFont(qsl(":/gui/fonts/OpenSans-Bold.ttf"), qsl("Open Sans"), style::internal::FontBold);
--	auto semibold = LoadCustomFont(qsl(":/gui/fonts/OpenSans-Semibold.ttf"), qsl("Open Sans Semibold"));
-+	auto regular = ValidateFont(qsl("Open Sans"));
-+	auto bold = ValidateFont(qsl("Open Sans"), style::internal::FontBold);
-+	auto semibold = ValidateFont(qsl("Open Sans Semibold"));
+-	auto regular = LoadCustomFont(":/gui/fonts/OpenSans-Regular.ttf", "Open Sans");
+-	auto bold = LoadCustomFont(":/gui/fonts/OpenSans-Bold.ttf", "Open Sans", style::internal::FontBold);
+-	auto semibold = LoadCustomFont(":/gui/fonts/OpenSans-Semibold.ttf", "Open Sans Semibold");
++	auto regular = ValidateFont(QStringLiteral("Open Sans"));
++	auto bold = ValidateFont(QStringLiteral("Open Sans"), style::internal::FontBold);
++	auto semibold = ValidateFont(QStringLiteral("Open Sans Semibold"));
  
  #ifdef Q_OS_WIN
  	// Attempt to workaround a strange font bug with Open Sans Semibold not loading.

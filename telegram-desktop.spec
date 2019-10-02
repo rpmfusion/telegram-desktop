@@ -28,7 +28,7 @@
 
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
-Version: 1.8.9
+Version: 1.8.12
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -77,11 +77,11 @@ BuildRequires: guidelines-support-library-devel >= 1.0.0
 BuildRequires: mapbox-variant-devel >= 0.3.6
 BuildRequires: qt5-qtbase-private-devel
 BuildRequires: libtgvoip-devel >= 2.4.4
+BuildRequires: range-v3-devel >= 0.9.1
 BuildRequires: ffmpeg-devel >= 3.1
 BuildRequires: openal-soft-devel
 BuildRequires: qt5-qtbase-devel
 BuildRequires: libstdc++-devel
-BuildRequires: range-v3-devel
 BuildRequires: openssl-devel
 BuildRequires: xxhash-devel
 BuildRequires: json11-devel
@@ -216,6 +216,12 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.appdat
 %{_metainfodir}/%{name}.appdata.xml
 
 %changelog
+* Wed Oct 02 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.12-1
+- Updated to 1.8.12.
+
+* Wed Oct 02 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.11-1
+- Updated to 1.8.11.
+
 * Sat Sep 28 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.9-1
 - Updated to 1.8.9.
 
