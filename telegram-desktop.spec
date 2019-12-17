@@ -29,7 +29,7 @@
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
 Version: 1.8.15
-Release: 1%{?dist}
+Release: 2%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
@@ -216,20 +216,12 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.appdat
 %{_metainfodir}/%{name}.appdata.xml
 
 %changelog
+* Tue Dec 17 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.15-2
+- Fixed issue with menu bar on Gnome.
+- Rebuilt due to Qt 5.13.2 update on Rawhide.
+
 * Wed Oct 09 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.15-1
 - Updated to version 1.8.15.
 
 * Thu Oct 03 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.13-1
 - Updated to version 1.8.13.
-
-* Wed Oct 02 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.12-1
-- Updated to version 1.8.12.
-
-* Wed Oct 02 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.11-1
-- Updated to version 1.8.11.
-
-* Sat Sep 28 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.9-1
-- Updated to version 1.8.9.
-
-* Tue Sep 10 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.8-1
-- Updated to version 1.8.8.
