@@ -85,16 +85,16 @@ BuildRequires: libstdc++-devel
 BuildRequires: openssl-devel
 BuildRequires: xxhash-devel
 BuildRequires: json11-devel
-BuildRequires: glib2-devel
 BuildRequires: opus-devel
 BuildRequires: lz4-devel
 BuildRequires: xz-devel
 BuildRequires: python3
 
 %if %{with gtk3}
-Recommends: libappindicator-gtk3%{?_isa}
 BuildRequires: libappindicator-gtk3-devel
+BuildRequires: glib2-devel
 BuildRequires: gtk3-devel
+Recommends: libappindicator-gtk3%{?_isa}
 Requires: gtk3%{?_isa}
 %endif
 
@@ -224,6 +224,3 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.appdat
 
 * Wed Oct 09 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.15-1
 - Updated to version 1.8.15.
-
-* Thu Oct 03 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.13-1
-- Updated to version 1.8.13.
