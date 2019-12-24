@@ -1,4 +1,4 @@
-From 91740b4965c378195e7dd19f331f7170b98db067 Mon Sep 17 00:00:00 2001
+From 72a41c239ba55ac173955854dee4f3d86f0d225d Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Wed, 17 Oct 2018 17:57:59 +0200
 Subject: [PATCH 3/3] Use packaged version of minizip on Fedora <= 29.
@@ -23,7 +23,7 @@ index 919eb3c8a..d7d5f6c12 100644
          '<!(rpm --eval "%{_includedir}")/libtgvoip',
          '<!(rpm --eval "%{_includedir}")/guidelines-support-library',
 diff --git a/Telegram/gyp/telegram/linux.gypi b/Telegram/gyp/telegram/linux.gypi
-index b32c45bf2..009e54c3f 100644
+index 7f0dcaa99..702ecaf51 100644
 --- a/Telegram/gyp/telegram/linux.gypi
 +++ b/Telegram/gyp/telegram/linux.gypi
 @@ -29,6 +29,7 @@
@@ -74,5 +74,5 @@ index fe4df2c2d..22649c077 100644
        '<(submodules_loc)/crl/src',
      ],
 -- 
-2.23.0
+2.24.1
 

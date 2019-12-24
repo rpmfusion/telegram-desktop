@@ -29,7 +29,7 @@
 Summary: Telegram Desktop official messaging app
 Name: telegram-desktop
 Version: 1.8.15
-Release: 2%{?dist}
+Release: 3%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * S0 (Telegram Desktop) - GPLv3+ with OpenSSL exception -- main source;
@@ -93,9 +93,8 @@ BuildRequires: python3
 
 %if %{with gtk3}
 Recommends: libappindicator-gtk3%{?_isa}
-BuildRequires: libappindicator-devel
+BuildRequires: libappindicator-gtk3-devel
 BuildRequires: gtk3-devel
-BuildRequires: dee-devel
 Requires: gtk3%{?_isa}
 %endif
 
@@ -216,6 +215,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.appdat
 %{_metainfodir}/%{name}.appdata.xml
 
 %changelog
+* Tue Dec 24 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.15-3
+- Removed GTK2 from build requirements.
+
 * Tue Dec 17 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.15-2
 - Fixed issue with menu bar on Gnome.
 - Rebuilt due to Qt 5.13.2 update on Rawhide.

@@ -1,4 +1,4 @@
-From 75ffaa10720678f6776c9da690ab78e84e2a9d4c Mon Sep 17 00:00:00 2001
+From 7dae800678004cf3365d02c582ffb1ffdd571bde Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Sun, 24 Jun 2018 22:59:34 +0200
 Subject: [PATCH 2/3] Backported and rebased patch from Debian maintainer
@@ -40,5 +40,5 @@ index 653dbfff0..62527327f 100644
  #ifdef Q_OS_WIN
  	// Attempt to workaround a strange font bug with Open Sans Semibold not loading.
 -- 
-2.23.0
+2.24.1
 
