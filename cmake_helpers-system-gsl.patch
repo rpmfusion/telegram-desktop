@@ -1,0 +1,32 @@
+From 5a25232dbf1b69e7497602e1d439115b76d0f9ff Mon Sep 17 00:00:00 2001
+From: Vitaly Zaitsev <vitaly@easycoding.org>
+Date: Thu, 9 Jan 2020 14:43:15 +0100
+Subject: [PATCH 3/5] Use packaged version of guidelines-support-library.
+
+---
+ external/gsl/CMakeLists.txt | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/external/gsl/CMakeLists.txt b/external/gsl/CMakeLists.txt
+index c7a0883..84c8632 100644
+--- a/external/gsl/CMakeLists.txt
++++ b/external/gsl/CMakeLists.txt
+@@ -7,7 +7,11 @@
+ add_library(external_gsl INTERFACE IMPORTED GLOBAL)
+ add_library(desktop-app::external_gsl ALIAS external_gsl)
+ 
+-target_include_directories(external_gsl SYSTEM
+-INTERFACE
+-    ${third_party_loc}/GSL/include
+-)
++if (DESKTOP_APP_USE_PACKAGED)
++    target_include_directories(external_gsl INTERFACE "${INCLUDE_INSTALL_DIR}/guidelines-support-library")
++else()
++    target_include_directories(external_gsl SYSTEM
++    INTERFACE
++        ${third_party_loc}/GSL/include
++    )
++endif()
+-- 
+2.24.1
+

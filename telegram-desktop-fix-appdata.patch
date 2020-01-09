@@ -1,0 +1,24 @@
+From aa1bf7309fad9d556551756e5501cf0306955dd2 Mon Sep 17 00:00:00 2001
+From: Vitaly Zaitsev <vitaly@easycoding.org>
+Date: Thu, 9 Jan 2020 15:06:32 +0100
+Subject: [PATCH 2/2] Updated AppData file.
+
+---
+ lib/xdg/telegramdesktop.appdata.xml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/xdg/telegramdesktop.appdata.xml b/lib/xdg/telegramdesktop.appdata.xml
+index 9eedae55c..f90a6b8e7 100644
+--- a/lib/xdg/telegramdesktop.appdata.xml
++++ b/lib/xdg/telegramdesktop.appdata.xml
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <component type="desktop">
+-    <id>org.telegram.desktop</id>
++    <id>telegram-desktop.desktop</id>
+     <metadata_license>CC0-1.0</metadata_license>
+     <project_license>GPL-3.0</project_license>
+     <name>Telegram Desktop</name>
+-- 
+2.24.1
+

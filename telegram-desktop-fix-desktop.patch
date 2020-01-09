@@ -1,0 +1,29 @@
+From 6503d4a1943f0a43ab31e20563d1ce5d2b0eaf18 Mon Sep 17 00:00:00 2001
+From: Vitaly Zaitsev <vitaly@easycoding.org>
+Date: Thu, 9 Jan 2020 15:05:52 +0100
+Subject: [PATCH 1/2] Updated desktop file.
+
+---
+ lib/xdg/telegramdesktop.desktop | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/lib/xdg/telegramdesktop.desktop b/lib/xdg/telegramdesktop.desktop
+index 858a8268e..a6773b62a 100644
+--- a/lib/xdg/telegramdesktop.desktop
++++ b/lib/xdg/telegramdesktop.desktop
+@@ -1,9 +1,10 @@
+ [Desktop Entry]
+ Version=1.0
+ Name=Telegram Desktop
++GenericName=Telegram Desktop
+ Comment=Official desktop version of Telegram messaging app
+-Exec=telegram-desktop -- %u
+-Icon=telegram
++Exec=/usr/bin/telegram-desktop -- %u
++Icon=telegram-desktop
+ Terminal=false
+ StartupWMClass=TelegramDesktop
+ Type=Application
+-- 
+2.24.1
+

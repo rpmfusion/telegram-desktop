@@ -1,0 +1,32 @@
+From 506b42ad9db309231e21e33bcc35995a135261c0 Mon Sep 17 00:00:00 2001
+From: Vitaly Zaitsev <vitaly@easycoding.org>
+Date: Thu, 9 Jan 2020 14:42:45 +0100
+Subject: [PATCH 2/5] Use packaged version of expected library.
+
+---
+ external/expected/CMakeLists.txt | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/external/expected/CMakeLists.txt b/external/expected/CMakeLists.txt
+index 53ec233..a9c78c7 100644
+--- a/external/expected/CMakeLists.txt
++++ b/external/expected/CMakeLists.txt
+@@ -7,7 +7,11 @@
+ add_library(external_expected INTERFACE IMPORTED GLOBAL)
+ add_library(desktop-app::external_expected ALIAS external_expected)
+ 
+-target_include_directories(external_expected SYSTEM
+-INTERFACE
+-    ${third_party_loc}/expected/include
+-)
++if (DESKTOP_APP_USE_PACKAGED)
++    find_package(tl-expected CONFIG REQUIRED)
++else()
++    target_include_directories(external_expected SYSTEM
++    INTERFACE
++        ${third_party_loc}/expected/include
++    )
++endif()
+-- 
+2.24.1
+

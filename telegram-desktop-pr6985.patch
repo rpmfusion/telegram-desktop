@@ -1,0 +1,30 @@
+From 99c1e1140e12081175bd1c5d231982eac8b146bf Mon Sep 17 00:00:00 2001
+From: Vitaly Zaitsev <vitaly@easycoding.org>
+Date: Thu, 9 Jan 2020 15:50:01 +0100
+Subject: [PATCH] Fixed TDESKTOP_LAUNCHER_FILENAME option.
+
+Signed-off-by: Vitaly Zaitsev <vitaly@easycoding.org>
+---
+ Telegram/cmake/telegram_options.cmake | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/Telegram/cmake/telegram_options.cmake b/Telegram/cmake/telegram_options.cmake
+index cb721e5903..0a2deb9204 100644
+--- a/Telegram/cmake/telegram_options.cmake
++++ b/Telegram/cmake/telegram_options.cmake
+@@ -12,6 +12,7 @@ option(TDESKTOP_DISABLE_GTK_INTEGRATION "Disable all code for GTK integration (L
+ option(TDESKTOP_API_TEST "Use test API credentials." OFF)
+ set(TDESKTOP_API_ID "0" CACHE STRING "Provide 'api_id' for the Telegram API access.")
+ set(TDESKTOP_API_HASH "" CACHE STRING "Provide 'api_hash' for the Telegram API access.")
++set(TDESKTOP_LAUNCHER_FILENAME "" CACHE STRING "Use custom desktop file name (Linux only).")
+ 
+ if (TDESKTOP_API_TEST)
+     set(TDESKTOP_API_ID 17349)
+@@ -82,3 +83,7 @@ endif()
+ if (TDESKTOP_DISABLE_GTK_INTEGRATION)
+     target_compile_definitions(Telegram PRIVATE TDESKTOP_DISABLE_GTK_INTEGRATION)
+ endif()
++
++if (TDESKTOP_LAUNCHER_FILENAME)
++    target_compile_definitions(Telegram PRIVATE TDESKTOP_LAUNCHER_FILENAME=${TDESKTOP_LAUNCHER_FILENAME})
++endif()
