@@ -1,7 +1,7 @@
-From 08551b891e74445c6d7093edc1db54a819d7268b Mon Sep 17 00:00:00 2001
+From 539fe57aa89160ef775fe6995dd7173bd040a8e3 Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Thu, 9 Jan 2020 14:44:54 +0100
-Subject: [PATCH 5/5] Use packaged version of mapbox-variant library.
+Subject: [PATCH 4/4] Use packaged version of mapbox-variant library.
 
 ---
  external/variant/CMakeLists.txt | 13 +++++++++----

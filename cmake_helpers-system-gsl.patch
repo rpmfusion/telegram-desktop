@@ -1,7 +1,7 @@
-From 5a25232dbf1b69e7497602e1d439115b76d0f9ff Mon Sep 17 00:00:00 2001
+From 5365f0e2a6228873b4ac625d113d9d1a733abe2c Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Thu, 9 Jan 2020 14:43:15 +0100
-Subject: [PATCH 3/5] Use packaged version of guidelines-support-library.
+Subject: [PATCH 2/4] Use packaged version of guidelines-support-library.
 
 ---
  external/gsl/CMakeLists.txt | 12 ++++++++----

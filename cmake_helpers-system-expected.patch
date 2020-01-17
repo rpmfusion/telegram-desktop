@@ -1,7 +1,7 @@
-From 506b42ad9db309231e21e33bcc35995a135261c0 Mon Sep 17 00:00:00 2001
+From 03300739a87eba33e28f0ee5299745f9100bb0c9 Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Thu, 9 Jan 2020 14:42:45 +0100
-Subject: [PATCH 2/5] Use packaged version of expected library.
+Subject: [PATCH 1/4] Use packaged version of expected library.
 
 ---
  external/expected/CMakeLists.txt | 12 ++++++++----

@@ -9,7 +9,7 @@
 %global apihash dfbe1bc42dc9d20507e17d1814cc2f0a
 
 # Git revision of cmake_helpers...
-%global commit1 652bbaf002546ae1822fff4474ffe95091bfc2e4
+%global commit1 458fec94999b82145bffaaab114ee9baa8708dd3
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 
 # Git revision of patched rlottie...
@@ -21,7 +21,7 @@
 %global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
 
 # Git revision of lib_base...
-%global commit4 baae6cdd9ba5216732222e7dec9a76b9ea3a7c83
+%global commit4 8ba86078fbe71ab857ee1b6e35acc4def4cc0d1c
 %global shortcommit4 %(c=%{commit4}; echo ${c:0:7})
 
 # Git revision of lib_lottie...
@@ -37,7 +37,7 @@
 %global shortcommit7 %(c=%{commit7}; echo ${c:0:7})
 
 # Git revision of lib_spellcheck...
-%global commit8 d305de6d67ca4f3891bad96a0e49e40f5c904189
+%global commit8 47847963bf491dfd266da916478de5cc479342f6
 %global shortcommit8 %(c=%{commit8}; echo ${c:0:7})
 
 # Git revision of lib_storage...
@@ -49,7 +49,7 @@
 %global shortcommit10 %(c=%{commit10}; echo ${c:0:7})
 
 # Git revision of lib_ui...
-%global commit11 4ec9e32f8f5f6b8192fd60d73ae0b575e82c1c60
+%global commit11 c0b07457fa5df905f7926025302f66065dc4d52b
 %global shortcommit11 %(c=%{commit11}; echo ${c:0:7})
 
 # Git revision of codegen...
@@ -62,7 +62,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 1.9.3
+Version: 1.9.4
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -97,14 +97,6 @@ Patch10: cmake_helpers-system-expected.patch
 Patch11: cmake_helpers-system-gsl.patch
 Patch12: cmake_helpers-system-qrcode.patch
 Patch13: cmake_helpers-system-variant.patch
-Patch20: lib_ui-remove-configs.patch
-
-# Temporary upstream and proposed to upstream patches...
-Patch100: %{name}-pr6956.patch
-Patch101: cmake_helpers-system-libraries.patch
-Patch102: %{name}-commit-100fed3.patch
-Patch103: %{name}-commit-322367c.patch
-Patch104: %{name}-pr6985.patch
 
 %{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
 Requires: qt5-qtimageformats%{?_isa}
@@ -127,7 +119,7 @@ BuildRequires: guidelines-support-library-devel >= 1.0.0
 BuildRequires: mapbox-variant-devel >= 0.3.6
 BuildRequires: qt5-qtbase-private-devel
 BuildRequires: libtgvoip-devel >= 2.4.4
-BuildRequires: range-v3-devel >= 0.9.1
+BuildRequires: range-v3-devel >= 0.10.0
 BuildRequires: libqrcodegencpp-devel
 BuildRequires: ffmpeg-devel >= 3.1
 BuildRequires: openal-soft-devel
@@ -260,6 +252,7 @@ pushd Telegram
     rm -rf lib_ui
     tar -xf %{SOURCE11}
     mv lib_ui-%{commit11} lib_ui
+    rm -f lib_ui/qt_conf/linux.qrc
 popd
 
 # Unpacking codegen...
@@ -272,20 +265,12 @@ popd
 # Applying patches for core application...
 %patch0 -p1 -b .desktop
 %patch1 -p1 -b .appdata
-%patch102 -p1 -b .commit-100fed3
-%patch103 -p1 -b .commit-322367c
-%patch100 -p1 -b .pr6956
-%patch104 -p1 -b .pr6985
 
 # Applying patches for build system...
-%patch101 -d cmake -p1 -b .system-libraries
 %patch10 -d cmake -p1 -b .system-expected
 %patch11 -d cmake -p1 -b .system-gsl
 %patch12 -d cmake -p1 -b .system-qrcode
 %patch13 -d cmake -p1 -b .system-variant
-
-# Applying patches for lib_ui...
-%patch20 -d Telegram/lib_ui -p1 -b .remove-configs
 
 %build
 # Building Telegram Desktop using cmake...
@@ -358,12 +343,11 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.appdat
 %{_metainfodir}/%{name}.appdata.xml
 
 %changelog
+* Fri Jan 17 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.4-1
+- Updated to version 1.9.4.
+
 * Thu Jan 09 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.3-1
 - Updated to version 1.9.3.
 
 * Tue Dec 24 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.15-3
 - Removed GTK2 from build requirements.
-
-* Tue Dec 17 2019 Vitaly Zaitsev <vitaly@easycoding.org> - 1.8.15-2
-- Fixed issue with menu bar on Gnome.
-- Rebuilt due to Qt 5.13.2 update on Rawhide.

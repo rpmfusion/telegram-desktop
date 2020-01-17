@@ -1,7 +1,7 @@
-From 82de89301519043e392c4475f7aee5c24e94fd69 Mon Sep 17 00:00:00 2001
+From fee202d3b1f86a2a1d63c8f7eb828deb439a3d85 Mon Sep 17 00:00:00 2001
 From: Vitaly Zaitsev <vitaly@easycoding.org>
 Date: Thu, 9 Jan 2020 14:44:11 +0100
-Subject: [PATCH 4/5] Use packaged version of qr-code-generator library.
+Subject: [PATCH 3/4] Use packaged version of qr-code-generator library.
 
 ---
  external/qr_code_generator/CMakeLists.txt | 41 +++++++++++++----------
