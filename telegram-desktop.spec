@@ -314,7 +314,7 @@ mkdir -p %{buildroot}%{_bindir}
 install -m 0755 -p %{_target_platform}/bin/Telegram %{buildroot}%{_bindir}/%{name}
 
 # Installing desktop shortcut...
-desktop-file-install --copy-name-to-generic-name --dir=%{buildroot}%{_datadir}/applications lib/xdg/%{launcher}.desktop
+desktop-file-install --set-key=Exec --set-value=%{_bindir}/%{name} --copy-name-to-generic-name --dir=%{buildroot}%{_datadir}/applications lib/xdg/%{launcher}.desktop
 
 # Installing icons...
 for size in 16 32 48 64 128 256 512; do
