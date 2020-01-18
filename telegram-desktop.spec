@@ -5,6 +5,9 @@
 
 # Telegram Desktop's constants...
 %global appname tdesktop
+%global launcher telegramdesktop
+
+# Telegram API tokens...
 %global apiid 208164
 %global apihash dfbe1bc42dc9d20507e17d1814cc2f0a
 
@@ -300,7 +303,7 @@ pushd %{_target_platform}
     -DTDESKTOP_DISABLE_AUTOUPDATE:BOOL=ON \
     -DTDESKTOP_DISABLE_REGISTER_CUSTOM_SCHEME:BOOL=ON \
     -DTDESKTOP_DISABLE_DESKTOP_FILE_GENERATION:BOOL=ON \
-    -DTDESKTOP_LAUNCHER_FILENAME=telegramdesktop.desktop \
+    -DTDESKTOP_LAUNCHER_FILENAME=%{launcher}.desktop \
     ..
 popd
 %ninja_build -C %{_target_platform}
@@ -311,7 +314,7 @@ mkdir -p %{buildroot}%{_bindir}
 install -m 0755 -p %{_target_platform}/bin/Telegram %{buildroot}%{_bindir}/%{name}
 
 # Installing desktop shortcut...
-desktop-file-install --copy-name-to-generic-name --dir=%{buildroot}%{_datadir}/applications lib/xdg/telegramdesktop.desktop
+desktop-file-install --copy-name-to-generic-name --dir=%{buildroot}%{_datadir}/applications lib/xdg/%{launcher}.desktop
 
 # Installing icons...
 for size in 16 32 48 64 128 256 512; do
@@ -322,18 +325,18 @@ done
 
 # Installing appdata for Gnome Software...
 install -d %{buildroot}%{_metainfodir}
-install -m 0644 -p lib/xdg/telegramdesktop.appdata.xml %{buildroot}%{_metainfodir}
+install -m 0644 -p lib/xdg/telegramdesktop.appdata.xml %{buildroot}%{_metainfodir}/%{launcher}.appdata.xml
 
 %check
-appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/*.appdata.xml
+appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{launcher}.appdata.xml
 
 %files
 %doc README.md changelog.txt
 %license LICENSE LEGAL
 %{_bindir}/%{name}
-%{_datadir}/applications/*.desktop
+%{_datadir}/applications/%{launcher}.desktop
 %{_datadir}/icons/hicolor/*/apps/*.png
-%{_metainfodir}/*.appdata.xml
+%{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
 * Fri Jan 17 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.4-1
