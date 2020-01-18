@@ -300,7 +300,7 @@ pushd %{_target_platform}
     -DTDESKTOP_DISABLE_AUTOUPDATE:BOOL=ON \
     -DTDESKTOP_DISABLE_REGISTER_CUSTOM_SCHEME:BOOL=ON \
     -DTDESKTOP_DISABLE_DESKTOP_FILE_GENERATION:BOOL=ON \
-    -DTDESKTOP_LAUNCHER_FILENAME=%{name}.desktop \
+    -DTDESKTOP_LAUNCHER_FILENAME=telegramdesktop.desktop \
     ..
 popd
 %ninja_build -C %{_target_platform}
