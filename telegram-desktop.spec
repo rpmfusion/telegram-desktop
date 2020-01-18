@@ -91,8 +91,6 @@ Source11: https://github.com/desktop-app/lib_ui/archive/%{commit11}/lib_ui-%{sho
 Source12: https://github.com/desktop-app/codegen/archive/%{commit12}/codegen-%{shortcommit12}.tar.gz
 
 # Permanent downstream patches...
-Patch0: %{name}-fix-desktop.patch
-Patch1: %{name}-fix-appdata.patch
 Patch10: cmake_helpers-system-expected.patch
 Patch11: cmake_helpers-system-gsl.patch
 Patch12: cmake_helpers-system-qrcode.patch
@@ -262,10 +260,6 @@ pushd Telegram
     mv codegen-%{commit12} codegen
 popd
 
-# Applying patches for core application...
-%patch0 -p1 -b .desktop
-%patch1 -p1 -b .appdata
-
 # Applying patches for build system...
 %patch10 -d cmake -p1 -b .system-expected
 %patch11 -d cmake -p1 -b .system-gsl
@@ -317,34 +311,34 @@ mkdir -p %{buildroot}%{_bindir}
 install -m 0755 -p %{_target_platform}/bin/Telegram %{buildroot}%{_bindir}/%{name}
 
 # Installing desktop shortcut...
-mv lib/xdg/telegramdesktop.desktop lib/xdg/%{name}.desktop
-desktop-file-install --dir=%{buildroot}%{_datadir}/applications lib/xdg/%{name}.desktop
+desktop-file-install --copy-name-to-generic-name --dir=%{buildroot}%{_datadir}/applications lib/xdg/telegramdesktop.desktop
 
 # Installing icons...
 for size in 16 32 48 64 128 256 512; do
     dir=%{buildroot}%{_datadir}/icons/hicolor/${size}x${size}/apps
     install -d $dir
-    install -m 0644 -p Telegram/Resources/art/icon${size}.png $dir/%{name}.png
+    install -m 0644 -p Telegram/Resources/art/icon${size}.png $dir/telegram.png
 done
 
 # Installing appdata for Gnome Software...
 install -d %{buildroot}%{_metainfodir}
-install -m 0644 -p lib/xdg/telegramdesktop.appdata.xml %{buildroot}%{_metainfodir}/%{name}.appdata.xml
+install -m 0644 -p lib/xdg/telegramdesktop.appdata.xml %{buildroot}%{_metainfodir}
 
 %check
-appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.appdata.xml
+appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/*.appdata.xml
 
 %files
 %doc README.md changelog.txt
 %license LICENSE LEGAL
 %{_bindir}/%{name}
-%{_datadir}/applications/%{name}.desktop
-%{_datadir}/icons/hicolor/*/apps/%{name}.png
-%{_metainfodir}/%{name}.appdata.xml
+%{_datadir}/applications/*.desktop
+%{_datadir}/icons/hicolor/*/apps/*.png
+%{_metainfodir}/*.appdata.xml
 
 %changelog
 * Fri Jan 17 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.4-1
 - Updated to version 1.9.4.
+- Removed obsolete downstream patches.
 
 * Thu Jan 09 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.3-1
 - Updated to version 1.9.3.
