@@ -1,10 +1,6 @@
 # Build conditionals...
 %bcond_with gtk3
-%if 0%{?fedora} && %{?fedora} >= 32
-%bcond_without clang
-%else
 %bcond_with clang
-%endif
 %bcond_with spellcheck
 %bcond_without fonts
 
@@ -193,7 +189,6 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %changelog
 * Thu Jan 23 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.7-2
 - Fixed desktop launcher. Regression introduced in previous build.
-- Temporary switched to clang compiler on Fedora 32+ due to GCC 10 regressions.
 
 * Thu Jan 23 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.7-1
 - Updated to version 1.9.7.
