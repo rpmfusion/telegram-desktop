@@ -24,7 +24,7 @@
 
 Name: telegram-desktop
 Version: 1.9.7
-Release: 1%{?dist}
+Release: 2%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
@@ -132,7 +132,7 @@ mkdir -p %{_target_platform}
 rm -rf Telegram/ThirdParty/{Catch,GSL,QR,SPMediaKeyTap,expected,libtgvoip,lz4,minizip,variant,xxHash}
 
 # Patching default desktop file...
-desktop-file-edit --set-key=Exec --set-value=%{_bindir}/%{name} --copy-name-to-generic-name lib/xdg/telegramdesktop.desktop
+desktop-file-edit --set-key=Exec --set-value="%{_bindir}/%{name} -- %u" --copy-name-to-generic-name lib/xdg/telegramdesktop.desktop
 
 %build
 # Building Telegram Desktop using cmake...
@@ -191,12 +191,13 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Thu Jan 23 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.7-2
+- Fixed desktop launcher. Regression introduced in previous build.
+- Temporary switched to clang compiler on Fedora 32+ due to GCC 10 regressions.
+
 * Thu Jan 23 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.7-1
 - Updated to version 1.9.7.
 
 * Fri Jan 17 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.4-1
 - Updated to version 1.9.4.
 - Removed obsolete downstream patches.
-
-* Thu Jan 09 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.3-1
-- Updated to version 1.9.3.
