@@ -1,8 +1,13 @@
-# Build conditionals...
+# Build conditionals (with - OFF, without - ON)...
 %bcond_with gtk3
+%if 0%{?fedora} && %{?fedora} >= 32
+%bcond_without clang
+%else
 %bcond_with clang
-%bcond_with spellcheck
+%endif
+%bcond_without spellcheck
 %bcond_without fonts
+%bcond_without ipo
 
 # Telegram Desktop's constants...
 %global appname tdesktop
@@ -19,8 +24,8 @@
 %endif
 
 Name: telegram-desktop
-Version: 1.9.7
-Release: 2%{?dist}
+Version: 1.9.8
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
@@ -62,6 +67,7 @@ BuildRequires: qt5-qtbase-private-devel
 BuildRequires: libtgvoip-devel >= 2.4.4
 BuildRequires: range-v3-devel >= 0.10.0
 BuildRequires: libqrcodegencpp-devel
+BuildRequires: minizip-compat-devel
 BuildRequires: ffmpeg-devel >= 3.1
 BuildRequires: openal-soft-devel
 BuildRequires: qt5-qtbase-devel
@@ -98,12 +104,6 @@ BuildRequires: llvm
 
 %if %{with fonts}
 Requires: open-sans-fonts
-%endif
-
-%if 0%{?fedora} && 0%{?fedora} >= 30
-BuildRequires: minizip-compat-devel
-%else
-BuildRequires: minizip-devel
 %endif
 
 %description
@@ -143,6 +143,9 @@ pushd %{_target_platform}
 %endif
 %if %{without fonts}
     -DDESKTOP_APP_USE_PACKAGED_FONTS:BOOL=OFF \
+%endif
+%if %{with ipo} && %{without clang}
+    -DDESKTOP_APP_ENABLE_IPO_OPTIMIZATIONS:BOOL=ON \
 %endif
 %if %{with clang}
     -DCMAKE_C_COMPILER=clang \
@@ -187,6 +190,10 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Fri Jan 24 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.8-1
+- Updated to version 1.9.8.
+- Enabled LTO and spellcheck.
+
 * Thu Jan 23 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.7-2
 - Fixed desktop launcher. Regression introduced in previous build.
 
