@@ -7,7 +7,7 @@
 %endif
 %bcond_without spellcheck
 %bcond_without fonts
-%bcond_without ipo
+%bcond_with ipo
 
 # Telegram Desktop's constants...
 %global appname tdesktop
@@ -192,14 +192,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %changelog
 * Fri Jan 24 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.8-1
 - Updated to version 1.9.8.
-- Enabled LTO and spellcheck.
 
 * Thu Jan 23 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.7-2
 - Fixed desktop launcher. Regression introduced in previous build.
 
 * Thu Jan 23 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.7-1
 - Updated to version 1.9.7.
-
-* Fri Jan 17 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.4-1
-- Updated to version 1.9.4.
-- Removed obsolete downstream patches.
