@@ -1,13 +1,10 @@
 # Build conditionals (with - OFF, without - ON)...
 %bcond_with gtk3
-%if 0%{?fedora} && %{?fedora} >= 32
-%bcond_without clang
-%else
 %bcond_with clang
-%endif
 %bcond_without spellcheck
 %bcond_without fonts
-%bcond_with ipo
+%bcond_without ipo
+%bcond_without mindbg
 
 # Telegram Desktop's constants...
 %global appname tdesktop
@@ -23,8 +20,13 @@
 %global optflags %(echo %{optflags} | sed -e 's/-mcet//g' -e 's/-fcf-protection//g' -e 's/-fstack-clash-protection//g' -e 's/$/-Qunused-arguments -Wno-unknown-warning-option/')
 %endif
 
+# Decrease debuginfo verbosity to reduce memory consumption...
+%if %{with mindbg}
+%global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
+%endif
+
 Name: telegram-desktop
-Version: 1.9.8
+Version: 1.9.9
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -94,6 +96,7 @@ Requires: gtk3%{?_isa}
 BuildRequires: enchant2-devel
 BuildRequires: glib2-devel
 Requires: enchant2%{?_isa}
+Requires: hunspell%{?_isa}
 %endif
 
 %if %{with clang}
@@ -144,7 +147,7 @@ pushd %{_target_platform}
 %if %{without fonts}
     -DDESKTOP_APP_USE_PACKAGED_FONTS:BOOL=OFF \
 %endif
-%if %{with ipo} && %{without clang}
+%if %{with ipo} && %{with mindbg} && %{without clang}
     -DDESKTOP_APP_ENABLE_IPO_OPTIMIZATIONS:BOOL=ON \
 %endif
 %if %{with clang}
@@ -190,11 +193,12 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Wed Jan 29 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.9-1
+- Updated to version 1.9.9.
+- Enabled LTO for all supported releases.
+
 * Fri Jan 24 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.8-1
 - Updated to version 1.9.8.
 
 * Thu Jan 23 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.7-2
 - Fixed desktop launcher. Regression introduced in previous build.
-
-* Thu Jan 23 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.7-1
-- Updated to version 1.9.7.
