@@ -27,7 +27,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 1.9.12
+Version: 1.9.13
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -157,6 +157,7 @@ pushd %{_target_platform}
 %endif
 %if %{with rlottie}
     -DDESKTOP_APP_USE_PACKAGED_RLOTTIE:BOOL=ON \
+    -DDESKTOP_APP_LOTTIE_USE_CACHE:BOOL=OFF \
 %else
     -DDESKTOP_APP_USE_PACKAGED_RLOTTIE:BOOL=OFF \
 %endif
@@ -206,12 +207,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Thu Feb 13 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.13-1
+- Updated to version 1.9.13.
+
 * Tue Feb 11 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.12-1
 - Updated to version 1.9.12.
 
 * Thu Feb 06 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.10-1
 - Updated to version 1.9.10 (beta).
-
-* Wed Jan 29 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.9-1
-- Updated to version 1.9.9.
-- Enabled LTO for all supported releases.
