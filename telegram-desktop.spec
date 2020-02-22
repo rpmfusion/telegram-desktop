@@ -28,7 +28,7 @@
 
 Name: telegram-desktop
 Version: 1.9.14
-Release: 1%{?dist}
+Release: 2%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
@@ -207,6 +207,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Sat Feb 22 2020 RPM Fusion Release Engineering <leigh123linux@googlemail.com> - 1.9.14-2
+- Rebuild for ffmpeg-4.3 git
+
 * Tue Feb 18 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.14-1
 - Updated to version 1.9.14.
 
