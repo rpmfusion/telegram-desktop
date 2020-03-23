@@ -27,7 +27,11 @@
 
 # Decrease debuginfo verbosity to reduce memory consumption...
 %if %{with mindbg}
+%ifarch x86_64
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
+%else
+%global optflags %(echo %{optflags} | sed 's/-g /-g2 /')
+%endif
 %endif
 
 Name: telegram-desktop
