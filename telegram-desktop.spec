@@ -5,11 +5,7 @@
 %bcond_without spellcheck
 %bcond_without fonts
 %bcond_without mindbg
-%ifarch x86_64
 %bcond_without ipo
-%else
-%bcond_with ipo
-%endif
 
 # Telegram Desktop's constants...
 %global appname tdesktop
@@ -27,16 +23,12 @@
 
 # Decrease debuginfo verbosity to reduce memory consumption...
 %if %{with mindbg}
-%ifarch x86_64
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
-%else
-%global optflags %(echo %{optflags} | sed 's/-g /-g2 /')
-%endif
 %endif
 
 Name: telegram-desktop
 Version: 1.9.21
-Release: 2%{?dist}
+Release: 3%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
@@ -45,7 +37,7 @@ Release: 2%{?dist}
 License: GPLv3+ and LGPLv2+ and LGPLv3
 URL: https://github.com/telegramdesktop/%{appname}
 Summary: Telegram Desktop official messaging app
-ExclusiveArch: x86_64 aarch64 ppc64le
+ExclusiveArch: x86_64
 
 # Source files...
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}%{tarsuffix}.tar.gz
@@ -213,11 +205,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Mon Mar 23 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.21-3
+- Disabled aarch64 and ppc64le again due to not enough RAM on builders.
+
 * Mon Mar 23 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.21-2
 - Enabled aarch64 and ppc64le architectures.
 
 * Tue Mar 17 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.21-1
 - Updated to version 1.9.21.
-
-* Tue Feb 18 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.14-1
-- Updated to version 1.9.14.
