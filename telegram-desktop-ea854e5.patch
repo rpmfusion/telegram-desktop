@@ -1,0 +1,28 @@
+From ea854e5be3c89157c282f7e224bee2e14791208a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=D0=9A=D0=B8=D0=BF=D0=BE=D1=80=D1=81=D0=BA=D0=B8=D0=B9=20?=
+ =?UTF-8?q?=D0=90=D0=BB=D0=B5=D0=BA=D1=81=D0=B5=D0=B9?=
+ <kiporskiy_ay@technology45.ru>
+Date: Fri, 20 Mar 2020 10:02:36 +0500
+Subject: [PATCH] bugfix: incorrect erase element
+
+---
+ Telegram/SourceFiles/mtproto/session_private.cpp | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/Telegram/SourceFiles/mtproto/session_private.cpp b/Telegram/SourceFiles/mtproto/session_private.cpp
+index e35a4959d5..808af4543e 100644
+--- a/Telegram/SourceFiles/mtproto/session_private.cpp
++++ b/Telegram/SourceFiles/mtproto/session_private.cpp
+@@ -2007,9 +2007,10 @@ void SessionPrivate::requestsAcked(const QVector<MTPlong> &ids, bool byResponse)
+ 				} else {
+ 					DEBUG_LOG(("Message Info: acked msgId %1 that was prepared to resend, requestId %2").arg(msgId).arg(requestId));
+ 				}
+-				toSend.erase(j);
+-
++				
+ 				_ackedIds.emplace(msgId, j->second->requestId);
++				
++				toSend.erase(j);
+ 				continue;
+ 			}
+ 			DEBUG_LOG(("Message Info: msgId %1 was not found in recent resent either").arg(msgId));

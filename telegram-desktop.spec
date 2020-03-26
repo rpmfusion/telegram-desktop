@@ -42,8 +42,17 @@ ExclusiveArch: x86_64
 # Source files...
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}%{tarsuffix}.tar.gz
 
+# https://github.com/telegramdesktop/tdesktop/commit/d2291f5b17e0c169083a34e51053a99546207ec8
+Patch100: %{name}-d2291f5.patch
+
+# https://github.com/telegramdesktop/tdesktop/commit/ea854e5be3c89157c282f7e224bee2e14791208a
+Patch101: %{name}-ea854e5.patch
+
+# https://github.com/telegramdesktop/tdesktop/commit/6c46194009a0bf26c1f383060a9d14378efa4ded
+Patch102: %{name}-6c46194.patch
+
 # https://github.com/telegramdesktop/tdesktop/commit/13e8b60d6c396b128cfd7338656d91ffbec8d170
-Patch100: %{name}-13e8b60.patch
+Patch103: %{name}-13e8b60.patch
 
 # Telegram Desktop require exact version of Qt due to Qt private API usage.
 %{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
@@ -209,7 +218,7 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 
 %changelog
 * Thu Mar 26 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.21-4
-- Backported upstream patch with tray icon fix.
+- Backported upstream patches with different fixes.
 
 * Mon Mar 23 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.21-3
 - Disabled aarch64 and ppc64le again due to not enough RAM on builders.
