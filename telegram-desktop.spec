@@ -28,7 +28,7 @@
 
 Name: telegram-desktop
 Version: 1.9.21
-Release: 3%{?dist}
+Release: 4%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
@@ -41,6 +41,9 @@ ExclusiveArch: x86_64
 
 # Source files...
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}%{tarsuffix}.tar.gz
+
+# https://github.com/telegramdesktop/tdesktop/commit/13e8b60d6c396b128cfd7338656d91ffbec8d170
+Patch100: %{name}-13e8b60.patch
 
 # Telegram Desktop require exact version of Qt due to Qt private API usage.
 %{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
@@ -205,11 +208,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Thu Mar 26 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.21-4
+- Backported upstream patch with tray icon fix.
+
 * Mon Mar 23 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.21-3
 - Disabled aarch64 and ppc64le again due to not enough RAM on builders.
 
 * Mon Mar 23 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.21-2
 - Enabled aarch64 and ppc64le architectures.
-
-* Tue Mar 17 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.21-1
-- Updated to version 1.9.21.
