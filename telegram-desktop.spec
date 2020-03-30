@@ -1,12 +1,7 @@
 # Build conditionals (with - OFF, without - ON)...
-%bcond_with gtk3
-%if 0%{?fedora} && 0%{?fedora} >= 32
-%bcond_without clang
-%bcond_without rlottie
-%else
-%bcond_with clang
 %bcond_with rlottie
-%endif
+%bcond_with gtk3
+%bcond_with clang
 %bcond_without spellcheck
 %bcond_without fonts
 %bcond_without mindbg
