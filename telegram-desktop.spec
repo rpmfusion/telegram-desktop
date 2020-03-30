@@ -5,16 +5,16 @@
 %bcond_without spellcheck
 %bcond_without fonts
 %bcond_without mindbg
+%ifarch x86_64
 %bcond_without ipo
+%else
+%bcond_with ipo
+%endif
 
 # Telegram Desktop's constants...
 %global appname tdesktop
 %global launcher telegramdesktop
 %global tarsuffix -full
-
-# Telegram API tokens...
-%global apiid 208164
-%global apihash dfbe1bc42dc9d20507e17d1814cc2f0a
 
 # Applying workaround to RHBZ#1559007...
 %if %{with clang}
@@ -23,12 +23,16 @@
 
 # Decrease debuginfo verbosity to reduce memory consumption...
 %if %{with mindbg}
+%ifarch x86_64
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
+%else
+%global optflags %(echo %{optflags} | sed 's/-g /-g2 /')
+%endif
 %endif
 
 Name: telegram-desktop
-Version: 1.9.21
-Release: 4%{?dist}
+Version: 2.0.0
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
@@ -41,18 +45,6 @@ ExclusiveArch: x86_64
 
 # Source files...
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}%{tarsuffix}.tar.gz
-
-# https://github.com/telegramdesktop/tdesktop/commit/d2291f5b17e0c169083a34e51053a99546207ec8
-Patch100: %{name}-d2291f5.patch
-
-# https://github.com/telegramdesktop/tdesktop/commit/ea854e5be3c89157c282f7e224bee2e14791208a
-Patch101: %{name}-ea854e5.patch
-
-# https://github.com/telegramdesktop/tdesktop/commit/6c46194009a0bf26c1f383060a9d14378efa4ded
-Patch102: %{name}-6c46194.patch
-
-# https://github.com/telegramdesktop/tdesktop/commit/13e8b60d6c396b128cfd7338656d91ffbec8d170
-Patch103: %{name}-13e8b60.patch
 
 # Telegram Desktop require exact version of Qt due to Qt private API usage.
 %{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
@@ -172,8 +164,8 @@ pushd %{_target_platform}
     -DDESKTOP_APP_USE_PACKAGED_RLOTTIE:BOOL=OFF \
 %endif
 %if %{with clang}
-    -DCMAKE_C_COMPILER=clang \
-    -DCMAKE_CXX_COMPILER=clang++ \
+    -DCMAKE_C_COMPILER=%{_bindir}/clang \
+    -DCMAKE_CXX_COMPILER=%{_bindir}/clang++ \
     -DCMAKE_AR=%{_bindir}/llvm-ar \
     -DCMAKE_RANLIB=%{_bindir}/llvm-ranlib \
     -DCMAKE_LINKER=%{_bindir}/llvm-ld \
@@ -184,8 +176,8 @@ pushd %{_target_platform}
     -DCMAKE_RANLIB=%{_bindir}/gcc-ranlib \
     -DCMAKE_NM=%{_bindir}/gcc-nm \
 %endif
-    -DTDESKTOP_API_ID=%{apiid} \
-    -DTDESKTOP_API_HASH=%{apihash} \
+    -DTDESKTOP_API_ID=611335 \
+    -DTDESKTOP_API_HASH=d524b414d21f4d37f08684c1df41ac9c \
     -DDESKTOP_APP_USE_PACKAGED:BOOL=ON \
     -DDESKTOP_APP_USE_PACKAGED_GSL:BOOL=ON \
     -DDESKTOP_APP_USE_PACKAGED_EXPECTED:BOOL=ON \
@@ -196,6 +188,7 @@ pushd %{_target_platform}
     -DTDESKTOP_USE_PACKAGED_TGVOIP:BOOL=ON \
     -DTDESKTOP_DISABLE_REGISTER_CUSTOM_SCHEME:BOOL=ON \
     -DTDESKTOP_DISABLE_DESKTOP_FILE_GENERATION:BOOL=ON \
+    -DTDESKTOP_USE_FONTCONFIG_FALLBACK:BOOL=OFF \
     -DTDESKTOP_LAUNCHER_BASENAME=%{launcher} \
     ..
 popd
@@ -217,11 +210,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Mon Mar 30 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.0.0-1
+- Updated to version 2.0.0.
+
 * Thu Mar 26 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.21-4
 - Backported upstream patches with different fixes.
 
 * Mon Mar 23 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.21-3
 - Disabled aarch64 and ppc64le again due to not enough RAM on builders.
-
-* Mon Mar 23 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.21-2
-- Enabled aarch64 and ppc64le architectures.
