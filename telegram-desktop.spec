@@ -5,10 +5,14 @@
 %bcond_without spellcheck
 %bcond_without fonts
 %bcond_without mindbg
+%if 0%{?fedora} && 0%{?fedora} >= 32
+%bcond_with ipo
+%else
 %ifarch x86_64
 %bcond_without ipo
 %else
 %bcond_with ipo
+%endif
 %endif
 
 # Telegram Desktop's constants...
