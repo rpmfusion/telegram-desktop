@@ -31,7 +31,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 2.0.0
+Version: 2.0.1
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -210,11 +210,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Tue Mar 31 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.0.1-1
+- Updated to version 2.0.1.
+
 * Mon Mar 30 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.0.0-1
 - Updated to version 2.0.0.
 
 * Thu Mar 26 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.21-4
 - Backported upstream patches with different fixes.
-
-* Mon Mar 23 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.21-3
-- Disabled aarch64 and ppc64le again due to not enough RAM on builders.
