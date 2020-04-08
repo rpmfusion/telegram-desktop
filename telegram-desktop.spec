@@ -1,13 +1,15 @@
 # Build conditionals (with - OFF, without - ON)...
-%bcond_with rlottie
 %bcond_with gtk3
-%bcond_with clang
 %bcond_without spellcheck
 %bcond_without fonts
 %bcond_without mindbg
 %if 0%{?fedora} && 0%{?fedora} >= 32
 %bcond_with ipo
+%bcond_without clang
+%bcond_without rlottie
 %else
+%bcond_with clang
+%bcond_with rlottie
 %ifarch x86_64
 %bcond_without ipo
 %else
@@ -49,6 +51,9 @@ ExclusiveArch: x86_64
 
 # Source files...
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}%{tarsuffix}.tar.gz
+
+# https://github.com/desktop-app/lib_base/commit/eedb8afcf5f1709f3e02db9b06b977bb57aca182
+Patch100: lib_base-eedb8af.patch
 
 # Telegram Desktop require exact version of Qt due to Qt private API usage.
 %{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}

@@ -1,0 +1,22 @@
+From eedb8afcf5f1709f3e02db9b06b977bb57aca182 Mon Sep 17 00:00:00 2001
+From: John Preston <johnprestonmail@gmail.com>
+Date: Wed, 8 Apr 2020 13:56:26 +0400
+Subject: [PATCH] Fix thread_safe_wrap for Clang 10.
+
+---
+ base/thread_safe_wrap.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Telegram/lib_base/base/thread_safe_wrap.h b/Telegram/lib_base/base/thread_safe_wrap.h
+index 8c2f562..d5f4e4a 100644
+--- a/Telegram/lib_base/base/thread_safe_wrap.h
++++ b/Telegram/lib_base/base/thread_safe_wrap.h
+@@ -31,7 +31,7 @@ class thread_safe_wrap {
+ 
+ private:
+ 	T _value;
+-	QMutex _mutex;
++	mutable QMutex _mutex;
+ 
+ };
+ 
