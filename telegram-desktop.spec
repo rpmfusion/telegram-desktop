@@ -1,20 +1,21 @@
 # Build conditionals (with - OFF, without - ON)...
 %bcond_with gtk3
+%bcond_with gsl
+%bcond_without rlottie
 %bcond_without spellcheck
 %bcond_without fonts
 %bcond_without mindbg
+
 %if 0%{?fedora} && 0%{?fedora} >= 32
-%bcond_with ipo
 %bcond_without clang
-%bcond_without rlottie
 %else
 %bcond_with clang
-%bcond_with rlottie
+%endif
+
 %ifarch x86_64
 %bcond_without ipo
 %else
 %bcond_with ipo
-%endif
 %endif
 
 # Telegram Desktop's constants...
@@ -37,7 +38,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 2.0.1
+Version: 2.1.0
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -52,9 +53,6 @@ ExclusiveArch: x86_64
 # Source files...
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}%{tarsuffix}.tar.gz
 
-# https://github.com/desktop-app/lib_base/commit/eedb8afcf5f1709f3e02db9b06b977bb57aca182
-Patch100: lib_base-eedb8af.patch
-
 # Telegram Desktop require exact version of Qt due to Qt private API usage.
 %{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
 Requires: qt5-qtimageformats%{?_isa}
@@ -66,6 +64,12 @@ Requires: hicolor-icon-theme
 BuildRequires: rlottie-devel
 %else
 Provides: bundled(rlottie) = 0~git
+%endif
+
+%if %{with gsl}
+BuildRequires: guidelines-support-library-devel
+%else
+Provides: bundled(guidelines-support-library) = 2.0.0
 %endif
 
 # Telegram Desktop require patched version of lxqt-qtplugin.
@@ -80,7 +84,6 @@ BuildRequires: cmake
 BuildRequires: gcc
 
 # Development packages for Telegram Desktop...
-BuildRequires: guidelines-support-library-devel >= 1.0.0
 BuildRequires: mapbox-variant-devel >= 0.3.6
 BuildRequires: qt5-qtbase-private-devel
 BuildRequires: libtgvoip-devel >= 2.4.4
@@ -144,7 +147,15 @@ business messaging needs.
 mkdir -p %{_target_platform}
 
 # Unbundling libraries...
-rm -rf Telegram/ThirdParty/{Catch,GSL,QR,SPMediaKeyTap,expected,libdbusmenu-qt,libtgvoip,lz4,minizip,variant,xxHash}
+rm -rf Telegram/ThirdParty/{Catch,QR,SPMediaKeyTap,expected,hunspell,libdbusmenu-qt,libtgvoip,lz4,minizip,variant,xxHash}
+
+%if %{with rlottie}
+rm -rf Telegram/ThirdParty/rlottie
+%endif
+
+%if %{with gsl}
+rm -rf Telegram/ThirdParty/GSL
+%endif
 
 # Patching default desktop file...
 desktop-file-edit --set-key=Exec --set-value="%{_bindir}/%{name} -- %u" --copy-name-to-generic-name lib/xdg/telegramdesktop.desktop
@@ -172,6 +183,11 @@ pushd %{_target_platform}
 %else
     -DDESKTOP_APP_USE_PACKAGED_RLOTTIE:BOOL=OFF \
 %endif
+%if %{with gsl}
+    -DDESKTOP_APP_USE_PACKAGED_GSL:BOOL=ON \
+%else
+    -DDESKTOP_APP_USE_PACKAGED_GSL:BOOL=OFF \
+%endif
 %if %{with clang}
     -DCMAKE_C_COMPILER=%{_bindir}/clang \
     -DCMAKE_CXX_COMPILER=%{_bindir}/clang++ \
@@ -188,7 +204,6 @@ pushd %{_target_platform}
     -DTDESKTOP_API_ID=611335 \
     -DTDESKTOP_API_HASH=d524b414d21f4d37f08684c1df41ac9c \
     -DDESKTOP_APP_USE_PACKAGED:BOOL=ON \
-    -DDESKTOP_APP_USE_PACKAGED_GSL:BOOL=ON \
     -DDESKTOP_APP_USE_PACKAGED_EXPECTED:BOOL=ON \
     -DDESKTOP_APP_USE_PACKAGED_VARIANT:BOOL=ON \
     -DDESKTOP_APP_USE_PACKAGED_QRCODE:BOOL=ON \
@@ -219,11 +234,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Tue Apr 28 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.0-1
+- Updated to version 2.1.0.
+
 * Tue Mar 31 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.0.1-1
 - Updated to version 2.0.1.
 
 * Mon Mar 30 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.0.0-1
 - Updated to version 2.0.0.
-
-* Thu Mar 26 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 1.9.21-4
-- Backported upstream patches with different fixes.
