@@ -1,6 +1,5 @@
 # Build conditionals (with - OFF, without - ON)...
 %bcond_with gtk3
-%bcond_with gsl
 %bcond_without rlottie
 %bcond_without spellcheck
 %bcond_without fonts
@@ -38,7 +37,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 2.1.0
+Version: 2.1.1
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -64,12 +63,6 @@ Requires: hicolor-icon-theme
 BuildRequires: rlottie-devel
 %else
 Provides: bundled(rlottie) = 0~git
-%endif
-
-%if %{with gsl}
-BuildRequires: guidelines-support-library-devel
-%else
-Provides: bundled(guidelines-support-library) = 2.0.0
 %endif
 
 # Telegram Desktop require patched version of lxqt-qtplugin.
@@ -147,14 +140,10 @@ business messaging needs.
 mkdir -p %{_target_platform}
 
 # Unbundling libraries...
-rm -rf Telegram/ThirdParty/{Catch,QR,SPMediaKeyTap,expected,hunspell,libdbusmenu-qt,libtgvoip,lz4,minizip,variant,xxHash}
+rm -rf Telegram/ThirdParty/{Catch,GSL,QR,SPMediaKeyTap,expected,hunspell,libdbusmenu-qt,libtgvoip,lz4,minizip,variant,xxHash}
 
 %if %{with rlottie}
 rm -rf Telegram/ThirdParty/rlottie
-%endif
-
-%if %{with gsl}
-rm -rf Telegram/ThirdParty/GSL
 %endif
 
 # Patching default desktop file...
@@ -183,11 +172,6 @@ pushd %{_target_platform}
 %else
     -DDESKTOP_APP_USE_PACKAGED_RLOTTIE:BOOL=OFF \
 %endif
-%if %{with gsl}
-    -DDESKTOP_APP_USE_PACKAGED_GSL:BOOL=ON \
-%else
-    -DDESKTOP_APP_USE_PACKAGED_GSL:BOOL=OFF \
-%endif
 %if %{with clang}
     -DCMAKE_C_COMPILER=%{_bindir}/clang \
     -DCMAKE_CXX_COMPILER=%{_bindir}/clang++ \
@@ -204,6 +188,7 @@ pushd %{_target_platform}
     -DTDESKTOP_API_ID=611335 \
     -DTDESKTOP_API_HASH=d524b414d21f4d37f08684c1df41ac9c \
     -DDESKTOP_APP_USE_PACKAGED:BOOL=ON \
+    -DDESKTOP_APP_USE_PACKAGED_GSL:BOOL=ON \
     -DDESKTOP_APP_USE_PACKAGED_EXPECTED:BOOL=ON \
     -DDESKTOP_APP_USE_PACKAGED_VARIANT:BOOL=ON \
     -DDESKTOP_APP_USE_PACKAGED_QRCODE:BOOL=ON \
@@ -234,11 +219,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Fri May 01 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.1-1
+- Updated to version 2.1.1.
+
 * Tue Apr 28 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.0-1
 - Updated to version 2.1.0.
 
 * Tue Mar 31 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.0.1-1
 - Updated to version 2.0.1.
-
-* Mon Mar 30 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.0.0-1
-- Updated to version 2.0.0.
