@@ -77,6 +77,7 @@ BuildRequires: cmake
 BuildRequires: gcc
 
 # Development packages for Telegram Desktop...
+BuildRequires: guidelines-support-library-devel >= 3.0.0
 BuildRequires: mapbox-variant-devel >= 0.3.6
 BuildRequires: qt5-qtbase-private-devel
 BuildRequires: libtgvoip-devel >= 2.4.4
