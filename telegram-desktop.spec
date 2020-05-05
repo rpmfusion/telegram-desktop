@@ -1,9 +1,6 @@
 # Build conditionals (with - OFF, without - ON)...
-%bcond_with gtk3
 %bcond_without rlottie
-%bcond_without spellcheck
-%bcond_without fonts
-%bcond_without mindbg
+%bcond_without ipo
 
 %if 0%{?fedora} && 0%{?fedora} >= 32
 %bcond_without clang
@@ -11,33 +8,24 @@
 %bcond_with clang
 %endif
 
-%ifarch x86_64
-%bcond_without ipo
-%else
-%bcond_with ipo
-%endif
-
 # Telegram Desktop's constants...
 %global appname tdesktop
 %global launcher telegramdesktop
-%global tarsuffix -full
 
 # Applying workaround to RHBZ#1559007...
 %if %{with clang}
-%global optflags %(echo %{optflags} | sed -e 's/-mcet//g' -e 's/-fcf-protection//g' -e 's/-fstack-clash-protection//g' -e 's/$/-Qunused-arguments -Wno-unknown-warning-option/')
+%global optflags %(echo %{optflags} | sed -e 's/-mcet//g' -e 's/-fcf-protection//g' -e 's/-fstack-clash-protection//g' -e 's/$/-Qunused-arguments -Wno-unknown-warning-option -Wno-deprecated-declarations/')
 %endif
 
 # Decrease debuginfo verbosity to reduce memory consumption...
-%if %{with mindbg}
 %ifarch x86_64
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 %else
 %global optflags %(echo %{optflags} | sed 's/-g /-g2 /')
 %endif
-%endif
 
 Name: telegram-desktop
-Version: 2.1.1
+Version: 2.1.2
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -50,12 +38,16 @@ Summary: Telegram Desktop official messaging app
 ExclusiveArch: x86_64
 
 # Source files...
-Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}%{tarsuffix}.tar.gz
+Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
 
 # Telegram Desktop require exact version of Qt due to Qt private API usage.
 %{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
 Requires: qt5-qtimageformats%{?_isa}
 Requires: hicolor-icon-theme
+Requires: open-sans-fonts
+
+# Short alias for the main package...
+Provides: telegram%{?_isa} = %{?epoch:%{epoch}:}%{version}-%{release}
 
 # Telegram Desktop require patched version of rlottie since 1.8.0.
 # Pull Request pending: https://github.com/Samsung/rlottie/pull/252
@@ -90,36 +82,21 @@ BuildRequires: openal-soft-devel
 BuildRequires: qt5-qtbase-devel
 BuildRequires: libstdc++-devel
 BuildRequires: expected-devel
+BuildRequires: hunspell-devel
 BuildRequires: openssl-devel
 BuildRequires: xxhash-devel
 BuildRequires: json11-devel
 BuildRequires: ninja-build
+BuildRequires: glib2-devel
 BuildRequires: opus-devel
 BuildRequires: lz4-devel
 BuildRequires: xz-devel
 BuildRequires: python3
 
-%if %{with gtk3}
-BuildRequires: libappindicator-gtk3-devel
-BuildRequires: glib2-devel
-BuildRequires: gtk3-devel
-Recommends: libappindicator-gtk3%{?_isa}
-Requires: gtk3%{?_isa}
-%endif
-
-%if %{with spellcheck}
-BuildRequires: hunspell-devel
-BuildRequires: glib2-devel
-%endif
-
 %if %{with clang}
 BuildRequires: compiler-rt
 BuildRequires: clang
 BuildRequires: llvm
-%endif
-
-%if %{with fonts}
-Requires: open-sans-fonts
 %endif
 
 %description
@@ -137,35 +114,26 @@ business messaging needs.
 
 %prep
 # Unpacking Telegram Desktop source archive...
-%autosetup -n %{appname}-%{version}%{tarsuffix} -p1
+%autosetup -n %{appname}-%{version}-full -p1
 mkdir -p %{_target_platform}
 
 # Unbundling libraries...
-rm -rf Telegram/ThirdParty/{Catch,GSL,QR,SPMediaKeyTap,expected,hunspell,libdbusmenu-qt,libtgvoip,lz4,minizip,variant,xxHash}
+rm -rf Telegram/ThirdParty/{Catch,GSL,QR,SPMediaKeyTap,expected,fcitx-qt5,hime,hunspell,libdbusmenu-qt,libqtxdg,libtgvoip,lxqt-qtplugin,lz4,materialdecoration,minizip,nimf,qt5ct,range-v3,variant,xxHash}
 
+# Unbundling rlottie if build against packaged version...
 %if %{with rlottie}
 rm -rf Telegram/ThirdParty/rlottie
 %endif
-
-# Patching default desktop file...
-desktop-file-edit --set-key=Exec --set-value="%{_bindir}/%{name} -- %u" --copy-name-to-generic-name lib/xdg/telegramdesktop.desktop
 
 %build
 # Building Telegram Desktop using cmake...
 pushd %{_target_platform}
     %cmake -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
-%if %{without gtk3}
-    -DTDESKTOP_DISABLE_GTK_INTEGRATION:BOOL=ON \
-%endif
-%if %{without spellcheck}
-    -DDESKTOP_APP_DISABLE_SPELLCHECK:BOOL=ON \
-%endif
-%if %{without fonts}
-    -DDESKTOP_APP_USE_PACKAGED_FONTS:BOOL=OFF \
-%endif
-%if %{with ipo} && %{with mindbg} && %{without clang}
+%ifarch x86_64
+%if %{with ipo} && %{without clang}
     -DDESKTOP_APP_ENABLE_IPO_OPTIMIZATIONS:BOOL=ON \
+%endif
 %endif
 %if %{with rlottie}
     -DDESKTOP_APP_USE_PACKAGED_RLOTTIE:BOOL=ON \
@@ -193,9 +161,11 @@ pushd %{_target_platform}
     -DDESKTOP_APP_USE_PACKAGED_EXPECTED:BOOL=ON \
     -DDESKTOP_APP_USE_PACKAGED_VARIANT:BOOL=ON \
     -DDESKTOP_APP_USE_PACKAGED_QRCODE:BOOL=ON \
+    -DDESKTOP_APP_USE_PACKAGED_FONTS:BOOL=ON \
     -DDESKTOP_APP_USE_GLIBC_WRAPS:BOOL=OFF \
     -DDESKTOP_APP_DISABLE_CRASH_REPORTS:BOOL=ON \
     -DTDESKTOP_USE_PACKAGED_TGVOIP:BOOL=ON \
+    -DTDESKTOP_DISABLE_GTK_INTEGRATION:BOOL=ON \
     -DTDESKTOP_DISABLE_REGISTER_CUSTOM_SCHEME:BOOL=ON \
     -DTDESKTOP_DISABLE_DESKTOP_FILE_GENERATION:BOOL=ON \
     -DTDESKTOP_USE_FONTCONFIG_FALLBACK:BOOL=OFF \
@@ -220,11 +190,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Tue May 05 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.2-1
+- Updated to version 2.1.2.
+
 * Fri May 01 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.1-1
 - Updated to version 2.1.1.
 
 * Tue Apr 28 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.0-1
 - Updated to version 2.1.0.
-
-* Tue Mar 31 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.0.1-1
-- Updated to version 2.0.1.
