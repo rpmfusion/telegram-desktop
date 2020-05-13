@@ -1,12 +1,7 @@
 # Build conditionals (with - OFF, without - ON)...
 %bcond_without rlottie
 %bcond_without ipo
-
-%if 0%{?fedora} && 0%{?fedora} >= 32
-%bcond_without clang
-%else
 %bcond_with clang
-%endif
 
 # Telegram Desktop's constants...
 %global appname tdesktop
@@ -25,7 +20,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 2.1.4
+Version: 2.1.5
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -118,7 +113,7 @@ business messaging needs.
 mkdir -p %{_target_platform}
 
 # Unbundling libraries...
-rm -rf Telegram/ThirdParty/{Catch,GSL,QR,SPMediaKeyTap,expected,fcitx-qt5,hime,hunspell,libdbusmenu-qt,libqtxdg,libtgvoip,lxqt-qtplugin,lz4,materialdecoration,minizip,nimf,qt5ct,range-v3,variant,xxHash}
+rm -rf Telegram/ThirdParty/{Catch,GSL,QR,SPMediaKeyTap,expected,fcitx-qt5,fcitx5-qt,hime,hunspell,libdbusmenu-qt,libqtxdg,libtgvoip,lxqt-qtplugin,lz4,materialdecoration,minizip,nimf,qt5ct,range-v3,variant,xxHash}
 
 # Unbundling rlottie if build against packaged version...
 %if %{with rlottie}
@@ -190,11 +185,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Wed May 13 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.5-1
+- Updated to version 2.1.5.
+
 * Sat May 09 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.4-1
 - Updated to version 2.1.4.
 
 * Fri May 08 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.3-1
 - Updated to version 2.1.3.
-
-* Tue May 05 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.2-1
-- Updated to version 2.1.2.
