@@ -33,9 +33,6 @@ Summary: Telegram Desktop official messaging app
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
 ExclusiveArch: x86_64
 
-# Fixed build with packaged GSL 3.1.0...
-Patch100: %{name}-gsl-version-fix.patch
-
 # Telegram Desktop require exact version of Qt due to Qt private API usage.
 %{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
 Requires: qt5-qtimageformats%{?_isa}
