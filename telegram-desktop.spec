@@ -9,7 +9,7 @@
 
 # Applying workaround to RHBZ#1559007...
 %if %{with clang}
-%global optflags %(echo %{optflags} | sed -e 's/-mcet//g' -e 's/-fcf-protection//g' -e 's/-fstack-clash-protection//g' -e 's/$/-Qunused-arguments -Wno-unknown-warning-option -Wno-deprecated-declarations/')
+%global optflags %(echo %{optflags} | sed -e 's/-mcet//g' -e 's/-fcf-protection//g' -e 's/-fstack-clash-protection//g' -e 's/$/ -Qunused-arguments -Wno-unknown-warning-option -Wno-deprecated-declarations/')
 %endif
 
 # Decrease debuginfo verbosity to reduce memory consumption...
@@ -20,7 +20,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 2.1.7
+Version: 2.1.10
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -185,11 +185,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Sat Jun 06 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.10-1
+- Updated to version 2.1.10.
+
 * Sun May 24 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.7-1
 - Updated to version 2.1.7.
 
 * Thu May 14 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.6-1
 - Updated to version 2.1.6.
-
-* Wed May 13 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.5-1
-- Updated to version 2.1.5.
