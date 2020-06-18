@@ -1,6 +1,7 @@
 # Build conditionals (with - OFF, without - ON)...
 %bcond_without rlottie
 %bcond_without ipo
+%bcond_with gtk3
 %bcond_with clang
 
 # Telegram Desktop's constants...
@@ -20,8 +21,8 @@
 %endif
 
 Name: telegram-desktop
-Version: 2.1.11
-Release: 2%{?dist}
+Version: 2.1.12
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
@@ -40,6 +41,7 @@ Requires: hicolor-icon-theme
 Requires: open-sans-fonts
 
 # Short alias for the main package...
+Provides: telegram = %{?epoch:%{epoch}:}%{version}-%{release}
 Provides: telegram%{?_isa} = %{?epoch:%{epoch}:}%{version}-%{release}
 
 # Telegram Desktop require patched version of rlottie since 1.8.0.
@@ -90,6 +92,11 @@ BuildRequires: python3
 BuildRequires: compiler-rt
 BuildRequires: clang
 BuildRequires: llvm
+%endif
+
+%if %{with gtk3}
+BuildRequires: gtk3-devel
+Requires: gtk3%{?_isa}
 %endif
 
 %description
@@ -158,7 +165,11 @@ pushd %{_target_platform}
     -DDESKTOP_APP_USE_GLIBC_WRAPS:BOOL=OFF \
     -DDESKTOP_APP_DISABLE_CRASH_REPORTS:BOOL=ON \
     -DTDESKTOP_USE_PACKAGED_TGVOIP:BOOL=ON \
+%if %{with gtk3}
+    -DTDESKTOP_DISABLE_GTK_INTEGRATION:BOOL=OFF \
+%else
     -DTDESKTOP_DISABLE_GTK_INTEGRATION:BOOL=ON \
+%endif
     -DTDESKTOP_DISABLE_REGISTER_CUSTOM_SCHEME:BOOL=ON \
     -DTDESKTOP_DISABLE_DESKTOP_FILE_GENERATION:BOOL=ON \
     -DTDESKTOP_USE_FONTCONFIG_FALLBACK:BOOL=OFF \
@@ -183,11 +194,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Thu Jun 18 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.12-1
+- Updated to version 2.1.12.
+
 * Mon Jun 15 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.11-2
 - Rebuilt due to Qt 5.14.2 update.
 
 * Mon Jun 08 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.11-1
 - Updated to version 2.1.11.
-
-* Sat Jun 06 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.10-1
-- Updated to version 2.1.10.
