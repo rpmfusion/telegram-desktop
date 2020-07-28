@@ -21,7 +21,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 2.1.13
+Version: 2.2.0
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -67,6 +67,8 @@ BuildRequires: gcc
 BuildRequires: guidelines-support-library-devel >= 3.0.1
 BuildRequires: mapbox-variant-devel >= 0.3.6
 BuildRequires: qt5-qtbase-private-devel
+BuildRequires: qt5-qtbase-static
+BuildRequires: qt5-qtwayland-devel
 BuildRequires: libtgvoip-devel >= 2.4.4
 BuildRequires: range-v3-devel >= 0.10.0
 BuildRequires: libqrcodegencpp-devel
@@ -194,11 +196,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Tue Jul 28 2020 ojab <ojab@ojab.ru> - 2.2.0-1
+- Updated to version 2.2.0 & added missing build deps
+
 * Wed Jun 24 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.13-1
 - Updated to version 2.1.13.
 
 * Thu Jun 18 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.12-1
 - Updated to version 2.1.12.
-
-* Mon Jun 15 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.11-2
-- Rebuilt due to Qt 5.14.2 update.
