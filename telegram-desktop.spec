@@ -1,3 +1,6 @@
+%undefine __cmake_in_source_build
+%define _lto_cflags %{nil}
+
 # Build conditionals (with - OFF, without - ON)...
 %bcond_without rlottie
 %bcond_without ipo
@@ -10,7 +13,11 @@
 
 # Applying workaround to RHBZ#1559007...
 %if %{with clang}
+%if 0%{?fedora} && 0%{?fedora} >= 33
+%global toolchain clang
+%else
 %global optflags %(echo %{optflags} | sed -e 's/-mcet//g' -e 's/-fcf-protection//g' -e 's/-fstack-clash-protection//g' -e 's/$/ -Qunused-arguments -Wno-unknown-warning-option -Wno-deprecated-declarations/')
+%endif
 %endif
 
 # Decrease debuginfo verbosity to reduce memory consumption...
@@ -21,7 +28,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 2.1.13
+Version: 2.2.0
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -33,6 +40,10 @@ URL: https://github.com/telegramdesktop/%{appname}
 Summary: Telegram Desktop official messaging app
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
 ExclusiveArch: x86_64
+
+# Upstream patches...
+Patch100: %{name}-fix-night-theme.patch
+Patch101: %{name}-libatomic-linkage.patch
 
 # Telegram Desktop require exact version of Qt due to Qt private API usage.
 %{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
@@ -71,19 +82,23 @@ BuildRequires: libtgvoip-devel >= 2.4.4
 BuildRequires: range-v3-devel >= 0.10.0
 BuildRequires: libqrcodegencpp-devel
 BuildRequires: minizip-compat-devel
+BuildRequires: qt5-qtwayland-devel
 BuildRequires: ffmpeg-devel >= 3.1
 BuildRequires: dbusmenu-qt5-devel
 BuildRequires: openal-soft-devel
+BuildRequires: qt5-qtbase-static
 BuildRequires: qt5-qtbase-devel
 BuildRequires: libstdc++-devel
 BuildRequires: expected-devel
 BuildRequires: hunspell-devel
 BuildRequires: openssl-devel
+BuildRequires: wayland-devel
 BuildRequires: xxhash-devel
 BuildRequires: json11-devel
 BuildRequires: ninja-build
 BuildRequires: glib2-devel
 BuildRequires: opus-devel
+BuildRequires: libatomic
 BuildRequires: lz4-devel
 BuildRequires: xz-devel
 BuildRequires: python3
@@ -115,7 +130,6 @@ business messaging needs.
 %prep
 # Unpacking Telegram Desktop source archive...
 %autosetup -n %{appname}-%{version}-full -p1
-mkdir -p %{_target_platform}
 
 # Unbundling libraries...
 rm -rf Telegram/ThirdParty/{Catch,GSL,QR,SPMediaKeyTap,expected,fcitx-qt5,fcitx5-qt,hime,hunspell,libdbusmenu-qt,libqtxdg,libtgvoip,lxqt-qtplugin,lz4,materialdecoration,minizip,nimf,qt5ct,range-v3,variant,xxHash}
@@ -127,8 +141,7 @@ rm -rf Telegram/ThirdParty/rlottie
 
 %build
 # Building Telegram Desktop using cmake...
-pushd %{_target_platform}
-    %cmake -G Ninja \
+%cmake -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
 %ifarch x86_64
 %if %{with ipo} && %{without clang}
@@ -173,13 +186,11 @@ pushd %{_target_platform}
     -DTDESKTOP_DISABLE_REGISTER_CUSTOM_SCHEME:BOOL=ON \
     -DTDESKTOP_DISABLE_DESKTOP_FILE_GENERATION:BOOL=ON \
     -DTDESKTOP_USE_FONTCONFIG_FALLBACK:BOOL=OFF \
-    -DTDESKTOP_LAUNCHER_BASENAME=%{launcher} \
-    ..
-popd
-%ninja_build -C %{_target_platform}
+    -DTDESKTOP_LAUNCHER_BASENAME=%{launcher}
+%cmake_build
 
 %install
-%ninja_install -C %{_target_platform}
+%cmake_install
 
 %check
 appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{launcher}.appdata.xml
@@ -194,11 +205,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Sun Jul 26 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.2.0-1
+- Updated to version 2.2.0.
+
 * Wed Jun 24 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.13-1
 - Updated to version 2.1.13.
 
 * Thu Jun 18 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.12-1
 - Updated to version 2.1.12.
-
-* Mon Jun 15 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.11-2
-- Rebuilt due to Qt 5.14.2 update.

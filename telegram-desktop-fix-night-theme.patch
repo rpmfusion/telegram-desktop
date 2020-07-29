@@ -1,0 +1,33 @@
+From fe639078a698acb692192c6416d2bb15858c9545 Mon Sep 17 00:00:00 2001
+From: John Preston <johnprestonmail@gmail.com>
+Date: Sun, 26 Jul 2020 16:55:04 +0400
+Subject: [PATCH] Version 2.2: Fix default-night mode.
+
+---
+ Telegram/SourceFiles/storage/localstorage.cpp | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Telegram/SourceFiles/storage/localstorage.cpp b/Telegram/SourceFiles/storage/localstorage.cpp
+index 39bf065158..9091d2cae1 100644
+--- a/Telegram/SourceFiles/storage/localstorage.cpp
++++ b/Telegram/SourceFiles/storage/localstorage.cpp
+@@ -363,9 +363,8 @@ void start() {
+ 		_readOldMtpData(false, context); // needed further in _readMtpData
+ 		applyReadContext(std::move(context));
+ 
+-		if (!ApplyDefaultNightMode()) {
+-			writeSettings();
+-		}
++		_settingsRewriteNeeded = true;
++		ApplyDefaultNightMode();
+ 		return;
+ 	}
+ 	LOG(("App Info: reading settings..."));
+@@ -1072,6 +1071,7 @@ bool ApplyDefaultNightMode() {
+ 		|| _themeKeyLegacy) {
+ 		return false;
+ 	}
++	Core::App().startSettingsAndBackground();
+ 	Window::Theme::ToggleNightMode();
+ 	Window::Theme::KeepApplied();
+ 	return true;
