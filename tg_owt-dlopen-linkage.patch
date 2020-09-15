@@ -1,0 +1,38 @@
+From 5fc2e9c95291c5864d3c41676942d28ab56acb0f Mon Sep 17 00:00:00 2001
+From: Vitaly Zaitsev <vitaly@easycoding.org>
+Date: Tue, 15 Sep 2020 13:40:41 +0200
+Subject: [PATCH] Fixed linkage against dl library.
+
+Signed-off-by: Vitaly Zaitsev <vitaly@easycoding.org>
+---
+ tg_owt/CMakeLists.txt       | 1 +
+ tg_owt/cmake/external.cmake | 7 +++++++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 2c238bd7..68e142af 100644
+--- a/tg_owt/CMakeLists.txt
++++ b/tg_owt/CMakeLists.txt
+@@ -108,6 +108,7 @@ link_opus(tg_owt)
+ if (UNIX AND NOT APPLE)
+     link_libalsa(tg_owt)
+     link_libpulse(tg_owt)
++    link_dl(tg_owt)
+ endif()
+ 
+ nice_target_sources(tg_owt ${webrtc_loc}
+diff --git a/cmake/external.cmake b/cmake/external.cmake
+index 60683340..c0dff620 100644
+--- a/tg_owt/cmake/external.cmake
++++ b/tg_owt/cmake/external.cmake
+@@ -121,3 +121,10 @@ function(link_libpulse target_name)
+         target_include_directories(${target_name} PRIVATE ${PULSEAUDIO_INCLUDE_DIRS})
+     endif()
+ endfunction()
++
++# dl
++function(link_dl target_name)
++    if (TG_OWT_PACKAGED_BUILD)
++        target_link_libraries(${target_name} PRIVATE ${CMAKE_DL_LIBS})
++    endif()
++endfunction()

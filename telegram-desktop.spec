@@ -2,14 +2,25 @@
 %define _lto_cflags %{nil}
 
 # Build conditionals (with - OFF, without - ON)...
-%bcond_without rlottie
+%bcond_with rlottie
 %bcond_without ipo
+%bcond_without webrtc
 %bcond_with gtk3
 %bcond_with clang
+
+%if 0%{?fedora} && 0%{?fedora} >= 33
+%bcond_with mapbox
+%else
+%bcond_without mapbox
+%endif
 
 # Telegram Desktop's constants...
 %global appname tdesktop
 %global launcher telegramdesktop
+
+# Git revision of WebRTC...
+%global commit1 a80383535367dd8961f55f960938d943d6975808
+%global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 
 # Applying workaround to RHBZ#1559007...
 %if %{with clang}
@@ -28,22 +39,29 @@
 %endif
 
 Name: telegram-desktop
-Version: 2.2.0
-Release: 2%{?dist}
+Version: 2.3.2
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
+# * tg_owt - BSD -- static dependency;
 # * rlottie - LGPLv2+ -- static dependency;
 # * qt_functions.cpp - LGPLv3 -- build-time dependency.
 License: GPLv3+ and LGPLv2+ and LGPLv3
 URL: https://github.com/telegramdesktop/%{appname}
 Summary: Telegram Desktop official messaging app
-Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
-ExclusiveArch: x86_64
 
-# Upstream patches...
-Patch100: %{name}-fix-night-theme.patch
-Patch101: %{name}-libatomic-linkage.patch
+Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
+Source1: https://github.com/desktop-app/tg_owt/archive/%{commit1}/owt-%{shortcommit1}.tar.gz
+
+# https://github.com/desktop-app/cmake_helpers/commit/d955882cb4d4c94f61a9b1df62b7f93d3c5bff7d
+Patch100: %{name}-webrtc-packaged.patch
+# https://github.com/desktop-app/tg_owt/pull/25
+Patch101: tg_owt-dlopen-linkage.patch
+
+# Telegram Desktop require more than 8 GB of RAM on linking stage.
+# Disabling all low-memory architectures.
+ExclusiveArch: x86_64
 
 # Telegram Desktop require exact version of Qt due to Qt private API usage.
 %{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
@@ -63,6 +81,13 @@ BuildRequires: rlottie-devel
 Provides: bundled(rlottie) = 0~git
 %endif
 
+# Breaking API changes in version 1.2.0.
+%if %{with mapbox}
+BuildRequires: mapbox-variant-devel < 1.2.0
+%else
+Provides: bundled(mapbox-variant) = 1.1.6
+%endif
+
 # Telegram Desktop require patched version of lxqt-qtplugin.
 # Pull Request pending: https://github.com/lxqt/lxqt-qtplugin/pull/52
 Provides: bundled(lxqt-qtplugin) = 0.14.0~git
@@ -76,7 +101,6 @@ BuildRequires: gcc
 
 # Development packages for Telegram Desktop...
 BuildRequires: guidelines-support-library-devel >= 3.0.1
-BuildRequires: mapbox-variant-devel >= 0.3.6
 BuildRequires: qt5-qtbase-private-devel
 BuildRequires: libtgvoip-devel >= 2.4.4
 BuildRequires: range-v3-devel >= 0.10.0
@@ -102,6 +126,23 @@ BuildRequires: libatomic
 BuildRequires: lz4-devel
 BuildRequires: xz-devel
 BuildRequires: python3
+
+%if %{with webrtc}
+BuildRequires: pulseaudio-libs-devel
+BuildRequires: libjpeg-turbo-devel
+BuildRequires: alsa-lib-devel
+BuildRequires: yasm
+
+Provides: bundled(tg_owt) = 0~git
+Provides: bundled(openh264) = 0~git
+Provides: bundled(abseil-cpp) = 0~git
+Provides: bundled(libsrtp) = 0~git
+Provides: bundled(libvpx) = 0~git
+Provides: bundled(libyuv) = 0~git
+Provides: bundled(pffft) = 0~git
+Provides: bundled(rnnoise) = 0~git
+Provides: bundled(usrsctp) = 0~git
+%endif
 
 %if %{with clang}
 BuildRequires: compiler-rt
@@ -129,30 +170,74 @@ business messaging needs.
 
 %prep
 # Unpacking Telegram Desktop source archive...
-%autosetup -n %{appname}-%{version}-full -p1
+%setup -q -n %{appname}-%{version}-full
+%patch100 -p1
+
+# Unpacking WebRTC...
+%if %{with webrtc}
+tar -xf %{SOURCE1}
+mv tg_owt-%{commit1} tg_owt
+%patch101 -p1
+%endif
 
 # Unbundling libraries...
-rm -rf Telegram/ThirdParty/{Catch,GSL,QR,SPMediaKeyTap,expected,fcitx-qt5,fcitx5-qt,hime,hunspell,libdbusmenu-qt,libqtxdg,libtgvoip,lxqt-qtplugin,lz4,materialdecoration,minizip,nimf,qt5ct,range-v3,variant,xxHash}
+rm -rf Telegram/ThirdParty/{Catch,GSL,QR,SPMediaKeyTap,expected,fcitx-qt5,fcitx5-qt,hime,hunspell,libdbusmenu-qt,libqtxdg,libtgvoip,lxqt-qtplugin,lz4,materialdecoration,minizip,nimf,qt5ct,range-v3,xxHash}
 
 # Unbundling rlottie if build against packaged version...
 %if %{with rlottie}
 rm -rf Telegram/ThirdParty/rlottie
 %endif
 
+# Unbundling mapbox-variant if build against packaged version...
+%if %{with mapbox}
+rm -rf Telegram/ThirdParty/variant
+%endif
+
 %build
+# Building WebRTC using cmake...
+%if %{with webrtc}
+pushd tg_owt
+%cmake -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release \
+%ifarch x86_64
+%if %{with ipo} && %{without clang}
+    -DCMAKE_INTERPROCEDURAL_OPTIMIZATION:BOOL=ON \
+%endif
+%endif
+%if %{with clang}
+    -DCMAKE_C_COMPILER=%{_bindir}/clang \
+    -DCMAKE_CXX_COMPILER=%{_bindir}/clang++ \
+    -DCMAKE_AR=%{_bindir}/llvm-ar \
+    -DCMAKE_RANLIB=%{_bindir}/llvm-ranlib \
+    -DCMAKE_LINKER=%{_bindir}/llvm-ld \
+    -DCMAKE_OBJDUMP=%{_bindir}/llvm-objdump \
+    -DCMAKE_NM=%{_bindir}/llvm-nm \
+%else
+    -DCMAKE_AR=%{_bindir}/gcc-ar \
+    -DCMAKE_RANLIB=%{_bindir}/gcc-ranlib \
+    -DCMAKE_NM=%{_bindir}/gcc-nm \
+%endif
+    -DTG_OWT_PACKAGED_BUILD:BOOL=ON
+%cmake_build
+popd
+%endif
+
 # Building Telegram Desktop using cmake...
 %cmake -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
 %ifarch x86_64
 %if %{with ipo} && %{without clang}
-    -DDESKTOP_APP_ENABLE_IPO_OPTIMIZATIONS:BOOL=ON \
+    -DCMAKE_INTERPROCEDURAL_OPTIMIZATION:BOOL=ON \
 %endif
 %endif
 %if %{with rlottie}
-    -DDESKTOP_APP_USE_PACKAGED_RLOTTIE:BOOL=ON \
     -DDESKTOP_APP_LOTTIE_USE_CACHE:BOOL=OFF \
+%endif
+%if %{with webrtc}
+    -DDESKTOP_APP_DISABLE_WEBRTC_INTEGRATION:BOOL=OFF \
+    -Dtg_owt_DIR:PATH=%{_builddir}/%{appname}-%{version}-full/tg_owt/%_vpath_builddir \
 %else
-    -DDESKTOP_APP_USE_PACKAGED_RLOTTIE:BOOL=OFF \
+    -DDESKTOP_APP_DISABLE_WEBRTC_INTEGRATION:BOOL=ON \
 %endif
 %if %{with clang}
     -DCMAKE_C_COMPILER=%{_bindir}/clang \
@@ -170,22 +255,15 @@ rm -rf Telegram/ThirdParty/rlottie
     -DTDESKTOP_API_ID=611335 \
     -DTDESKTOP_API_HASH=d524b414d21f4d37f08684c1df41ac9c \
     -DDESKTOP_APP_USE_PACKAGED:BOOL=ON \
-    -DDESKTOP_APP_USE_PACKAGED_GSL:BOOL=ON \
-    -DDESKTOP_APP_USE_PACKAGED_EXPECTED:BOOL=ON \
-    -DDESKTOP_APP_USE_PACKAGED_VARIANT:BOOL=ON \
-    -DDESKTOP_APP_USE_PACKAGED_QRCODE:BOOL=ON \
     -DDESKTOP_APP_USE_PACKAGED_FONTS:BOOL=ON \
     -DDESKTOP_APP_USE_GLIBC_WRAPS:BOOL=OFF \
     -DDESKTOP_APP_DISABLE_CRASH_REPORTS:BOOL=ON \
-    -DTDESKTOP_USE_PACKAGED_TGVOIP:BOOL=ON \
 %if %{with gtk3}
     -DTDESKTOP_DISABLE_GTK_INTEGRATION:BOOL=OFF \
 %else
     -DTDESKTOP_DISABLE_GTK_INTEGRATION:BOOL=ON \
 %endif
     -DTDESKTOP_DISABLE_REGISTER_CUSTOM_SCHEME:BOOL=ON \
-    -DTDESKTOP_DISABLE_DESKTOP_FILE_GENERATION:BOOL=ON \
-    -DTDESKTOP_USE_FONTCONFIG_FALLBACK:BOOL=OFF \
     -DTDESKTOP_LAUNCHER_BASENAME=%{launcher}
 %cmake_build
 
@@ -205,14 +283,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Sun Aug 30 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.3.2-1
+- Updated to version 2.3.2.
+
 * Tue Aug 18 2020 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 2.2.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
 
 * Sun Jul 26 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.2.0-1
 - Updated to version 2.2.0.
-
-* Wed Jun 24 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.13-1
-- Updated to version 2.1.13.
-
-* Thu Jun 18 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.1.12-1
-- Updated to version 2.1.12.
