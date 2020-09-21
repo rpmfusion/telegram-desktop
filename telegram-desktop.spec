@@ -3,7 +3,6 @@
 
 # Build conditionals (with - OFF, without - ON)...
 %bcond_with rlottie
-%bcond_without ipo
 %bcond_without webrtc
 %bcond_with gtk3
 %bcond_with clang
@@ -12,6 +11,13 @@
 %bcond_with mapbox
 %else
 %bcond_without mapbox
+%endif
+
+# F33+ has some issues with LTO: https://bugzilla.redhat.com/show_bug.cgi?id=1880290
+%if 0%{?fedora} && 0%{?fedora} >= 33
+%bcond_with ipo
+%else
+%bcond_without ipo
 %endif
 
 # Telegram Desktop's constants...
@@ -40,7 +46,7 @@
 
 Name: telegram-desktop
 Version: 2.3.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
@@ -283,6 +289,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Mon Sep 21 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.3.2-2
+- Fixed startup crash on Fedora 33+.
+
 * Sun Aug 30 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.3.2-1
 - Updated to version 2.3.2.
 
