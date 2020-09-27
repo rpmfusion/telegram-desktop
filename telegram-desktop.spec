@@ -46,7 +46,7 @@
 
 Name: telegram-desktop
 Version: 2.3.2
-Release: 2%{?dist}
+Release: 3%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
@@ -289,14 +289,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Sun Sep 27 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.3.2-3
+- Rebuilt due to Qt 5.15.1 update.
+
 * Mon Sep 21 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.3.2-2
 - Fixed startup crash on Fedora 33+.
 
 * Sun Aug 30 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.3.2-1
 - Updated to version 2.3.2.
-
-* Tue Aug 18 2020 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 2.2.0-2
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
-
-* Sun Jul 26 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.2.0-1
-- Updated to version 2.2.0.
