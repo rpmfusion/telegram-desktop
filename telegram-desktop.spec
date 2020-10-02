@@ -7,12 +7,6 @@
 %bcond_with gtk3
 %bcond_with clang
 
-%if 0%{?fedora} && 0%{?fedora} >= 33
-%bcond_with mapbox
-%else
-%bcond_without mapbox
-%endif
-
 # F33+ has some issues with LTO: https://bugzilla.redhat.com/show_bug.cgi?id=1880290
 %if 0%{?fedora} && 0%{?fedora} >= 33
 %bcond_with ipo
@@ -25,7 +19,7 @@
 %global launcher telegramdesktop
 
 # Git revision of WebRTC...
-%global commit1 a80383535367dd8961f55f960938d943d6975808
+%global commit1 7a9d4bd6d9a147d15e3c8fa818a716c31f65606a
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 
 # Applying workaround to RHBZ#1559007...
@@ -45,8 +39,8 @@
 %endif
 
 Name: telegram-desktop
-Version: 2.3.2
-Release: 3%{?dist}
+Version: 2.4.1
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
@@ -59,11 +53,6 @@ Summary: Telegram Desktop official messaging app
 
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
 Source1: https://github.com/desktop-app/tg_owt/archive/%{commit1}/owt-%{shortcommit1}.tar.gz
-
-# https://github.com/desktop-app/cmake_helpers/commit/d955882cb4d4c94f61a9b1df62b7f93d3c5bff7d
-Patch100: %{name}-webrtc-packaged.patch
-# https://github.com/desktop-app/tg_owt/pull/25
-Patch101: tg_owt-dlopen-linkage.patch
 
 # Telegram Desktop require more than 8 GB of RAM on linking stage.
 # Disabling all low-memory architectures.
@@ -85,13 +74,6 @@ Provides: telegram%{?_isa} = %{?epoch:%{epoch}:}%{version}-%{release}
 BuildRequires: rlottie-devel
 %else
 Provides: bundled(rlottie) = 0~git
-%endif
-
-# Breaking API changes in version 1.2.0.
-%if %{with mapbox}
-BuildRequires: mapbox-variant-devel < 1.2.0
-%else
-Provides: bundled(mapbox-variant) = 1.1.6
 %endif
 
 # Telegram Desktop require patched version of lxqt-qtplugin.
@@ -139,7 +121,7 @@ BuildRequires: libjpeg-turbo-devel
 BuildRequires: alsa-lib-devel
 BuildRequires: yasm
 
-Provides: bundled(tg_owt) = 0~git
+Provides: bundled(tg_owt) = 0~git%{shortcommit1}
 Provides: bundled(openh264) = 0~git
 Provides: bundled(abseil-cpp) = 0~git
 Provides: bundled(libsrtp) = 0~git
@@ -176,14 +158,12 @@ business messaging needs.
 
 %prep
 # Unpacking Telegram Desktop source archive...
-%setup -q -n %{appname}-%{version}-full
-%patch100 -p1
+%autosetup -n %{appname}-%{version}-full -p1
 
 # Unpacking WebRTC...
 %if %{with webrtc}
 tar -xf %{SOURCE1}
 mv tg_owt-%{commit1} tg_owt
-%patch101 -p1
 %endif
 
 # Unbundling libraries...
@@ -192,11 +172,6 @@ rm -rf Telegram/ThirdParty/{Catch,GSL,QR,SPMediaKeyTap,expected,fcitx-qt5,fcitx5
 # Unbundling rlottie if build against packaged version...
 %if %{with rlottie}
 rm -rf Telegram/ThirdParty/rlottie
-%endif
-
-# Unbundling mapbox-variant if build against packaged version...
-%if %{with mapbox}
-rm -rf Telegram/ThirdParty/variant
 %endif
 
 %build
@@ -269,7 +244,6 @@ popd
 %else
     -DTDESKTOP_DISABLE_GTK_INTEGRATION:BOOL=ON \
 %endif
-    -DTDESKTOP_DISABLE_REGISTER_CUSTOM_SCHEME:BOOL=ON \
     -DTDESKTOP_LAUNCHER_BASENAME=%{launcher}
 %cmake_build
 
@@ -289,11 +263,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Fri Oct 02 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.4.1-1
+- Updated to version 2.4.1.
+
 * Sun Sep 27 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.3.2-3
 - Rebuilt due to Qt 5.15.1 update.
 
 * Mon Sep 21 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.3.2-2
 - Fixed startup crash on Fedora 33+.
-
-* Sun Aug 30 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.3.2-1
-- Updated to version 2.3.2.
