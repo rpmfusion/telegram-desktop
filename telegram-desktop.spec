@@ -1,5 +1,5 @@
 %undefine __cmake_in_source_build
-%define _lto_cflags %{nil}
+%global _lto_cflags %{nil}
 
 # Build conditionals (with - OFF, without - ON)...
 %bcond_with rlottie
@@ -19,7 +19,7 @@
 %global launcher telegramdesktop
 
 # Git revision of WebRTC...
-%global commit1 7a9d4bd6d9a147d15e3c8fa818a716c31f65606a
+%global commit1 c73a4718cbff7048373a63db32068482e5fd11ef
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 
 # Applying workaround to RHBZ#1559007...
@@ -39,7 +39,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 2.4.3
+Version: 2.4.4
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -75,10 +75,6 @@ BuildRequires: rlottie-devel
 %else
 Provides: bundled(rlottie) = 0~git
 %endif
-
-# Telegram Desktop require patched version of lxqt-qtplugin.
-# Pull Request pending: https://github.com/lxqt/lxqt-qtplugin/pull/52
-Provides: bundled(lxqt-qtplugin) = 0.14.0~git
 
 # Compilers and tools...
 BuildRequires: desktop-file-utils
@@ -167,7 +163,7 @@ mv tg_owt-%{commit1} tg_owt
 %endif
 
 # Unbundling libraries...
-rm -rf Telegram/ThirdParty/{Catch,GSL,QR,SPMediaKeyTap,expected,fcitx-qt5,fcitx5-qt,hime,hunspell,libdbusmenu-qt,libqtxdg,libtgvoip,lxqt-qtplugin,lz4,materialdecoration,minizip,nimf,qt5ct,range-v3,xxHash}
+rm -rf Telegram/ThirdParty/{Catch,GSL,QR,SPMediaKeyTap,expected,fcitx-qt5,fcitx5-qt,hime,hunspell,libdbusmenu-qt,libtgvoip,lz4,materialdecoration,minizip,nimf,qt5ct,range-v3,xxHash}
 
 # Unbundling rlottie if build against packaged version...
 %if %{with rlottie}
@@ -263,11 +259,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Sat Oct 24 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.4.4-1
+- Updated to version 2.4.4.
+
 * Wed Oct 07 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.4.3-1
 - Updated to version 2.4.3.
 
 * Fri Oct 02 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.4.2-1
 - Updated to version 2.4.2.
-
-* Fri Oct 02 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.4.1-1
-- Updated to version 2.4.1.
