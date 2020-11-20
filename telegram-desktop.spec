@@ -29,7 +29,7 @@
 
 Name: telegram-desktop
 Version: 2.4.7
-Release: 2%{?dist}
+Release: 3%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
@@ -39,6 +39,12 @@ License: GPLv3+ and LGPLv2+ and LGPLv3
 URL: https://github.com/telegramdesktop/%{appname}
 Summary: Telegram Desktop official messaging app
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
+
+# https://github.com/telegramdesktop/tdesktop/commit/21133abe132344bab00f9cad2ac139d0960fd596
+Patch100: %{name}-fix-ibus-hangs.patch
+
+# https://github.com/telegramdesktop/tdesktop/commit/e64f6f72667d1beccd5464ec4d915b66f6db329d
+Patch101: %{name}-fix-ibus-portal-check.patch
 
 # Telegram Desktop require more than 8 GB of RAM on linking stage.
 # Disabling all low-memory architectures.
@@ -195,11 +201,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Fri Nov 20 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.4.7-3
+- Backported upstream patches with startup hangs fixes.
+
 * Thu Nov 12 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.4.7-2
 - Rebuilt with bundled version of libtgvoip.
 
 * Thu Nov 05 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.4.7-1
 - Updated to version 2.4.7.
-
-* Mon Nov 02 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.4.6-1
-- Updated to version 2.4.6.

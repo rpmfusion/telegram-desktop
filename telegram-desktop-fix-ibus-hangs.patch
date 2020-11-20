@@ -1,0 +1,79 @@
+From 8846116f0d2ca72425ed77cc8b49fa3e6cb7aec0 Mon Sep 17 00:00:00 2001
+From: Ilya Fedin <fedin-ilja2010@ya.ru>
+Date: Tue, 10 Nov 2020 14:00:26 +0400
+Subject: [PATCH 1/2] Fix 30s hang in case ibus portal couldn't be started
+
+---
+ .../platform/linux/specific_linux.cpp         | 42 +++++++++++++++++--
+ 1 file changed, 39 insertions(+), 3 deletions(-)
+
+diff --git a/Telegram/SourceFiles/platform/linux/specific_linux.cpp b/Telegram/SourceFiles/platform/linux/specific_linux.cpp
+index 5fff0b83d..42c50074f 100644
+--- a/Telegram/SourceFiles/platform/linux/specific_linux.cpp
++++ b/Telegram/SourceFiles/platform/linux/specific_linux.cpp
+@@ -35,6 +35,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
+ #ifndef DESKTOP_APP_DISABLE_DBUS_INTEGRATION
+ #include <QtDBus/QDBusInterface>
+ #include <QtDBus/QDBusConnection>
++#include <QtDBus/QDBusConnectionInterface>
+ #include <QtDBus/QDBusMessage>
+ #include <QtDBus/QDBusReply>
+ #include <QtDBus/QDBusError>
+@@ -87,6 +88,31 @@ constexpr auto kXCBFrameExtentsAtomName = "_GTK_FRAME_EXTENTS"_cs;
+ QStringList PlatformThemes;
+ 
+ #ifndef DESKTOP_APP_DISABLE_DBUS_INTEGRATION
++QStringList ListDBusActivatableNames() {
++	static const auto Result = [&] {
++		const auto message = QDBusMessage::createMethodCall(
++			qsl("org.freedesktop.DBus"),
++			qsl("/org/freedesktop/DBus"),
++			qsl("org.freedesktop.DBus"),
++			qsl("ListActivatableNames"));
++
++		const QDBusReply<QStringList> reply = QDBusConnection::sessionBus()
++			.call(message);
++
++		if (reply.isValid()) {
++			return reply.value();
++		} else {
++			LOG(("App Error: %1: %2")
++				.arg(reply.error().name())
++				.arg(reply.error().message()));
++		}
++
++		return QStringList{};
++	}();
++
++	return Result;
++}
++
+ void PortalAutostart(bool autostart, bool silent = false) {
+ 	if (cExeName().isEmpty()) {
+ 		return;
+@@ -133,9 +159,19 @@ bool IsXDGDesktopPortalKDEPresent() {
+ }
+ 
+ bool IsIBusPortalPresent() {
+-	static const auto Result = QDBusInterface(
+-		qsl("org.freedesktop.portal.IBus"),
+-		qsl("/org/freedesktop/IBus")).isValid();
++	static const auto Result = [&] {
++		const auto interface = QDBusConnection::sessionBus().interface();
++		const auto activatableNames = ListDBusActivatableNames();
++
++		const auto serviceRegistered = interface
++			&& interface->isServiceRegistered(
++				qsl("org.freedesktop.portal.IBus"));
++
++		const auto serviceActivatable = activatableNames.contains(
++			qsl("org.freedesktop.portal.IBus"));
++
++		return serviceRegistered || serviceActivatable;
++	}();
+ 
+ 	return Result;
+ }
+-- 
+2.28.0
+
