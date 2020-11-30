@@ -29,7 +29,7 @@
 
 Name: telegram-desktop
 Version: 2.4.7
-Release: 3%{?dist}
+Release: 4%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
@@ -201,11 +201,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Mon Nov 30 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.4.7-4
+- Rebuilt due to Qt 5.15.2 update.
+
 * Fri Nov 20 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.4.7-3
 - Backported upstream patches with startup hangs fixes.
 
 * Thu Nov 12 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.4.7-2
 - Rebuilt with bundled version of libtgvoip.
-
-* Thu Nov 05 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.4.7-1
-- Updated to version 2.4.7.
