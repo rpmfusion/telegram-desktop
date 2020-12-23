@@ -79,6 +79,7 @@ BuildRequires: gcc
 BuildRequires: guidelines-support-library-devel >= 3.0.1
 BuildRequires: qt5-qtbase-private-devel
 BuildRequires: range-v3-devel >= 0.10.0
+BuildRequires: xcb-util-keysyms-devel
 BuildRequires: libqrcodegencpp-devel
 BuildRequires: minizip-compat-devel
 BuildRequires: qt5-qtwayland-devel
@@ -92,6 +93,7 @@ BuildRequires: expected-devel
 BuildRequires: hunspell-devel
 BuildRequires: openssl-devel
 BuildRequires: wayland-devel
+BuildRequires: libxcb-devel
 BuildRequires: xxhash-devel
 BuildRequires: json11-devel
 BuildRequires: tg_owt-devel
