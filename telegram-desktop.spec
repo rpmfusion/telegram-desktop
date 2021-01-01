@@ -29,7 +29,7 @@
 
 Name: telegram-desktop
 Version: 2.5.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
@@ -197,6 +197,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Fri Jan  1 2021 Leigh Scott <leigh123linux@gmail.com> - 2.5.1-2
+- Rebuilt for new ffmpeg snapshot
+
 * Wed Dec 23 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.5.1-1
 - Updated to version 2.5.1.
 
