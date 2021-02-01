@@ -2,22 +2,19 @@
 %global _lto_cflags %{nil}
 
 # Build conditionals (with - OFF, without - ON)...
-%bcond_with rlottie
-%bcond_with gtk3
 %bcond_with clang
+%bcond_with gtk3
 %bcond_with libtgvoip
+%bcond_with rlottie
+%bcond_with wayland
 
 # Telegram Desktop's constants...
 %global appname tdesktop
 %global launcher telegramdesktop
 
-# Applying workaround to RHBZ#1559007...
+# Applying toolchain configuration...
 %if %{with clang}
-%if 0%{?fedora} && 0%{?fedora} >= 33
 %global toolchain clang
-%else
-%global optflags %(echo %{optflags} | sed -e 's/-mcet//g' -e 's/-fcf-protection//g' -e 's/-fstack-clash-protection//g' -e 's/$/ -Qunused-arguments -Wno-unknown-warning-option -Wno-deprecated-declarations/')
-%endif
 %endif
 
 # Decrease debuginfo verbosity to reduce memory consumption...
@@ -28,8 +25,8 @@
 %endif
 
 Name: telegram-desktop
-Version: 2.5.1
-Release: 2%{?dist}
+Version: 2.5.8
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
@@ -44,66 +41,51 @@ Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
 # Disabling all low-memory architectures.
 ExclusiveArch: x86_64
 
-# Telegram Desktop require exact version of Qt due to Qt private API usage.
-%{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
-Requires: qt5-qtimageformats%{?_isa}
-Requires: hicolor-icon-theme
-Requires: open-sans-fonts
+BuildRequires: cmake(Microsoft.GSL)
+BuildRequires: cmake(OpenAL)
+BuildRequires: cmake(Qt5Core)
+BuildRequires: cmake(Qt5DBus)
+BuildRequires: cmake(Qt5Gui)
+BuildRequires: cmake(Qt5Network)
+BuildRequires: cmake(Qt5Widgets)
+BuildRequires: cmake(Qt5XkbCommonSupport)
+BuildRequires: cmake(dbusmenu-qt5)
+BuildRequires: cmake(range-v3)
+BuildRequires: cmake(tg_owt)
+BuildRequires: cmake(tl-expected)
 
-# Short alias for the main package...
-Provides: telegram = %{?epoch:%{epoch}:}%{version}-%{release}
-Provides: telegram%{?_isa} = %{?epoch:%{epoch}:}%{version}-%{release}
+BuildRequires: pkgconfig(gio-2.0)
+BuildRequires: pkgconfig(glib-2.0)
+BuildRequires: pkgconfig(gobject-2.0)
+BuildRequires: pkgconfig(hunspell)
+BuildRequires: pkgconfig(libavcodec)
+BuildRequires: pkgconfig(libavformat)
+BuildRequires: pkgconfig(libavresample)
+BuildRequires: pkgconfig(libavutil)
+BuildRequires: pkgconfig(libcrypto)
+BuildRequires: pkgconfig(liblz4)
+BuildRequires: pkgconfig(liblzma)
+BuildRequires: pkgconfig(libswscale)
+BuildRequires: pkgconfig(libxxhash)
+BuildRequires: pkgconfig(openssl)
+BuildRequires: pkgconfig(opus)
+BuildRequires: pkgconfig(xcb)
+BuildRequires: pkgconfig(xcb-keysyms)
+BuildRequires: pkgconfig(xcb-record)
+BuildRequires: pkgconfig(xcb-screensaver)
 
-# Telegram Desktop require patched version of rlottie since 1.8.0.
-# Pull Request pending: https://github.com/Samsung/rlottie/pull/252
-%if %{with rlottie}
-BuildRequires: rlottie-devel
-%else
-Provides: bundled(rlottie) = 0~git
-%endif
-
-%if %{with libtgvoip}
-BuildRequires: libtgvoip-devel >= 2.4.4
-%else
-Provides: bundled(libtgvoip) = 2.4.4
-%endif
-
-# Compilers and tools...
-BuildRequires: desktop-file-utils
-BuildRequires: libappstream-glib
-BuildRequires: gcc-c++
 BuildRequires: cmake
+BuildRequires: desktop-file-utils
 BuildRequires: gcc
-
-# Development packages for Telegram Desktop...
-BuildRequires: guidelines-support-library-devel >= 3.0.1
-BuildRequires: qt5-qtbase-private-devel
-BuildRequires: range-v3-devel >= 0.10.0
-BuildRequires: xcb-util-keysyms-devel
-BuildRequires: libqrcodegencpp-devel
-BuildRequires: minizip-compat-devel
-BuildRequires: qt5-qtwayland-devel
-BuildRequires: ffmpeg-devel >= 3.1
-BuildRequires: dbusmenu-qt5-devel
-BuildRequires: openal-soft-devel
-BuildRequires: qt5-qtbase-static
-BuildRequires: qt5-qtbase-devel
-BuildRequires: libstdc++-devel
-BuildRequires: expected-devel
-BuildRequires: hunspell-devel
-BuildRequires: openssl-devel
-BuildRequires: wayland-devel
-BuildRequires: libxcb-devel
-BuildRequires: xxhash-devel
-BuildRequires: json11-devel
-BuildRequires: tg_owt-devel
-BuildRequires: ninja-build
-BuildRequires: glib2-devel
-BuildRequires: opus-devel
+BuildRequires: gcc-c++
+BuildRequires: libappstream-glib
 BuildRequires: libatomic
-BuildRequires: lz4-devel
-BuildRequires: xz-devel
+BuildRequires: libqrcodegencpp-devel
+BuildRequires: libstdc++-devel
+BuildRequires: minizip-compat-devel
+BuildRequires: ninja-build
 BuildRequires: python3
+BuildRequires: qt5-qtbase-private-devel
 
 %if %{with clang}
 BuildRequires: compiler-rt
@@ -112,9 +94,38 @@ BuildRequires: llvm
 %endif
 
 %if %{with gtk3}
-BuildRequires: gtk3-devel
+BuildRequires: pkgconfig(gtk+-3.0)
 Requires: gtk3%{?_isa}
 %endif
+
+%if %{with libtgvoip}
+BuildRequires: pkgconfig(tgvoip) >= 2.4.4
+%else
+Provides: bundled(libtgvoip) = 2.4.4
+%endif
+
+%if %{with rlottie}
+BuildRequires: cmake(rlottie)
+%else
+Provides: bundled(rlottie) = 0~git
+%endif
+
+%if %{with wayland}
+BuildRequires: cmake(KF5Wayland)
+BuildRequires: cmake(Qt5WaylandClient)
+BuildRequires: pkgconfig(wayland-client)
+BuildRequires: qt5-qtbase-static
+%endif
+
+# Telegram Desktop require exact version of Qt due to Qt private API usage.
+%{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
+Requires: hicolor-icon-theme
+Requires: open-sans-fonts
+Requires: qt5-qtimageformats%{?_isa}
+
+# Short alias for the main package...
+Provides: telegram = %{?epoch:%{epoch}:}%{version}-%{release}
+Provides: telegram%{?_isa} = %{?epoch:%{epoch}:}%{version}-%{release}
 
 %description
 Telegram is a messaging app with a focus on speed and security, it’s super
@@ -150,9 +161,6 @@ rm -rf Telegram/ThirdParty/libtgvoip
 # Building Telegram Desktop using cmake...
 %cmake -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
-%if %{with rlottie}
-    -DDESKTOP_APP_LOTTIE_USE_CACHE:BOOL=OFF \
-%endif
 %if %{with clang}
     -DCMAKE_C_COMPILER=%{_bindir}/clang \
     -DCMAKE_CXX_COMPILER=%{_bindir}/clang++ \
@@ -178,6 +186,14 @@ rm -rf Telegram/ThirdParty/libtgvoip
 %else
     -DTDESKTOP_DISABLE_GTK_INTEGRATION:BOOL=ON \
 %endif
+%if %{with wayland}
+    -DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION:BOOL=OFF \
+%else
+    -DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION:BOOL=ON \
+%endif
+%if %{with rlottie}
+    -DDESKTOP_APP_LOTTIE_USE_CACHE:BOOL=OFF \
+%endif
     -DTDESKTOP_LAUNCHER_BASENAME=%{launcher}
 %cmake_build
 
@@ -197,14 +213,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
-* Fri Jan  1 2021 Leigh Scott <leigh123linux@gmail.com> - 2.5.1-2
+* Mon Feb 01 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 2.5.8-1
+- Updated to version 2.5.8.
+
+* Fri Jan 01 2021 Leigh Scott <leigh123linux@gmail.com> - 2.5.1-2
 - Rebuilt for new ffmpeg snapshot
 
 * Wed Dec 23 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.5.1-1
 - Updated to version 2.5.1.
-
-* Mon Nov 30 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.4.7-4
-- Rebuilt due to Qt 5.15.2 update.
-
-* Fri Nov 20 2020 Vitaly Zaitsev <vitaly@easycoding.org> - 2.4.7-3
-- Backported upstream patches with startup hangs fixes.
