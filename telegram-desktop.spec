@@ -217,7 +217,7 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 
 %changelog
 * Tue Feb 09 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 2.5.8-3
-- Packported upstream patch with crash fixes.
+- Backported upstream patch with crash fixes.
 
 * Thu Feb 04 2021 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 2.5.8-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
