@@ -1,5 +1,4 @@
 %undefine __cmake_in_source_build
-%global _lto_cflags %{nil}
 
 # Build conditionals (with - OFF, without - ON)...
 %bcond_with clang
@@ -7,6 +6,7 @@
 %bcond_with libtgvoip
 %bcond_with rlottie
 %bcond_with wayland
+%bcond_without x11
 
 # Telegram Desktop's constants...
 %global appname tdesktop
@@ -17,15 +17,8 @@
 %global toolchain clang
 %endif
 
-# Decrease debuginfo verbosity to reduce memory consumption...
-%ifarch x86_64
-%global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
-%else
-%global optflags %(echo %{optflags} | sed 's/-g /-g2 /')
-%endif
-
 Name: telegram-desktop
-Version: 2.5.9
+Version: 2.6.0
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -69,10 +62,6 @@ BuildRequires: pkgconfig(libswscale)
 BuildRequires: pkgconfig(libxxhash)
 BuildRequires: pkgconfig(openssl)
 BuildRequires: pkgconfig(opus)
-BuildRequires: pkgconfig(xcb)
-BuildRequires: pkgconfig(xcb-keysyms)
-BuildRequires: pkgconfig(xcb-record)
-BuildRequires: pkgconfig(xcb-screensaver)
 
 BuildRequires: cmake
 BuildRequires: desktop-file-utils
@@ -115,6 +104,13 @@ BuildRequires: cmake(KF5Wayland)
 BuildRequires: cmake(Qt5WaylandClient)
 BuildRequires: pkgconfig(wayland-client)
 BuildRequires: qt5-qtbase-static
+%endif
+
+%if %{with x11}
+BuildRequires: pkgconfig(xcb)
+BuildRequires: pkgconfig(xcb-keysyms)
+BuildRequires: pkgconfig(xcb-record)
+BuildRequires: pkgconfig(xcb-screensaver)
 %endif
 
 # Telegram Desktop require exact version of Qt due to Qt private API usage.
@@ -182,14 +178,19 @@ rm -rf Telegram/ThirdParty/libtgvoip
     -DDESKTOP_APP_DISABLE_CRASH_REPORTS:BOOL=ON \
     -DDESKTOP_APP_DISABLE_WEBRTC_INTEGRATION:BOOL=OFF \
 %if %{with gtk3}
-    -DTDESKTOP_DISABLE_GTK_INTEGRATION:BOOL=OFF \
+    -DDESKTOP_APP_DISABLE_GTK_INTEGRATION:BOOL=OFF \
 %else
-    -DTDESKTOP_DISABLE_GTK_INTEGRATION:BOOL=ON \
+    -DDESKTOP_APP_DISABLE_GTK_INTEGRATION:BOOL=ON \
 %endif
 %if %{with wayland}
     -DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION:BOOL=OFF \
 %else
     -DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION:BOOL=ON \
+%endif
+%if %{with x11}
+    -DDESKTOP_APP_DISABLE_X11_INTEGRATION:BOOL=OFF \
+%else
+    -DDESKTOP_APP_DISABLE_X11_INTEGRATION:BOOL=ON \
 %endif
 %if %{with rlottie}
     -DDESKTOP_APP_LOTTIE_USE_CACHE:BOOL=OFF \
@@ -213,11 +214,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Wed Feb 24 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 2.6.0-1
+- Updated to version 2.6.0.
+
 * Thu Feb 18 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 2.5.9-1
 - Updated to version 2.5.9.
 
 * Tue Feb 09 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 2.5.8-3
 - Backported upstream patch with crash fixes.
-
-* Thu Feb 04 2021 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 2.5.8-2
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
