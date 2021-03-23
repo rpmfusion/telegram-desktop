@@ -1,0 +1,20 @@
+--- a/Telegram/ThirdParty/tgcalls/tgcalls/group/StreamingPart.cpp
++++ b/Telegram/ThirdParty/tgcalls/tgcalls/group/StreamingPart.cpp
+@@ -12,7 +12,6 @@ extern "C" {
+ #include <string>
+ #include <set>
+ #include <map>
+-#include <stdint.h>
+ 
+ namespace tgcalls {
+ 
+--- a/Telegram/ThirdParty/tgcalls/tgcalls/group/StreamingPart.h
++++ b/Telegram/ThirdParty/tgcalls/tgcalls/group/StreamingPart.h
+@@ -3,6 +3,7 @@
+ 
+ #include "absl/types/optional.h"
+ #include <vector>
++#include <stdint.h>
+ 
+ namespace tgcalls {
+ 
