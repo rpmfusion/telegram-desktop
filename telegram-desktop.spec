@@ -94,6 +94,7 @@ Requires: gtk3%{?_isa}
 %if %{with libtgvoip}
 BuildRequires: pkgconfig(tgvoip) >= 2.4.4
 %else
+BuildRequires: pkgconfig(alsa)
 Provides: bundled(libtgvoip) = 2.4.4
 %endif
 
