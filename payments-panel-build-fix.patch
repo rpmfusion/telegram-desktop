@@ -1,0 +1,12 @@
+diff --git a/Telegram/SourceFiles/payments/ui/payments_panel.cpp b/Telegram/SourceFiles/payments/ui/payments_panel.cpp
+index e8923f2bb..59d9f6695 100644
+--- a/Telegram/SourceFiles/payments/ui/payments_panel.cpp
++++ b/Telegram/SourceFiles/payments/ui/payments_panel.cpp
+@@ -24,6 +24,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
+ #include "webview/webview_interface.h"
+ #include "styles/style_payments.h"
+ #include "styles/style_layers.h"
++#include <QtCore/QJsonDocument>
+ 
+ namespace Payments::Ui {
+ namespace {

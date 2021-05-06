@@ -18,7 +18,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 2.7.1
+Version: 2.7.4
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -30,8 +30,7 @@ URL: https://github.com/telegramdesktop/%{appname}
 Summary: Telegram Desktop official messaging app
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
 
-# https://github.com/TelegramMessenger/tgcalls/commit/eded7cc540123eaf26361958b9a61c65cb2f7cfc
-Patch100: %{name}-build-fix.patch
+Patch100: payments-panel-build-fix.patch
 
 # Telegram Desktop require more than 8 GB of RAM on linking stage.
 # Disabling all low-memory architectures.
@@ -223,6 +222,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Tue May 4 2021 John Brooks <john@jbrooks.io> - 2.7.4-1
+- Updated to version 2.7.4.
+
 * Sun Mar 21 2021 Alexey Gorgurov <alexfails@fedoraproject.org> - 2.7.1-1
 - Updated to version 2.7.1.
 
