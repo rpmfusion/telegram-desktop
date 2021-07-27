@@ -18,7 +18,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 2.7.1
+Version: 2.8.8
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -29,9 +29,6 @@ License: GPLv3+ and LGPLv2+ and LGPLv3
 URL: https://github.com/telegramdesktop/%{appname}
 Summary: Telegram Desktop official messaging app
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
-
-# https://github.com/TelegramMessenger/tgcalls/commit/eded7cc540123eaf26361958b9a61c65cb2f7cfc
-Patch100: %{name}-build-fix.patch
 
 # Telegram Desktop require more than 8 GB of RAM on linking stage.
 # Disabling all low-memory architectures.
@@ -55,6 +52,7 @@ BuildRequires: pkgconfig(glib-2.0)
 BuildRequires: pkgconfig(glibmm-2.4)
 BuildRequires: pkgconfig(gobject-2.0)
 BuildRequires: pkgconfig(hunspell)
+BuildRequires: pkgconfig(jemalloc)
 BuildRequires: pkgconfig(libavcodec)
 BuildRequires: pkgconfig(libavformat)
 BuildRequires: pkgconfig(libavresample)
@@ -66,6 +64,7 @@ BuildRequires: pkgconfig(libswscale)
 BuildRequires: pkgconfig(libxxhash)
 BuildRequires: pkgconfig(openssl)
 BuildRequires: pkgconfig(opus)
+BuildRequires: pkgconfig(rnnoise)
 
 BuildRequires: cmake
 BuildRequires: desktop-file-utils
@@ -223,6 +222,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Tue Jul 27 2021 Leigh Scott <leigh123linux@gmail.com> - 2.8.8-1
+- Updated to version 2.8.8.
+
 * Sun Mar 21 2021 Alexey Gorgurov <alexfails@fedoraproject.org> - 2.7.1-1
 - Updated to version 2.7.1.
 
