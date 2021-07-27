@@ -46,7 +46,6 @@ BuildRequires: cmake(dbusmenu-qt5)
 BuildRequires: cmake(range-v3)
 BuildRequires: cmake(tg_owt)
 BuildRequires: cmake(tl-expected)
-
 BuildRequires: pkgconfig(gio-2.0)
 BuildRequires: pkgconfig(glib-2.0)
 BuildRequires: pkgconfig(glibmm-2.4)
@@ -60,12 +59,10 @@ BuildRequires: pkgconfig(libavutil)
 BuildRequires: pkgconfig(libcrypto)
 BuildRequires: pkgconfig(liblz4)
 BuildRequires: pkgconfig(liblzma)
-BuildRequires: pkgconfig(libpipewire-0.3)
 BuildRequires: pkgconfig(libswscale)
 BuildRequires: pkgconfig(libxxhash)
 BuildRequires: pkgconfig(openssl)
 BuildRequires: pkgconfig(opus)
-BuildRequires: pkgconfig(rnnoise)
 
 BuildRequires: cmake
 BuildRequires: desktop-file-utils
@@ -95,7 +92,9 @@ Requires: gtk3%{?_isa}
 BuildRequires: pkgconfig(tgvoip) >= 2.4.4
 %else
 BuildRequires: pkgconfig(alsa)
+BuildRequires: pkgconfig(libpipewire-0.3)
 BuildRequires: pkgconfig(libpulse)
+BuildRequires: pkgconfig(rnnoise)
 Provides: bundled(libtgvoip) = 2.4.4
 %endif
 
@@ -118,6 +117,12 @@ BuildRequires: pkgconfig(xcb-keysyms)
 BuildRequires: pkgconfig(xcb-record)
 BuildRequires: pkgconfig(xcb-screensaver)
 BuildRequires: pkgconfig(xcomposite)
+BuildRequires: pkgconfig(xdamage)
+BuildRequires: pkgconfig(xext)
+BuildRequires: pkgconfig(xfixes)
+BuildRequires: pkgconfig(xrender)
+BuildRequires: pkgconfig(xrandr)
+BuildRequires: pkgconfig(xtst)
 %endif
 
 # Telegram Desktop require exact version of Qt due to Qt private API usage.
