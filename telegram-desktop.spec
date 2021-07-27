@@ -117,6 +117,7 @@ BuildRequires: pkgconfig(xcb)
 BuildRequires: pkgconfig(xcb-keysyms)
 BuildRequires: pkgconfig(xcb-record)
 BuildRequires: pkgconfig(xcb-screensaver)
+BuildRequires: pkgconfig(xcomposite)
 %endif
 
 # Telegram Desktop require exact version of Qt due to Qt private API usage.
