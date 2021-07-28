@@ -2,7 +2,7 @@
 
 # Build conditionals (with - OFF, without - ON)...
 %bcond_with clang
-%bcond_with gtk3
+%bcond_without gtk3
 %bcond_with libtgvoip
 %bcond_with rlottie
 %bcond_with wayland
@@ -19,7 +19,7 @@
 
 Name: telegram-desktop
 Version: 2.8.8
-Release: 1%{?dist}
+Release: 2%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
@@ -29,6 +29,7 @@ License: GPLv3+ and LGPLv2+ and LGPLv3
 URL: https://github.com/telegramdesktop/%{appname}
 Summary: Telegram Desktop official messaging app
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
+Patch0:  webview_extern_c.patch
 
 # Telegram Desktop require more than 8 GB of RAM on linking stage.
 # Disabling all low-memory architectures.
@@ -85,6 +86,7 @@ BuildRequires: llvm
 
 %if %{with gtk3}
 BuildRequires: pkgconfig(gtk+-3.0)
+BuildRequires: pkgconfig(webkit2gtk-4.0)
 Requires: gtk3%{?_isa}
 %endif
 
@@ -229,6 +231,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Wed Jul 28 2021 Leigh Scott <leigh123linux@gmail.com> - 2.8.8-2
+- Add Buildrequires webkitgtk4-devel and enable gtk integration
+
 * Tue Jul 27 2021 Leigh Scott <leigh123linux@gmail.com> - 2.8.8-1
 - Updated to version 2.8.8.
 
