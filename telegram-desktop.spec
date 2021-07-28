@@ -2,7 +2,7 @@
 
 # Build conditionals (with - OFF, without - ON)...
 %bcond_with clang
-%bcond_without gtk3
+%bcond_with gtk3
 %bcond_with libtgvoip
 %bcond_with rlottie
 %bcond_with wayland
@@ -19,7 +19,7 @@
 
 Name: telegram-desktop
 Version: 2.8.8
-Release: 2%{?dist}
+Release: 3%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
@@ -64,6 +64,7 @@ BuildRequires: pkgconfig(libswscale)
 BuildRequires: pkgconfig(libxxhash)
 BuildRequires: pkgconfig(openssl)
 BuildRequires: pkgconfig(opus)
+BuildRequires: pkgconfig(webkit2gtk-4.0)
 
 BuildRequires: cmake
 BuildRequires: desktop-file-utils
@@ -86,7 +87,6 @@ BuildRequires: llvm
 
 %if %{with gtk3}
 BuildRequires: pkgconfig(gtk+-3.0)
-BuildRequires: pkgconfig(webkit2gtk-4.0)
 Requires: gtk3%{?_isa}
 %endif
 
@@ -231,6 +231,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Wed Jul 28 2021 Leigh Scott <leigh123linux@gmail.com> - 2.8.8-3
+- Disable gtk integration
+
 * Wed Jul 28 2021 Leigh Scott <leigh123linux@gmail.com> - 2.8.8-2
 - Add Buildrequires webkitgtk4-devel and enable gtk integration
 
