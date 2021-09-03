@@ -6,6 +6,7 @@
 %bcond_with libtgvoip
 %bcond_with rlottie
 %bcond_with wayland
+%bcond_with webkit
 %bcond_without x11
 
 # Telegram Desktop's constants...
@@ -18,8 +19,8 @@
 %endif
 
 Name: telegram-desktop
-Version: 2.8.8
-Release: 3%{?dist}
+Version: 3.0.1
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
@@ -29,7 +30,6 @@ License: GPLv3+ and LGPLv2+ and LGPLv3
 URL: https://github.com/telegramdesktop/%{appname}
 Summary: Telegram Desktop official messaging app
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
-Patch0:  webview_extern_c.patch
 
 # Telegram Desktop require more than 8 GB of RAM on linking stage.
 # Disabling all low-memory architectures.
@@ -41,12 +41,14 @@ BuildRequires: cmake(Qt5Core)
 BuildRequires: cmake(Qt5DBus)
 BuildRequires: cmake(Qt5Gui)
 BuildRequires: cmake(Qt5Network)
+BuildRequires: cmake(Qt5Svg)
 BuildRequires: cmake(Qt5Widgets)
 BuildRequires: cmake(Qt5XkbCommonSupport)
 BuildRequires: cmake(dbusmenu-qt5)
 BuildRequires: cmake(range-v3)
 BuildRequires: cmake(tg_owt)
 BuildRequires: cmake(tl-expected)
+
 BuildRequires: pkgconfig(gio-2.0)
 BuildRequires: pkgconfig(glib-2.0)
 BuildRequires: pkgconfig(glibmm-2.4)
@@ -64,7 +66,7 @@ BuildRequires: pkgconfig(libswscale)
 BuildRequires: pkgconfig(libxxhash)
 BuildRequires: pkgconfig(openssl)
 BuildRequires: pkgconfig(opus)
-BuildRequires: pkgconfig(webkit2gtk-4.0)
+BuildRequires: pkgconfig(rnnoise)
 
 BuildRequires: cmake
 BuildRequires: desktop-file-utils
@@ -90,13 +92,16 @@ BuildRequires: pkgconfig(gtk+-3.0)
 Requires: gtk3%{?_isa}
 %endif
 
+%if %{with webkit}
+BuildRequires: pkgconfig(webkit2gtk-4.0)
+Requires: webkit2gtk3%{?_isa}
+%endif
+
 %if %{with libtgvoip}
 BuildRequires: pkgconfig(tgvoip) >= 2.4.4
 %else
 BuildRequires: pkgconfig(alsa)
-BuildRequires: pkgconfig(libpipewire-0.3)
 BuildRequires: pkgconfig(libpulse)
-BuildRequires: pkgconfig(rnnoise)
 Provides: bundled(libtgvoip) = 2.4.4
 %endif
 
@@ -118,13 +123,6 @@ BuildRequires: pkgconfig(xcb)
 BuildRequires: pkgconfig(xcb-keysyms)
 BuildRequires: pkgconfig(xcb-record)
 BuildRequires: pkgconfig(xcb-screensaver)
-BuildRequires: pkgconfig(xcomposite)
-BuildRequires: pkgconfig(xdamage)
-BuildRequires: pkgconfig(xext)
-BuildRequires: pkgconfig(xfixes)
-BuildRequires: pkgconfig(xrender)
-BuildRequires: pkgconfig(xrandr)
-BuildRequires: pkgconfig(xtst)
 %endif
 
 # Telegram Desktop require exact version of Qt due to Qt private API usage.
@@ -158,7 +156,7 @@ business messaging needs.
 %autosetup -n %{appname}-%{version}-full -p1
 
 # Unbundling libraries...
-rm -rf Telegram/ThirdParty/{Catch,GSL,QR,SPMediaKeyTap,expected,fcitx-qt5,fcitx5-qt,hime,hunspell,libdbusmenu-qt,lz4,materialdecoration,minizip,nimf,qt5ct,range-v3,xxHash}
+rm -rf Telegram/ThirdParty/{Catch,GSL,QR,SPMediaKeyTap,expected,fcitx-qt5,fcitx5-qt,jemalloc,hime,hunspell,libdbusmenu-qt,lz4,materialdecoration,minizip,nimf,qt5ct,range-v3,xxHash}
 
 # Unbundling rlottie if build against packaged version...
 %if %{with rlottie}
@@ -168,6 +166,11 @@ rm -rf Telegram/ThirdParty/rlottie
 # Unbundling libtgvoip if build against packaged version...
 %if %{with libtgvoip}
 rm -rf Telegram/ThirdParty/libtgvoip
+%endif
+
+# Patching QR-Code...
+%if 0%{?fedora} && 0%{?fedora} >= 35
+sed -e 's/QrCode\.hpp/qrcodegen\.hpp/g' -i {cmake/external/qr_code_generator/CMakeLists.txt,Telegram/lib_qr/qr/qr_generate.cpp}
 %endif
 
 %build
@@ -198,6 +201,11 @@ rm -rf Telegram/ThirdParty/libtgvoip
     -DDESKTOP_APP_DISABLE_GTK_INTEGRATION:BOOL=OFF \
 %else
     -DDESKTOP_APP_DISABLE_GTK_INTEGRATION:BOOL=ON \
+%endif
+%if %{with webkit}
+    -DDESKTOP_APP_DISABLE_WEBKITGTK:BOOL=OFF \
+%else
+    -DDESKTOP_APP_DISABLE_WEBKITGTK:BOOL=ON \
 %endif
 %if %{with wayland}
     -DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION:BOOL=OFF \
@@ -231,6 +239,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Thu Sep 02 2021 Alexey Gorgurov <alexfails@fedoraproject.org> - 3.0.1-1
+- Updated to version 3.0.1.
+
 * Wed Jul 28 2021 Leigh Scott <leigh123linux@gmail.com> - 2.8.8-3
 - Disable gtk integration
 
