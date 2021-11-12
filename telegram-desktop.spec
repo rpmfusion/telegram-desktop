@@ -20,7 +20,7 @@
 
 Name: telegram-desktop
 Version: 3.0.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
@@ -239,6 +239,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Fri Nov 12 2021 Leigh Scott <leigh123linux@gmail.com> - 3.0.1-2
+- Rebuilt for new ffmpeg snapshot
+
 * Thu Sep 02 2021 Alexey Gorgurov <alexfails@fedoraproject.org> - 3.0.1-1
 - Updated to version 3.0.1.
 
