@@ -1,32 +1,31 @@
 %undefine __cmake_in_source_build
 
-# Build conditionals (with - OFF, without - ON)...
-%bcond_with clang
-%bcond_with libtgvoip
-%bcond_with rlottie
-%bcond_with wayland
-%bcond_with webkit
-%bcond_with qt5
-%bcond_without x11
+# Build conditionals...
+%global enable_wayland 0
+%global enable_x11 1
+%global system_libtgvoip 0
+%global system_rlottie 0
+%global use_clang 0
+%global use_qt5 1
 
 # Telegram Desktop's constants...
 %global appname tdesktop
 %global launcher telegramdesktop
 
 # Applying toolchain configuration...
-%if %{with clang}
+%if %{use_clang}
 %global toolchain clang
 %endif
 
 # Applying some workaround for non-x86 architectures...
 %ifnarch x86_64
-%define _lto_cflags %{nil}
-%global _smp_build_ncpus 1
+%global _lto_cflags %{nil}
+%global _smp_build_ncpus 2
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 %endif
 
 Name: telegram-desktop
-Version: 3.2.4
+Version: 3.2.5
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -45,7 +44,7 @@ ExclusiveArch: x86_64 aarch64
 BuildRequires: cmake(Microsoft.GSL)
 BuildRequires: cmake(OpenAL)
 BuildRequires: cmake(range-v3)
-BuildRequires: cmake(tg_owt) >= 0-13
+BuildRequires: cmake(tg_owt)
 BuildRequires: cmake(tl-expected)
 
 BuildRequires: pkgconfig(gio-2.0)
@@ -66,6 +65,7 @@ BuildRequires: pkgconfig(libxxhash)
 BuildRequires: pkgconfig(openssl)
 BuildRequires: pkgconfig(opus)
 BuildRequires: pkgconfig(rnnoise)
+BuildRequires: pkgconfig(webkit2gtk-4.0)
 
 BuildRequires: cmake
 BuildRequires: desktop-file-utils
@@ -79,13 +79,17 @@ BuildRequires: minizip-compat-devel
 BuildRequires: ninja-build
 BuildRequires: python3
 
-%if %{with clang}
+%if 0%{?fedora} && 0%{?fedora} > 35
+BuildRequires: openssl1.1-devel
+%endif
+
+%if %{use_clang}
 BuildRequires: compiler-rt
 BuildRequires: clang
 BuildRequires: llvm
 %endif
 
-%if %{with qt5}
+%if %{use_qt5}
 BuildRequires: cmake(Qt5Core)
 BuildRequires: cmake(Qt5DBus)
 BuildRequires: cmake(Qt5Gui)
@@ -95,6 +99,8 @@ BuildRequires: cmake(Qt5Widgets)
 BuildRequires: cmake(Qt5XkbCommonSupport)
 BuildRequires: cmake(dbusmenu-qt5)
 BuildRequires: qt5-qtbase-private-devel
+%{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
+Requires: qt5-qtimageformats%{?_isa}
 %else
 BuildRequires: cmake(Qt6Core)
 BuildRequires: cmake(Qt6Core5Compat)
@@ -106,15 +112,12 @@ BuildRequires: cmake(Qt6OpenGLWidgets)
 BuildRequires: cmake(Qt6Svg)
 BuildRequires: cmake(Qt6Widgets)
 BuildRequires: qt6-qtbase-private-devel
+%{?_qt6:Requires: %{_qt6}%{?_isa} = %{_qt6_version}}
+Requires: qt6-qtimageformats%{?_isa}
 Provides: bundled(dbusmenu-qt6) = 0.9.3
 %endif
 
-%if %{with webkit}
-BuildRequires: pkgconfig(webkit2gtk-4.0)
-Requires: webkit2gtk3%{?_isa}
-%endif
-
-%if %{with libtgvoip}
+%if %{system_libtgvoip}
 BuildRequires: pkgconfig(tgvoip) >= 2.4.4
 %else
 BuildRequires: pkgconfig(alsa)
@@ -122,14 +125,14 @@ BuildRequires: pkgconfig(libpulse)
 Provides: bundled(libtgvoip) = 2.4.4
 %endif
 
-%if %{with rlottie}
+%if %{system_rlottie}
 BuildRequires: cmake(rlottie)
 %else
 Provides: bundled(rlottie) = 0~git
 %endif
 
-%if %{with wayland}
-%if %{with qt5}
+%if %{enable_wayland}
+%if %{use_qt5}
 BuildRequires: cmake(Qt5Concurrent)
 BuildRequires: cmake(Qt5WaylandClient)
 BuildRequires: qt5-qtbase-static
@@ -140,20 +143,19 @@ BuildRequires: qt6-qtbase-static
 %endif
 BuildRequires: cmake(KF5Wayland)
 BuildRequires: pkgconfig(wayland-client)
+BuildRequires: extra-cmake-modules
 %endif
 
-%if %{with x11}
+%if %{enable_x11}
 BuildRequires: pkgconfig(xcb)
 BuildRequires: pkgconfig(xcb-keysyms)
 BuildRequires: pkgconfig(xcb-record)
 BuildRequires: pkgconfig(xcb-screensaver)
 %endif
 
-# Telegram Desktop require exact version of Qt due to Qt private API usage.
-%{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
 Requires: hicolor-icon-theme
 Requires: open-sans-fonts
-Requires: qt5-qtimageformats%{?_isa}
+Requires: webkit2gtk3%{?_isa}
 
 # Telegram Desktop can use native open/save dialogs with XDG portals.
 Recommends: xdg-desktop-portal%{?_isa}
@@ -186,17 +188,17 @@ business messaging needs.
 rm -rf Telegram/ThirdParty/{Catch,GSL,QR,SPMediaKeyTap,expected,fcitx-qt5,fcitx5-qt,jemalloc,hime,hunspell,lz4,materialdecoration,minizip,nimf,qt5ct,range-v3,xxHash}
 
 # Unbundling libdbusmenu-qt if build against Qt5...
-%if %{with qt5}
+%if %{use_qt5}
 rm -rf Telegram/ThirdParty/libdbusmenu-qt
 %endif
 
 # Unbundling rlottie if build against packaged version...
-%if %{with rlottie}
+%if %{system_rlottie}
 rm -rf Telegram/ThirdParty/rlottie
 %endif
 
 # Unbundling libtgvoip if build against packaged version...
-%if %{with libtgvoip}
+%if %{system_libtgvoip}
 rm -rf Telegram/ThirdParty/libtgvoip
 %endif
 
@@ -204,7 +206,7 @@ rm -rf Telegram/ThirdParty/libtgvoip
 # Building Telegram Desktop using cmake...
 %cmake -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
-%if %{with clang}
+%if %{use_clang}
     -DCMAKE_C_COMPILER=%{_bindir}/clang \
     -DCMAKE_CXX_COMPILER=%{_bindir}/clang++ \
     -DCMAKE_AR=%{_bindir}/llvm-ar \
@@ -222,29 +224,10 @@ rm -rf Telegram/ThirdParty/libtgvoip
     -DDESKTOP_APP_USE_PACKAGED:BOOL=ON \
     -DDESKTOP_APP_USE_PACKAGED_FONTS:BOOL=ON \
     -DDESKTOP_APP_DISABLE_CRASH_REPORTS:BOOL=ON \
-%if %{with qt5}
-    -DDESKTOP_APP_QT6:BOOL=OFF \
-%else
-    -DDESKTOP_APP_QT6:BOOL=ON \
-%endif
-%if %{with webkit}
-    -DDESKTOP_APP_DISABLE_WEBKITGTK:BOOL=OFF \
-%else
-    -DDESKTOP_APP_DISABLE_WEBKITGTK:BOOL=ON \
-%endif
-%if %{with wayland}
-    -DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION:BOOL=OFF \
-%else
-    -DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION:BOOL=ON \
-%endif
-%if %{with x11}
-    -DDESKTOP_APP_DISABLE_X11_INTEGRATION:BOOL=OFF \
-%else
-    -DDESKTOP_APP_DISABLE_X11_INTEGRATION:BOOL=ON \
-%endif
-%if %{with rlottie}
-    -DDESKTOP_APP_LOTTIE_USE_CACHE:BOOL=OFF \
-%endif
+    -DDESKTOP_APP_QT6:BOOL=%{?use_qt5:OFF}%{!?use_qt5:ON} \
+    -DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION:BOOL=%{?enable_wayland:OFF}%{!?enable_wayland:ON} \
+    -DDESKTOP_APP_DISABLE_X11_INTEGRATION:BOOL=%{?enable_x11:OFF}%{!?enable_x11:ON} \
+    -DDESKTOP_APP_LOTTIE_USE_CACHE:BOOL=%{?system_rlottie:OFF}%{!?system_rlottie:ON} \
     -DTDESKTOP_LAUNCHER_BASENAME=%{launcher}
 %cmake_build
 
@@ -264,6 +247,13 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Tue Nov 16 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 3.2.5-1
+- Updated to version 3.2.5.
+- Added OpenSSL workaround for Fedora 36+.
+- Adjusted the number of CPU cores on aarch64 during the build.
+- Switched from boolean conditionals to constants.
+- Build against Qt 5 due to issues with Qt 6 and Wayland.
+
 * Mon Nov 15 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 3.2.4-1
 - Updated to version 3.2.4.
 - Switched to Qt 6 with an option to build against Qt 5.
