@@ -2,11 +2,11 @@
 
 # Build conditionals (with - OFF, without - ON)...
 %bcond_with clang
-%bcond_with gtk3
 %bcond_with libtgvoip
 %bcond_with rlottie
 %bcond_with wayland
 %bcond_with webkit
+%bcond_with qt5
 %bcond_without x11
 
 # Telegram Desktop's constants...
@@ -18,9 +18,16 @@
 %global toolchain clang
 %endif
 
+# Applying some workaround for non-x86 architectures...
+%ifnarch x86_64
+%define _lto_cflags %{nil}
+%global _smp_build_ncpus 1
+%global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
+%endif
+
 Name: telegram-desktop
-Version: 3.0.1
-Release: 2%{?dist}
+Version: 3.2.4
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
@@ -33,20 +40,12 @@ Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
 
 # Telegram Desktop require more than 8 GB of RAM on linking stage.
 # Disabling all low-memory architectures.
-ExclusiveArch: x86_64
+ExclusiveArch: x86_64 aarch64
 
 BuildRequires: cmake(Microsoft.GSL)
 BuildRequires: cmake(OpenAL)
-BuildRequires: cmake(Qt5Core)
-BuildRequires: cmake(Qt5DBus)
-BuildRequires: cmake(Qt5Gui)
-BuildRequires: cmake(Qt5Network)
-BuildRequires: cmake(Qt5Svg)
-BuildRequires: cmake(Qt5Widgets)
-BuildRequires: cmake(Qt5XkbCommonSupport)
-BuildRequires: cmake(dbusmenu-qt5)
 BuildRequires: cmake(range-v3)
-BuildRequires: cmake(tg_owt)
+BuildRequires: cmake(tg_owt) >= 0-13
 BuildRequires: cmake(tl-expected)
 
 BuildRequires: pkgconfig(gio-2.0)
@@ -57,11 +56,11 @@ BuildRequires: pkgconfig(hunspell)
 BuildRequires: pkgconfig(jemalloc)
 BuildRequires: pkgconfig(libavcodec)
 BuildRequires: pkgconfig(libavformat)
-BuildRequires: pkgconfig(libavresample)
 BuildRequires: pkgconfig(libavutil)
 BuildRequires: pkgconfig(libcrypto)
 BuildRequires: pkgconfig(liblz4)
 BuildRequires: pkgconfig(liblzma)
+BuildRequires: pkgconfig(libswresample)
 BuildRequires: pkgconfig(libswscale)
 BuildRequires: pkgconfig(libxxhash)
 BuildRequires: pkgconfig(openssl)
@@ -79,7 +78,6 @@ BuildRequires: libstdc++-devel
 BuildRequires: minizip-compat-devel
 BuildRequires: ninja-build
 BuildRequires: python3
-BuildRequires: qt5-qtbase-private-devel
 
 %if %{with clang}
 BuildRequires: compiler-rt
@@ -87,9 +85,28 @@ BuildRequires: clang
 BuildRequires: llvm
 %endif
 
-%if %{with gtk3}
-BuildRequires: pkgconfig(gtk+-3.0)
-Requires: gtk3%{?_isa}
+%if %{with qt5}
+BuildRequires: cmake(Qt5Core)
+BuildRequires: cmake(Qt5DBus)
+BuildRequires: cmake(Qt5Gui)
+BuildRequires: cmake(Qt5Network)
+BuildRequires: cmake(Qt5Svg)
+BuildRequires: cmake(Qt5Widgets)
+BuildRequires: cmake(Qt5XkbCommonSupport)
+BuildRequires: cmake(dbusmenu-qt5)
+BuildRequires: qt5-qtbase-private-devel
+%else
+BuildRequires: cmake(Qt6Core)
+BuildRequires: cmake(Qt6Core5Compat)
+BuildRequires: cmake(Qt6DBus)
+BuildRequires: cmake(Qt6Gui)
+BuildRequires: cmake(Qt6Network)
+BuildRequires: cmake(Qt6OpenGL)
+BuildRequires: cmake(Qt6OpenGLWidgets)
+BuildRequires: cmake(Qt6Svg)
+BuildRequires: cmake(Qt6Widgets)
+BuildRequires: qt6-qtbase-private-devel
+Provides: bundled(dbusmenu-qt6) = 0.9.3
 %endif
 
 %if %{with webkit}
@@ -112,10 +129,17 @@ Provides: bundled(rlottie) = 0~git
 %endif
 
 %if %{with wayland}
-BuildRequires: cmake(KF5Wayland)
+%if %{with qt5}
+BuildRequires: cmake(Qt5Concurrent)
 BuildRequires: cmake(Qt5WaylandClient)
-BuildRequires: pkgconfig(wayland-client)
 BuildRequires: qt5-qtbase-static
+%else
+BuildRequires: cmake(Qt6Concurrent)
+BuildRequires: cmake(Qt6WaylandClient)
+BuildRequires: qt6-qtbase-static
+%endif
+BuildRequires: cmake(KF5Wayland)
+BuildRequires: pkgconfig(wayland-client)
 %endif
 
 %if %{with x11}
@@ -130,6 +154,9 @@ BuildRequires: pkgconfig(xcb-screensaver)
 Requires: hicolor-icon-theme
 Requires: open-sans-fonts
 Requires: qt5-qtimageformats%{?_isa}
+
+# Telegram Desktop can use native open/save dialogs with XDG portals.
+Recommends: xdg-desktop-portal%{?_isa}
 
 # Short alias for the main package...
 Provides: telegram = %{?epoch:%{epoch}:}%{version}-%{release}
@@ -156,7 +183,12 @@ business messaging needs.
 %autosetup -n %{appname}-%{version}-full -p1
 
 # Unbundling libraries...
-rm -rf Telegram/ThirdParty/{Catch,GSL,QR,SPMediaKeyTap,expected,fcitx-qt5,fcitx5-qt,jemalloc,hime,hunspell,libdbusmenu-qt,lz4,materialdecoration,minizip,nimf,qt5ct,range-v3,xxHash}
+rm -rf Telegram/ThirdParty/{Catch,GSL,QR,SPMediaKeyTap,expected,fcitx-qt5,fcitx5-qt,jemalloc,hime,hunspell,lz4,materialdecoration,minizip,nimf,qt5ct,range-v3,xxHash}
+
+# Unbundling libdbusmenu-qt if build against Qt5...
+%if %{with qt5}
+rm -rf Telegram/ThirdParty/libdbusmenu-qt
+%endif
 
 # Unbundling rlottie if build against packaged version...
 %if %{with rlottie}
@@ -166,11 +198,6 @@ rm -rf Telegram/ThirdParty/rlottie
 # Unbundling libtgvoip if build against packaged version...
 %if %{with libtgvoip}
 rm -rf Telegram/ThirdParty/libtgvoip
-%endif
-
-# Patching QR-Code...
-%if 0%{?fedora} && 0%{?fedora} >= 35
-sed -e 's/QrCode\.hpp/qrcodegen\.hpp/g' -i {cmake/external/qr_code_generator/CMakeLists.txt,Telegram/lib_qr/qr/qr_generate.cpp}
 %endif
 
 %build
@@ -194,13 +221,11 @@ sed -e 's/QrCode\.hpp/qrcodegen\.hpp/g' -i {cmake/external/qr_code_generator/CMa
     -DTDESKTOP_API_HASH=d524b414d21f4d37f08684c1df41ac9c \
     -DDESKTOP_APP_USE_PACKAGED:BOOL=ON \
     -DDESKTOP_APP_USE_PACKAGED_FONTS:BOOL=ON \
-    -DDESKTOP_APP_USE_GLIBC_WRAPS:BOOL=OFF \
     -DDESKTOP_APP_DISABLE_CRASH_REPORTS:BOOL=ON \
-    -DDESKTOP_APP_DISABLE_WEBRTC_INTEGRATION:BOOL=OFF \
-%if %{with gtk3}
-    -DDESKTOP_APP_DISABLE_GTK_INTEGRATION:BOOL=OFF \
+%if %{with qt5}
+    -DDESKTOP_APP_QT6:BOOL=OFF \
 %else
-    -DDESKTOP_APP_DISABLE_GTK_INTEGRATION:BOOL=ON \
+    -DDESKTOP_APP_QT6:BOOL=ON \
 %endif
 %if %{with webkit}
     -DDESKTOP_APP_DISABLE_WEBKITGTK:BOOL=OFF \
@@ -239,6 +264,13 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Mon Nov 15 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 3.2.4-1
+- Updated to version 3.2.4.
+- Switched to Qt 6 with an option to build against Qt 5.
+- Removed no longer supported by upstream use-flags.
+- Fixed FTBFS related to ffmpeg 4.5 update on Rawhide.
+- Enabled aarch64 architecture with some limitations.
+
 * Fri Nov 12 2021 Leigh Scott <leigh123linux@gmail.com> - 3.0.1-2
 - Rebuilt for new ffmpeg snapshot
 
