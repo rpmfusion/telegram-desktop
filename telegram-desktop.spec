@@ -224,10 +224,24 @@ rm -rf Telegram/ThirdParty/libtgvoip
     -DDESKTOP_APP_USE_PACKAGED:BOOL=ON \
     -DDESKTOP_APP_USE_PACKAGED_FONTS:BOOL=ON \
     -DDESKTOP_APP_DISABLE_CRASH_REPORTS:BOOL=ON \
-    -DDESKTOP_APP_QT6:BOOL=%{?use_qt5:OFF}%{!?use_qt5:ON} \
-    -DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION:BOOL=%{?enable_wayland:OFF}%{!?enable_wayland:ON} \
-    -DDESKTOP_APP_DISABLE_X11_INTEGRATION:BOOL=%{?enable_x11:OFF}%{!?enable_x11:ON} \
-    -DDESKTOP_APP_LOTTIE_USE_CACHE:BOOL=%{?system_rlottie:OFF}%{!?system_rlottie:ON} \
+%if %{use_qt5}
+    -DDESKTOP_APP_QT6:BOOL=OFF \
+%else
+    -DDESKTOP_APP_QT6:BOOL=ON \
+%endif
+%if %{enable_wayland}
+    -DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION:BOOL=OFF \
+%else
+    -DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION:BOOL=ON \
+%endif
+%if %{enable_x11}
+    -DDESKTOP_APP_DISABLE_X11_INTEGRATION:BOOL=OFF \
+%else
+    -DDESKTOP_APP_DISABLE_X11_INTEGRATION:BOOL=ON \
+%endif
+%if %{system_rlottie}
+    -DDESKTOP_APP_LOTTIE_USE_CACHE:BOOL=OFF \
+%endif
     -DTDESKTOP_LAUNCHER_BASENAME=%{launcher}
 %cmake_build
 
