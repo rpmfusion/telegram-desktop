@@ -1,7 +1,7 @@
 %undefine __cmake_in_source_build
 
 # Build conditionals...
-%global enable_wayland 0
+%global enable_wayland 1
 %global enable_x11 1
 %global system_libtgvoip 0
 %global system_rlottie 0
@@ -25,7 +25,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 3.2.5
+Version: 3.3.0
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -36,6 +36,9 @@ License: GPLv3+ and LGPLv2+ and LGPLv3
 URL: https://github.com/telegramdesktop/%{appname}
 Summary: Telegram Desktop official messaging app
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
+
+# https://github.com/telegramdesktop/tdesktop/pull/17371
+Patch100: %{name}-openssl30-fixes.patch
 
 # Telegram Desktop require more than 8 GB of RAM on linking stage.
 # Disabling all low-memory architectures.
@@ -78,10 +81,6 @@ BuildRequires: libstdc++-devel
 BuildRequires: minizip-compat-devel
 BuildRequires: ninja-build
 BuildRequires: python3
-
-%if 0%{?fedora} && 0%{?fedora} > 35
-BuildRequires: openssl1.1-devel
-%endif
 
 %if %{use_clang}
 BuildRequires: compiler-rt
@@ -261,6 +260,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.appdata.xml
 
 %changelog
+* Thu Dec 09 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 3.3.0-1
+- Updated to version 3.3.0.
+- Enabled Wayland integration.
+- Build with OpenSSL 3.0 for Fedora 36+.
+
 * Tue Nov 16 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 3.2.5-1
 - Updated to version 3.2.5.
 - Added OpenSSL workaround for Fedora 36+.
