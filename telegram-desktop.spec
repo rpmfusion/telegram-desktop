@@ -248,7 +248,7 @@ rm -rf Telegram/ThirdParty/libtgvoip
 %cmake_install
 
 %check
-appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{launcher}.appdata.xml
+appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{launcher}.metainfo.xml
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 
 %files
@@ -257,7 +257,7 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_bindir}/%{name}
 %{_datadir}/applications/%{launcher}.desktop
 %{_datadir}/icons/hicolor/*/apps/*.png
-%{_metainfodir}/%{launcher}.appdata.xml
+%{_metainfodir}/%{launcher}.metainfo.xml
 
 %changelog
 * Thu Dec 09 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 3.3.0-1
