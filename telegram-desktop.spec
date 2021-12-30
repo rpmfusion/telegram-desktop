@@ -25,7 +25,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 3.3.0
+Version: 3.4.0
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -36,9 +36,6 @@ License: GPLv3+ and LGPLv2+ and LGPLv3
 URL: https://github.com/telegramdesktop/%{appname}
 Summary: Telegram Desktop official messaging app
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
-
-# https://github.com/telegramdesktop/tdesktop/pull/17371
-Patch100: %{name}-openssl30-fixes.patch
 
 # Telegram Desktop require more than 8 GB of RAM on linking stage.
 # Disabling all low-memory architectures.
@@ -76,6 +73,7 @@ BuildRequires: gcc
 BuildRequires: gcc-c++
 BuildRequires: libappstream-glib
 BuildRequires: libatomic
+BuildRequires: libdispatch-devel
 BuildRequires: libqrcodegencpp-devel
 BuildRequires: libstdc++-devel
 BuildRequires: minizip-compat-devel
@@ -132,15 +130,17 @@ Provides: bundled(rlottie) = 0~git
 
 %if %{enable_wayland}
 %if %{use_qt5}
+BuildRequires: cmake(KF5Wayland)
 BuildRequires: cmake(Qt5Concurrent)
 BuildRequires: cmake(Qt5WaylandClient)
 BuildRequires: qt5-qtbase-static
 %else
+BuildRequires: cmake(PlasmaWaylandProtocols)
 BuildRequires: cmake(Qt6Concurrent)
 BuildRequires: cmake(Qt6WaylandClient)
 BuildRequires: qt6-qtbase-static
+Provides: bundled(kf5-kwayland) = 5.89.0
 %endif
-BuildRequires: cmake(KF5Wayland)
 BuildRequires: pkgconfig(wayland-client)
 BuildRequires: extra-cmake-modules
 %endif
@@ -158,6 +158,8 @@ Requires: webkit2gtk3%{?_isa}
 
 # Telegram Desktop can use native open/save dialogs with XDG portals.
 Recommends: xdg-desktop-portal%{?_isa}
+Recommends: (xdg-desktop-portal-gnome%{?_isa} if gnome-shell%{?_isa})
+Recommends: (xdg-desktop-portal-kde%{?_isa} if plasma-workspace-wayland%{?_isa})
 
 # Short alias for the main package...
 Provides: telegram = %{?epoch:%{epoch}:}%{version}-%{release}
@@ -184,11 +186,11 @@ business messaging needs.
 %autosetup -n %{appname}-%{version}-full -p1
 
 # Unbundling libraries...
-rm -rf Telegram/ThirdParty/{Catch,GSL,QR,SPMediaKeyTap,expected,fcitx-qt5,fcitx5-qt,jemalloc,hime,hunspell,lz4,materialdecoration,minizip,nimf,qt5ct,range-v3,xxHash}
+rm -rf Telegram/ThirdParty/{GSL,QR,SPMediaKeyTap,dispatch,expected,fcitx-qt5,fcitx5-qt,jemalloc,hime,hunspell,lz4,materialdecoration,minizip,nimf,qt5ct,range-v3,xxHash}
 
-# Unbundling libdbusmenu-qt if build against Qt5...
+# Unbundling kwayland and libdbusmenu-qt if build against Qt5...
 %if %{use_qt5}
-rm -rf Telegram/ThirdParty/libdbusmenu-qt
+rm -rf Telegram/ThirdParty/{kwayland,libdbusmenu-qt}
 %endif
 
 # Unbundling rlottie if build against packaged version...
@@ -260,6 +262,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.metainfo.xml
 
 %changelog
+* Thu Dec 30 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 3.4.0-1
+- Updated to version 3.4.0.
+
 * Thu Dec 09 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 3.3.0-1
 - Updated to version 3.3.0.
 - Enabled Wayland integration.
