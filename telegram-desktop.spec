@@ -6,7 +6,7 @@
 %global system_libtgvoip 0
 %global system_rlottie 0
 %global use_clang 0
-%global use_qt5 1
+%global use_qt5 0
 
 # Telegram Desktop's constants...
 %global appname tdesktop
@@ -25,7 +25,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 3.4.0
+Version: 3.4.2
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -138,6 +138,7 @@ BuildRequires: qt5-qtbase-static
 BuildRequires: cmake(PlasmaWaylandProtocols)
 BuildRequires: cmake(Qt6Concurrent)
 BuildRequires: cmake(Qt6WaylandClient)
+BuildRequires: pkgconfig(wayland-protocols)
 BuildRequires: qt6-qtbase-static
 Provides: bundled(kf5-kwayland) = 5.89.0
 %endif
@@ -262,6 +263,10 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.metainfo.xml
 
 %changelog
+* Sat Jan 01 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.4.2-1
+- Updated to version 3.4.2.
+- Build against Qt 6 as recommended by the upstream.
+
 * Thu Dec 30 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 3.4.0-1
 - Updated to version 3.4.0.
 
