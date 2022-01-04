@@ -25,7 +25,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 3.4.2
+Version: 3.4.3
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -161,6 +161,7 @@ Requires: webkit2gtk3%{?_isa}
 Recommends: xdg-desktop-portal%{?_isa}
 Recommends: (xdg-desktop-portal-gnome%{?_isa} if gnome-shell%{?_isa})
 Recommends: (xdg-desktop-portal-kde%{?_isa} if plasma-workspace-wayland%{?_isa})
+Recommends: (xdg-desktop-portal-wlr%{?_isa} if wlroots%{?_isa})
 
 # Short alias for the main package...
 Provides: telegram = %{?epoch:%{epoch}:}%{version}-%{release}
@@ -263,6 +264,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.metainfo.xml
 
 %changelog
+* Tue Jan 04 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.4.3-1
+- Updated to version 3.4.3.
+
 * Sat Jan 01 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.4.2-1
 - Updated to version 3.4.2.
 - Build against Qt 6 as recommended by the upstream.
