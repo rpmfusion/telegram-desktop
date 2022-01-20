@@ -25,7 +25,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 3.4.3
+Version: 3.4.8
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -133,17 +133,19 @@ Provides: bundled(rlottie) = 0~git
 BuildRequires: cmake(KF5Wayland)
 BuildRequires: cmake(Qt5Concurrent)
 BuildRequires: cmake(Qt5WaylandClient)
+BuildRequires: extra-cmake-modules
 BuildRequires: qt5-qtbase-static
 %else
-BuildRequires: cmake(PlasmaWaylandProtocols)
 BuildRequires: cmake(Qt6Concurrent)
 BuildRequires: cmake(Qt6WaylandClient)
-BuildRequires: pkgconfig(wayland-protocols)
+BuildRequires: meson
 BuildRequires: qt6-qtbase-static
-Provides: bundled(kf5-kwayland) = 5.89.0
+Provides: bundled(extra-cmake-modules) = 5.90.0
+Provides: bundled(kf5-kwayland) = 5.90.0
+Provides: bundled(plasma-wayland-protocols) = 1.6.0
+Provides: bundled(wayland-protocols) = 1.24
 %endif
 BuildRequires: pkgconfig(wayland-client)
-BuildRequires: extra-cmake-modules
 %endif
 
 %if %{enable_x11}
@@ -192,7 +194,7 @@ rm -rf Telegram/ThirdParty/{GSL,QR,SPMediaKeyTap,dispatch,expected,fcitx-qt5,fci
 
 # Unbundling kwayland and libdbusmenu-qt if build against Qt5...
 %if %{use_qt5}
-rm -rf Telegram/ThirdParty/{kwayland,libdbusmenu-qt}
+rm -rf Telegram/ThirdParty/{extra-cmake-modules,kwayland,plasma-wayland-protocols,libdbusmenu-qt,wayland-protocols}
 %endif
 
 # Unbundling rlottie if build against packaged version...
@@ -204,6 +206,9 @@ rm -rf Telegram/ThirdParty/rlottie
 %if %{system_libtgvoip}
 rm -rf Telegram/ThirdParty/libtgvoip
 %endif
+
+# Patching metainfo file to pass automatic checks...
+sed -e 's/Version=1.5/Version=1.0/g' -e '/SingleMainWindow/d' -i lib/xdg/telegramdesktop.desktop
 
 %build
 # Building Telegram Desktop using cmake...
@@ -243,7 +248,10 @@ rm -rf Telegram/ThirdParty/libtgvoip
     -DDESKTOP_APP_DISABLE_X11_INTEGRATION:BOOL=ON \
 %endif
 %if %{system_rlottie}
+    -DDESKTOP_APP_USE_PACKAGED_RLOTTIE:BOOL=ON \
     -DDESKTOP_APP_LOTTIE_USE_CACHE:BOOL=OFF \
+%else
+    -DDESKTOP_APP_USE_PACKAGED_RLOTTIE:BOOL=OFF \
 %endif
     -DTDESKTOP_LAUNCHER_BASENAME=%{launcher}
 %cmake_build
@@ -264,6 +272,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.metainfo.xml
 
 %changelog
+* Thu Jan 20 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.4.8-1
+- Updated to version 3.4.8.
+
 * Tue Jan 04 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.4.3-1
 - Updated to version 3.4.3.
 
