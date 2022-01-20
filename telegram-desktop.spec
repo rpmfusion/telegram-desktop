@@ -145,7 +145,7 @@ BuildRequires: cmake(Qt6Concurrent)
 BuildRequires: cmake(Qt6WaylandClient)
 BuildRequires: pkgconfig(wayland-protocols)
 BuildRequires: qt6-qtbase-static
-Provides: bundled(kf5-kwayland) = 5.89.0
+Provides: bundled(kf5-kwayland) = 5.90.0
 %endif
 BuildRequires: pkgconfig(wayland-client)
 BuildRequires: extra-cmake-modules
