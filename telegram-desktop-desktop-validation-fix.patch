@@ -1,0 +1,17 @@
+--- a/lib/xdg/telegramdesktop.desktop
++++ b/lib/xdg/telegramdesktop.desktop
+@@ -1,5 +1,5 @@
+ [Desktop Entry]
+-Version=1.5
++Version=1.0
+ Name=Telegram Desktop
+ Comment=Official desktop version of Telegram messaging app
+ TryExec=telegram-desktop
+@@ -12,7 +12,6 @@ Categories=Chat;Network;InstantMessaging;Qt;
+ MimeType=x-scheme-handler/tg;
+ Keywords=tg;chat;im;messaging;messenger;sms;tdesktop;
+ Actions=Quit;
+-SingleMainWindow=true
+ X-GNOME-UsesNotifications=true
+ X-GNOME-SingleWindow=true
+ 

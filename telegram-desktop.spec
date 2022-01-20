@@ -37,6 +37,11 @@ URL: https://github.com/telegramdesktop/%{appname}
 Summary: Telegram Desktop official messaging app
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
 
+# Downstream patches.
+Patch0: %{name}-desktop-validation-fix.patch
+Patch1: %{name}-unbundled-kwayland-stuff.patch
+Patch2: %{name}-downgrade-ecm-version.patch
+
 # Telegram Desktop require more than 8 GB of RAM on linking stage.
 # Disabling all low-memory architectures.
 ExclusiveArch: x86_64 aarch64
@@ -133,19 +138,17 @@ Provides: bundled(rlottie) = 0~git
 BuildRequires: cmake(KF5Wayland)
 BuildRequires: cmake(Qt5Concurrent)
 BuildRequires: cmake(Qt5WaylandClient)
-BuildRequires: extra-cmake-modules
 BuildRequires: qt5-qtbase-static
 %else
+BuildRequires: cmake(PlasmaWaylandProtocols)
 BuildRequires: cmake(Qt6Concurrent)
 BuildRequires: cmake(Qt6WaylandClient)
-BuildRequires: meson
+BuildRequires: pkgconfig(wayland-protocols)
 BuildRequires: qt6-qtbase-static
-Provides: bundled(extra-cmake-modules) = 5.90.0
-Provides: bundled(kf5-kwayland) = 5.90.0
-Provides: bundled(plasma-wayland-protocols) = 1.6.0
-Provides: bundled(wayland-protocols) = 1.24
+Provides: bundled(kf5-kwayland) = 5.89.0
 %endif
 BuildRequires: pkgconfig(wayland-client)
+BuildRequires: extra-cmake-modules
 %endif
 
 %if %{enable_x11}
@@ -190,11 +193,11 @@ business messaging needs.
 %autosetup -n %{appname}-%{version}-full -p1
 
 # Unbundling libraries...
-rm -rf Telegram/ThirdParty/{GSL,QR,SPMediaKeyTap,dispatch,expected,fcitx-qt5,fcitx5-qt,jemalloc,hime,hunspell,lz4,materialdecoration,minizip,nimf,qt5ct,range-v3,xxHash}
+rm -rf Telegram/ThirdParty/{GSL,QR,SPMediaKeyTap,dispatch,expected,extra-cmake-modules,fcitx-qt5,fcitx5-qt,jemalloc,hime,hunspell,lz4,materialdecoration,minizip,nimf,plasma-wayland-protocols,qt5ct,range-v3,wayland-protocols,xxHash}
 
 # Unbundling kwayland and libdbusmenu-qt if build against Qt5...
 %if %{use_qt5}
-rm -rf Telegram/ThirdParty/{extra-cmake-modules,kwayland,plasma-wayland-protocols,libdbusmenu-qt,wayland-protocols}
+rm -rf Telegram/ThirdParty/{kwayland,libdbusmenu-qt}
 %endif
 
 # Unbundling rlottie if build against packaged version...
@@ -206,9 +209,6 @@ rm -rf Telegram/ThirdParty/rlottie
 %if %{system_libtgvoip}
 rm -rf Telegram/ThirdParty/libtgvoip
 %endif
-
-# Patching metainfo file to pass automatic checks...
-sed -e 's/Version=1.5/Version=1.0/g' -e '/SingleMainWindow/d' -i lib/xdg/telegramdesktop.desktop
 
 %build
 # Building Telegram Desktop using cmake...
