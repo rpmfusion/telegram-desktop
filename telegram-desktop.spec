@@ -25,7 +25,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 3.4.8
+Version: 3.5.1
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -40,7 +40,6 @@ Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
 # Downstream patches.
 Patch0: %{name}-desktop-validation-fix.patch
 Patch1: %{name}-unbundled-kwayland-stuff.patch
-Patch2: %{name}-downgrade-ecm-version.patch
 
 # Telegram Desktop require more than 8 GB of RAM on linking stage.
 # Disabling all low-memory architectures.
@@ -70,6 +69,7 @@ BuildRequires: pkgconfig(libxxhash)
 BuildRequires: pkgconfig(openssl)
 BuildRequires: pkgconfig(opus)
 BuildRequires: pkgconfig(rnnoise)
+BuildRequires: pkgconfig(vpx)
 BuildRequires: pkgconfig(webkit2gtk-4.0)
 
 BuildRequires: cmake
@@ -148,7 +148,7 @@ BuildRequires: qt6-qtbase-static
 Provides: bundled(kf5-kwayland) = 5.90.0
 %endif
 BuildRequires: pkgconfig(wayland-client)
-BuildRequires: extra-cmake-modules
+BuildRequires: extra-cmake-modules >= 5.90.0
 %endif
 
 %if %{enable_x11}
@@ -272,6 +272,12 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.metainfo.xml
 
 %changelog
+* Sat Feb 05 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.5.1-1
+- Updated to version 3.5.1.
+
+* Tue Feb 01 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.5.0-1
+- Updated to version 3.5.0.
+
 * Thu Jan 20 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.4.8-1
 - Updated to version 3.4.8.
 
