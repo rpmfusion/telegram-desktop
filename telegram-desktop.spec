@@ -25,7 +25,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 3.5.1
+Version: 3.5.2
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -272,6 +272,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.metainfo.xml
 
 %changelog
+* Tue Feb 08 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.5.2-1
+- Updated to version 3.5.2.
+
 * Sat Feb 05 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.5.1-1
 - Updated to version 3.5.1.
 
