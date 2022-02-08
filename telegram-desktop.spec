@@ -41,6 +41,9 @@ Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
 Patch0: %{name}-desktop-validation-fix.patch
 Patch1: %{name}-unbundled-kwayland-stuff.patch
 
+# https://github.com/telegramdesktop/tdesktop/pull/24044
+Patch100: %{name}-ffmpeg5.patch
+
 # Telegram Desktop require more than 8 GB of RAM on linking stage.
 # Disabling all low-memory architectures.
 ExclusiveArch: x86_64 aarch64
