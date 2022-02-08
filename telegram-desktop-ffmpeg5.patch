@@ -94,14 +94,14 @@ Subject: [PATCH] Fix build against FFmpeg v5.0
 It has been released on January 17th. This patch keeps source compatibility
 with older versions.
 ---
- ThirdParty/tgcalls/tgcalls/group/AudioStreamingPart.cpp | 7 +++++--
- ThirdParty/tgcalls/tgcalls/group/VideoStreamingPart.cpp | 5 ++++-
+ Telegram/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPart.cpp | 7 +++++--
+ Telegram/ThirdParty/tgcalls/tgcalls/group/VideoStreamingPart.cpp | 5 ++++-
  2 files changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPart.cpp b/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPart.cpp
+diff --git a/Telegram/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPart.cpp b/Telegram/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPart.cpp
 index f71c8c7..94271b1 100644
---- a/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPart.cpp
-+++ b/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPart.cpp
+--- a/Telegram/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPart.cpp
++++ b/Telegram/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPart.cpp
 @@ -170,6 +170,9 @@ class AudioStreamingPartInternal {
  
          _frame = av_frame_alloc();
@@ -130,10 +130,10 @@ index f71c8c7..94271b1 100644
              if (codec) {
                  _codecContext = avcodec_alloc_context3(codec);
                  ret = avcodec_parameters_to_context(_codecContext, audioCodecParameters);
-diff --git a/ThirdParty/tgcalls/tgcalls/group/VideoStreamingPart.cpp b/ThirdParty/tgcalls/tgcalls/group/VideoStreamingPart.cpp
+diff --git a/Telegram/ThirdParty/tgcalls/tgcalls/group/VideoStreamingPart.cpp b/Telegram/ThirdParty/tgcalls/tgcalls/group/VideoStreamingPart.cpp
 index 591a523..a92151e 100644
---- a/ThirdParty/tgcalls/tgcalls/group/VideoStreamingPart.cpp
-+++ b/ThirdParty/tgcalls/tgcalls/group/VideoStreamingPart.cpp
+--- a/Telegram/ThirdParty/tgcalls/tgcalls/group/VideoStreamingPart.cpp
++++ b/Telegram/ThirdParty/tgcalls/tgcalls/group/VideoStreamingPart.cpp
 @@ -337,6 +337,9 @@ class VideoStreamingPartInternal {
  
          int ret = 0;
