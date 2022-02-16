@@ -3,7 +3,6 @@
 # Build conditionals...
 %global enable_wayland 1
 %global enable_x11 1
-%global system_libtgvoip 0
 %global system_rlottie 0
 %global use_clang 0
 %global use_qt5 0
@@ -26,7 +25,7 @@
 
 Name: telegram-desktop
 Version: 3.5.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
@@ -54,6 +53,7 @@ BuildRequires: cmake(range-v3)
 BuildRequires: cmake(tg_owt)
 BuildRequires: cmake(tl-expected)
 
+BuildRequires: pkgconfig(alsa)
 BuildRequires: pkgconfig(gio-2.0)
 BuildRequires: pkgconfig(glib-2.0)
 BuildRequires: pkgconfig(glibmm-2.4)
@@ -66,6 +66,7 @@ BuildRequires: pkgconfig(libavutil)
 BuildRequires: pkgconfig(libcrypto)
 BuildRequires: pkgconfig(liblz4)
 BuildRequires: pkgconfig(liblzma)
+BuildRequires: pkgconfig(libpulse)
 BuildRequires: pkgconfig(libswresample)
 BuildRequires: pkgconfig(libswscale)
 BuildRequires: pkgconfig(libxxhash)
@@ -102,7 +103,6 @@ BuildRequires: cmake(Qt5Network)
 BuildRequires: cmake(Qt5Svg)
 BuildRequires: cmake(Qt5Widgets)
 BuildRequires: cmake(Qt5XkbCommonSupport)
-BuildRequires: cmake(dbusmenu-qt5)
 BuildRequires: qt5-qtbase-private-devel
 %{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
 Requires: qt5-qtimageformats%{?_isa}
@@ -119,15 +119,6 @@ BuildRequires: cmake(Qt6Widgets)
 BuildRequires: qt6-qtbase-private-devel
 %{?_qt6:Requires: %{_qt6}%{?_isa} = %{_qt6_version}}
 Requires: qt6-qtimageformats%{?_isa}
-Provides: bundled(dbusmenu-qt6) = 0.9.3
-%endif
-
-%if %{system_libtgvoip}
-BuildRequires: pkgconfig(tgvoip) >= 2.4.4
-%else
-BuildRequires: pkgconfig(alsa)
-BuildRequires: pkgconfig(libpulse)
-Provides: bundled(libtgvoip) = 2.4.4
 %endif
 
 %if %{system_rlottie}
@@ -175,6 +166,9 @@ Recommends: (xdg-desktop-portal-wlr%{?_isa} if wlroots%{?_isa})
 Provides: telegram = %{?epoch:%{epoch}:}%{version}-%{release}
 Provides: telegram%{?_isa} = %{?epoch:%{epoch}:}%{version}-%{release}
 
+# Virtual provides for bundled libraries...
+Provides: bundled(libtgvoip) = 2.4.4
+
 # Obsolete shared version of tg_owt...
 Obsoletes: tg_owt < 0-8
 
@@ -198,19 +192,14 @@ business messaging needs.
 # Unbundling libraries...
 rm -rf Telegram/ThirdParty/{GSL,QR,SPMediaKeyTap,dispatch,expected,extra-cmake-modules,fcitx-qt5,fcitx5-qt,jemalloc,hime,hunspell,lz4,materialdecoration,minizip,nimf,plasma-wayland-protocols,qt5ct,range-v3,wayland-protocols,xxHash}
 
-# Unbundling kwayland and libdbusmenu-qt if build against Qt5...
+# Unbundling kwayland if build against Qt5...
 %if %{use_qt5}
-rm -rf Telegram/ThirdParty/{kwayland,libdbusmenu-qt}
+rm -rf Telegram/ThirdParty/kwayland
 %endif
 
 # Unbundling rlottie if build against packaged version...
 %if %{system_rlottie}
 rm -rf Telegram/ThirdParty/rlottie
-%endif
-
-# Unbundling libtgvoip if build against packaged version...
-%if %{system_libtgvoip}
-rm -rf Telegram/ThirdParty/libtgvoip
 %endif
 
 %build
@@ -275,6 +264,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.metainfo.xml
 
 %changelog
+* Wed Feb 16 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.5.2-2
+- Rebuilt for Qt 6.2.3 update.
+
 * Tue Feb 08 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.5.2-1
 - Updated to version 3.5.2.
 
