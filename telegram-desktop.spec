@@ -152,6 +152,11 @@ BuildRequires: pkgconfig(xcb-record)
 BuildRequires: pkgconfig(xcb-screensaver)
 %endif
 
+# Fedora now has a stripped ffmpeg. Make sure we're using the full version.
+%if 0%{?fedora} && 0%{?fedora} >= 36
+BuildRequires: ffmpeg-devel
+%endif
+
 Requires: hicolor-icon-theme
 Requires: open-sans-fonts
 Requires: webkit2gtk3%{?_isa}
