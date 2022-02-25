@@ -37,8 +37,7 @@ Summary: Telegram Desktop official messaging app
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
 
 # Downstream patches.
-Patch0: %{name}-desktop-validation-fix.patch
-Patch1: %{name}-unbundled-kwayland-stuff.patch
+Patch0: %{name}-unbundled-kwayland-stuff.patch
 
 # https://github.com/telegramdesktop/tdesktop/pull/24044
 Patch100: %{name}-ffmpeg5.patch
