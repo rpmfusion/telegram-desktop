@@ -1,0 +1,67 @@
+From 9ffcae6397442091d2aa77d643fc6268ff048105 Mon Sep 17 00:00:00 2001
+From: Nicholas Guriev <nicholas@guriev.su>
+Date: Tue, 8 Feb 2022 18:20:27 +0300
+Subject: [PATCH] Fix build against FFmpeg v5.0
+
+It has been released on January 17th. This patch keeps source compatibility
+with older versions.
+---
+ Telegram/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPart.cpp | 7 +++++--
+ Telegram/ThirdParty/tgcalls/tgcalls/group/VideoStreamingPart.cpp | 5 ++++-
+ 2 files changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/Telegram/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPart.cpp b/Telegram/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPart.cpp
+index f71c8c7..94271b1 100644
+--- a/Telegram/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPart.cpp
++++ b/Telegram/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPart.cpp
+@@ -170,6 +170,9 @@ class AudioStreamingPartInternal {
+ 
+         _frame = av_frame_alloc();
+ 
++#if LIBAVFORMAT_VERSION_MAJOR >= 59
++        const
++#endif
+         AVInputFormat *inputFormat = av_find_input_format("ogg");
+         if (!inputFormat) {
+             _didReadToEnd = true;
+@@ -209,7 +212,7 @@ class AudioStreamingPartInternal {
+             audioCodecParameters = inCodecpar;
+             audioStream = inStream;
+ 
+-            _durationInMilliseconds = (int)((inStream->duration + inStream->first_dts) * 1000 / 48000);
++            _durationInMilliseconds = (int)(inStream->duration * av_q2d(inStream->time_base) * 1000);
+ 
+             if (inStream->metadata) {
+                 AVDictionaryEntry *entry = av_dict_get(inStream->metadata, "TG_META", nullptr, 0);
+@@ -255,7 +258,7 @@ class AudioStreamingPartInternal {
+         }
+ 
+         if (audioCodecParameters && audioStream) {
+-            AVCodec *codec = avcodec_find_decoder(audioCodecParameters->codec_id);
++            const AVCodec *codec = avcodec_find_decoder(audioCodecParameters->codec_id);
+             if (codec) {
+                 _codecContext = avcodec_alloc_context3(codec);
+                 ret = avcodec_parameters_to_context(_codecContext, audioCodecParameters);
+diff --git a/Telegram/ThirdParty/tgcalls/tgcalls/group/VideoStreamingPart.cpp b/Telegram/ThirdParty/tgcalls/tgcalls/group/VideoStreamingPart.cpp
+index 591a523..a92151e 100644
+--- a/Telegram/ThirdParty/tgcalls/tgcalls/group/VideoStreamingPart.cpp
++++ b/Telegram/ThirdParty/tgcalls/tgcalls/group/VideoStreamingPart.cpp
+@@ -337,6 +337,9 @@ class VideoStreamingPartInternal {
+ 
+         int ret = 0;
+ 
++#if LIBAVFORMAT_VERSION_MAJOR >= 59
++        const
++#endif
+         AVInputFormat *inputFormat = av_find_input_format(container.c_str());
+         if (!inputFormat) {
+             _didReadToEnd = true;
+@@ -380,7 +383,7 @@ class VideoStreamingPartInternal {
+         }
+ 
+         if (videoCodecParameters && videoStream) {
+-            AVCodec *codec = avcodec_find_decoder(videoCodecParameters->codec_id);
++            const AVCodec *codec = avcodec_find_decoder(videoCodecParameters->codec_id);
+             if (codec) {
+                 _codecContext = avcodec_alloc_context3(codec);
+                 ret = avcodec_parameters_to_context(_codecContext, videoCodecParameters);
