@@ -6,15 +6,15 @@ Subject: [PATCH] Fix build against FFmpeg v5.0
 It has been released on January 17th. This patch keeps source compatibility
 with older versions.
 ---
- Telegram/ThirdParty/tgcalls/group/AudioStreamingPartInternal.cpp          | 5 ++++-
- Telegram/ThirdParty/tgcalls/group/AudioStreamingPartPersistentDecoder.cpp | 2 +-
- Telegram/ThirdParty/tgcalls/group/VideoStreamingPart.cpp                  | 5 ++++-
+ Telegram/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPartInternal.cpp          | 5 ++++-
+ Telegram/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPartPersistentDecoder.cpp | 2 +-
+ Telegram/ThirdParty/tgcalls/tgcalls/group/VideoStreamingPart.cpp                  | 5 ++++-
  3 files changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/Telegram/ThirdParty/tgcalls/group/AudioStreamingPartInternal.cpp b/Telegram/ThirdParty/tgcalls/group/AudioStreamingPartInternal.cpp
+diff --git a/Telegram/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPartInternal.cpp b/Telegram/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPartInternal.cpp
 index 27a71cb..5639036 100644
---- a/Telegram/ThirdParty/tgcalls/group/AudioStreamingPartInternal.cpp
-+++ b/Telegram/ThirdParty/tgcalls/group/AudioStreamingPartInternal.cpp
+--- a/Telegram/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPartInternal.cpp
++++ b/Telegram/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPartInternal.cpp
 @@ -104,6 +104,9 @@ _avIoContext(std::move(fileData)) {
  
      _frame = av_frame_alloc();
@@ -34,10 +34,10 @@ index 27a71cb..5639036 100644
  
          if (inStream->metadata) {
              AVDictionaryEntry *entry = av_dict_get(inStream->metadata, "TG_META", nullptr, 0);
-diff --git a/Telegram/ThirdParty/tgcalls/group/AudioStreamingPartPersistentDecoder.cpp b/Telegram/ThirdParty/tgcalls/group/AudioStreamingPartPersistentDecoder.cpp
+diff --git a/Telegram/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPartPersistentDecoder.cpp b/Telegram/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPartPersistentDecoder.cpp
 index e79d430..63ef475 100644
---- a/Telegram/ThirdParty/tgcalls/group/AudioStreamingPartPersistentDecoder.cpp
-+++ b/Telegram/ThirdParty/tgcalls/group/AudioStreamingPartPersistentDecoder.cpp
+--- a/Telegram/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPartPersistentDecoder.cpp
++++ b/Telegram/ThirdParty/tgcalls/tgcalls/group/AudioStreamingPartPersistentDecoder.cpp
 @@ -32,7 +32,7 @@ class AudioStreamingPartPersistentDecoderState {
      AudioStreamingPartPersistentDecoderState(AVCodecParameters const *codecParameters, AVRational timeBase) :
      _codecParameters(codecParameters),
@@ -47,10 +47,10 @@ index e79d430..63ef475 100644
          if (codec) {
              _codecContext = avcodec_alloc_context3(codec);
              int ret = avcodec_parameters_to_context(_codecContext, codecParameters);
-diff --git a/Telegram/ThirdParty/tgcalls/group/VideoStreamingPart.cpp b/Telegram/ThirdParty/tgcalls/group/VideoStreamingPart.cpp
+diff --git a/Telegram/ThirdParty/tgcalls/tgcalls/group/VideoStreamingPart.cpp b/Telegram/ThirdParty/tgcalls/tgcalls/group/VideoStreamingPart.cpp
 index a67514a..10457eb 100644
---- a/Telegram/ThirdParty/tgcalls/group/VideoStreamingPart.cpp
-+++ b/Telegram/ThirdParty/tgcalls/group/VideoStreamingPart.cpp
+--- a/Telegram/ThirdParty/tgcalls/tgcalls/group/VideoStreamingPart.cpp
++++ b/Telegram/ThirdParty/tgcalls/tgcalls/group/VideoStreamingPart.cpp
 @@ -280,6 +280,9 @@ class VideoStreamingPartInternal {
  
          int ret = 0;
