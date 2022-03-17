@@ -24,7 +24,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 3.6.0
+Version: 3.6.1
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -38,6 +38,7 @@ Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
 
 # Downstream patches.
 Patch0: %{name}-unbundled-kwayland-stuff.patch
+Patch1: %{name}-ecm-version-downgrade.patch
 
 # https://github.com/TelegramMessenger/tgcalls/pull/14
 Patch100: %{name}-ffmpeg5.patch
@@ -138,7 +139,7 @@ BuildRequires: cmake(Qt6Concurrent)
 BuildRequires: cmake(Qt6WaylandClient)
 BuildRequires: pkgconfig(wayland-protocols)
 BuildRequires: qt6-qtbase-static
-Provides: bundled(kf5-kwayland) = 5.91.0
+Provides: bundled(kf5-kwayland) = 5.92.0
 %endif
 BuildRequires: pkgconfig(wayland-client)
 BuildRequires: extra-cmake-modules >= 5.91.0
@@ -269,6 +270,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.metainfo.xml
 
 %changelog
+* Thu Mar 17 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.6.1-1
+- Updated to version 3.6.1.
+
 * Fri Mar 11 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.6.0-1
 - Updated to version 3.6.0.
 
