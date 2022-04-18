@@ -3,9 +3,7 @@
 # Build conditionals...
 %global enable_wayland 1
 %global enable_x11 1
-%global system_rlottie 0
 %global use_clang 0
-%global use_qt5 0
 
 # Telegram Desktop's constants...
 %global appname tdesktop
@@ -24,7 +22,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 3.6.1
+Version: 3.7.0
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -36,19 +34,21 @@ URL: https://github.com/telegramdesktop/%{appname}
 Summary: Telegram Desktop official messaging app
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
 
-# Downstream patches.
-Patch0: %{name}-unbundled-kwayland-stuff.patch
-Patch1: %{name}-ecm-version-downgrade.patch
-
-# https://github.com/TelegramMessenger/tgcalls/pull/14
-Patch100: %{name}-ffmpeg5.patch
-
 # Telegram Desktop require more than 8 GB of RAM on linking stage.
 # Disabling all low-memory architectures.
 ExclusiveArch: x86_64 aarch64
 
 BuildRequires: cmake(Microsoft.GSL)
 BuildRequires: cmake(OpenAL)
+BuildRequires: cmake(Qt6Core)
+BuildRequires: cmake(Qt6Core5Compat)
+BuildRequires: cmake(Qt6DBus)
+BuildRequires: cmake(Qt6Gui)
+BuildRequires: cmake(Qt6Network)
+BuildRequires: cmake(Qt6OpenGL)
+BuildRequires: cmake(Qt6OpenGLWidgets)
+BuildRequires: cmake(Qt6Svg)
+BuildRequires: cmake(Qt6Widgets)
 BuildRequires: cmake(range-v3)
 BuildRequires: cmake(tg_owt)
 BuildRequires: cmake(tl-expected)
@@ -88,6 +88,7 @@ BuildRequires: libstdc++-devel
 BuildRequires: minizip-compat-devel
 BuildRequires: ninja-build
 BuildRequires: python3
+BuildRequires: qt6-qtbase-private-devel
 
 %if %{use_clang}
 BuildRequires: compiler-rt
@@ -95,54 +96,14 @@ BuildRequires: clang
 BuildRequires: llvm
 %endif
 
-%if %{use_qt5}
-BuildRequires: cmake(Qt5Core)
-BuildRequires: cmake(Qt5DBus)
-BuildRequires: cmake(Qt5Gui)
-BuildRequires: cmake(Qt5Network)
-BuildRequires: cmake(Qt5Svg)
-BuildRequires: cmake(Qt5Widgets)
-BuildRequires: cmake(Qt5XkbCommonSupport)
-BuildRequires: qt5-qtbase-private-devel
-%{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
-Requires: qt5-qtimageformats%{?_isa}
-%else
-BuildRequires: cmake(Qt6Core)
-BuildRequires: cmake(Qt6Core5Compat)
-BuildRequires: cmake(Qt6DBus)
-BuildRequires: cmake(Qt6Gui)
-BuildRequires: cmake(Qt6Network)
-BuildRequires: cmake(Qt6OpenGL)
-BuildRequires: cmake(Qt6OpenGLWidgets)
-BuildRequires: cmake(Qt6Svg)
-BuildRequires: cmake(Qt6Widgets)
-BuildRequires: qt6-qtbase-private-devel
-%{?_qt6:Requires: %{_qt6}%{?_isa} = %{_qt6_version}}
-Requires: qt6-qtimageformats%{?_isa}
-%endif
-
-%if %{system_rlottie}
-BuildRequires: cmake(rlottie)
-%else
-Provides: bundled(rlottie) = 0~git
-%endif
-
 %if %{enable_wayland}
-%if %{use_qt5}
-BuildRequires: cmake(KF5Wayland)
-BuildRequires: cmake(Qt5Concurrent)
-BuildRequires: cmake(Qt5WaylandClient)
-BuildRequires: qt5-qtbase-static
-%else
-BuildRequires: cmake(PlasmaWaylandProtocols)
 BuildRequires: cmake(Qt6Concurrent)
 BuildRequires: cmake(Qt6WaylandClient)
+BuildRequires: pkgconfig(wayland-client)
 BuildRequires: pkgconfig(wayland-protocols)
 BuildRequires: qt6-qtbase-static
-Provides: bundled(kf5-kwayland) = 5.92.0
-%endif
-BuildRequires: pkgconfig(wayland-client)
-BuildRequires: extra-cmake-modules >= 5.91.0
+Provides: bundled(kf5-kwayland) = 5.93.0
+Provides: bundled(plasma-wayland-protocols) = 1.6.0
 %endif
 
 %if %{enable_x11}
@@ -158,8 +119,10 @@ BuildRequires: ffmpeg-devel
 Requires: ffmpeg-libs%{?_isa}
 %endif
 
+%{?_qt6:Requires: %{_qt6}%{?_isa} = %{_qt6_version}}
 Requires: hicolor-icon-theme
 Requires: open-sans-fonts
+Requires: qt6-qtimageformats%{?_isa}
 Requires: webkit2gtk3%{?_isa}
 
 # Telegram Desktop can use native open/save dialogs with XDG portals.
@@ -174,9 +137,7 @@ Provides: telegram%{?_isa} = %{?epoch:%{epoch}:}%{version}-%{release}
 
 # Virtual provides for bundled libraries...
 Provides: bundled(libtgvoip) = 2.4.4
-
-# Obsolete shared version of tg_owt...
-Obsoletes: tg_owt < 0-8
+Provides: bundled(rlottie) = 0~git8c69fc2
 
 %description
 Telegram is a messaging app with a focus on speed and security, it’s super
@@ -196,17 +157,7 @@ business messaging needs.
 %autosetup -n %{appname}-%{version}-full -p1
 
 # Unbundling libraries...
-rm -rf Telegram/ThirdParty/{GSL,QR,SPMediaKeyTap,dispatch,expected,extra-cmake-modules,fcitx-qt5,fcitx5-qt,jemalloc,hime,hunspell,lz4,materialdecoration,minizip,nimf,plasma-wayland-protocols,qt5ct,range-v3,wayland-protocols,xxHash}
-
-# Unbundling kwayland if build against Qt5...
-%if %{use_qt5}
-rm -rf Telegram/ThirdParty/kwayland
-%endif
-
-# Unbundling rlottie if build against packaged version...
-%if %{system_rlottie}
-rm -rf Telegram/ThirdParty/rlottie
-%endif
+rm -rf Telegram/ThirdParty/{GSL,QR,dispatch,expected,fcitx-qt5,fcitx5-qt,hime,hunspell,jemalloc,lz4,minizip,nimf,range-v3,xxHash}
 
 %build
 # Building Telegram Desktop using cmake...
@@ -230,11 +181,7 @@ rm -rf Telegram/ThirdParty/rlottie
     -DDESKTOP_APP_USE_PACKAGED:BOOL=ON \
     -DDESKTOP_APP_USE_PACKAGED_FONTS:BOOL=ON \
     -DDESKTOP_APP_DISABLE_CRASH_REPORTS:BOOL=ON \
-%if %{use_qt5}
-    -DDESKTOP_APP_QT6:BOOL=OFF \
-%else
     -DDESKTOP_APP_QT6:BOOL=ON \
-%endif
 %if %{enable_wayland}
     -DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION:BOOL=OFF \
 %else
@@ -244,12 +191,6 @@ rm -rf Telegram/ThirdParty/rlottie
     -DDESKTOP_APP_DISABLE_X11_INTEGRATION:BOOL=OFF \
 %else
     -DDESKTOP_APP_DISABLE_X11_INTEGRATION:BOOL=ON \
-%endif
-%if %{system_rlottie}
-    -DDESKTOP_APP_USE_PACKAGED_RLOTTIE:BOOL=ON \
-    -DDESKTOP_APP_LOTTIE_USE_CACHE:BOOL=OFF \
-%else
-    -DDESKTOP_APP_USE_PACKAGED_RLOTTIE:BOOL=OFF \
 %endif
     -DTDESKTOP_LAUNCHER_BASENAME=%{launcher}
 %cmake_build
@@ -270,6 +211,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.metainfo.xml
 
 %changelog
+* Mon Apr 18 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.7.0-1
+- Updated to version 3.7.0.
+
 * Thu Mar 17 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.6.1-1
 - Updated to version 3.6.1.
 
