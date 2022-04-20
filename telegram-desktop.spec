@@ -16,13 +16,11 @@
 
 # Applying some workaround for non-x86 architectures...
 %ifnarch x86_64
-%global _lto_cflags %{nil}
-%global _smp_build_ncpus 2
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 %endif
 
 Name: telegram-desktop
-Version: 3.7.0
+Version: 3.7.1
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -211,6 +209,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.metainfo.xml
 
 %changelog
+* Wed Apr 20 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.7.1-1
+- Updated to version 3.7.1.
+
 * Mon Apr 18 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.7.0-1
 - Updated to version 3.7.0.
 
