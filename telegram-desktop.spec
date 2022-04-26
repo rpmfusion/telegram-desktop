@@ -1,26 +1,16 @@
-%undefine __cmake_in_source_build
-
 # Build conditionals...
 %global enable_wayland 1
 %global enable_x11 1
-%global use_clang 0
 
 # Telegram Desktop's constants...
 %global appname tdesktop
 %global launcher telegramdesktop
 
-# Applying toolchain configuration...
-%if %{use_clang}
-%global toolchain clang
-%endif
-
-# Applying some workaround for non-x86 architectures...
-%ifnarch x86_64
+# Reducing debuginfo verbosity...
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
-%endif
 
 Name: telegram-desktop
-Version: 3.7.1
+Version: 3.7.3
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -87,12 +77,6 @@ BuildRequires: minizip-compat-devel
 BuildRequires: ninja-build
 BuildRequires: python3
 BuildRequires: qt6-qtbase-private-devel
-
-%if %{use_clang}
-BuildRequires: compiler-rt
-BuildRequires: clang
-BuildRequires: llvm
-%endif
 
 %if %{enable_wayland}
 BuildRequires: cmake(Qt6Concurrent)
@@ -161,19 +145,9 @@ rm -rf Telegram/ThirdParty/{GSL,QR,dispatch,expected,fcitx-qt5,fcitx5-qt,hime,hu
 # Building Telegram Desktop using cmake...
 %cmake -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
-%if %{use_clang}
-    -DCMAKE_C_COMPILER=%{_bindir}/clang \
-    -DCMAKE_CXX_COMPILER=%{_bindir}/clang++ \
-    -DCMAKE_AR=%{_bindir}/llvm-ar \
-    -DCMAKE_RANLIB=%{_bindir}/llvm-ranlib \
-    -DCMAKE_LINKER=%{_bindir}/llvm-ld \
-    -DCMAKE_OBJDUMP=%{_bindir}/llvm-objdump \
-    -DCMAKE_NM=%{_bindir}/llvm-nm \
-%else
     -DCMAKE_AR=%{_bindir}/gcc-ar \
     -DCMAKE_RANLIB=%{_bindir}/gcc-ranlib \
     -DCMAKE_NM=%{_bindir}/gcc-nm \
-%endif
     -DTDESKTOP_API_ID=611335 \
     -DTDESKTOP_API_HASH=d524b414d21f4d37f08684c1df41ac9c \
     -DDESKTOP_APP_USE_PACKAGED:BOOL=ON \
@@ -209,85 +183,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.metainfo.xml
 
 %changelog
+* Tue Apr 26 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.7.3-1
+- Updated to version 3.7.3.
+
 * Wed Apr 20 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.7.1-1
 - Updated to version 3.7.1.
 
 * Mon Apr 18 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.7.0-1
 - Updated to version 3.7.0.
-
-* Thu Mar 17 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.6.1-1
-- Updated to version 3.6.1.
-
-* Fri Mar 11 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.6.0-1
-- Updated to version 3.6.0.
-
-* Wed Feb 16 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.5.2-2
-- Rebuilt for Qt 6.2.3 update.
-
-* Tue Feb 08 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.5.2-1
-- Updated to version 3.5.2.
-
-* Sat Feb 05 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.5.1-1
-- Updated to version 3.5.1.
-
-* Tue Feb 01 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.5.0-1
-- Updated to version 3.5.0.
-
-* Thu Jan 20 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.4.8-1
-- Updated to version 3.4.8.
-
-* Tue Jan 04 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.4.3-1
-- Updated to version 3.4.3.
-
-* Sat Jan 01 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.4.2-1
-- Updated to version 3.4.2.
-- Build against Qt 6 as recommended by the upstream.
-
-* Thu Dec 30 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 3.4.0-1
-- Updated to version 3.4.0.
-
-* Thu Dec 09 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 3.3.0-1
-- Updated to version 3.3.0.
-- Enabled Wayland integration.
-- Build with OpenSSL 3.0 for Fedora 36+.
-
-* Tue Nov 16 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 3.2.5-1
-- Updated to version 3.2.5.
-- Added OpenSSL workaround for Fedora 36+.
-- Adjusted the number of CPU cores on aarch64 during the build.
-- Switched from boolean conditionals to constants.
-- Build against Qt 5 due to issues with Qt 6 and Wayland.
-
-* Mon Nov 15 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 3.2.4-1
-- Updated to version 3.2.4.
-- Switched to Qt 6 with an option to build against Qt 5.
-- Removed no longer supported by upstream use-flags.
-- Fixed FTBFS related to ffmpeg 4.5 update on Rawhide.
-- Enabled aarch64 architecture with some limitations.
-
-* Fri Nov 12 2021 Leigh Scott <leigh123linux@gmail.com> - 3.0.1-2
-- Rebuilt for new ffmpeg snapshot
-
-* Thu Sep 02 2021 Alexey Gorgurov <alexfails@fedoraproject.org> - 3.0.1-1
-- Updated to version 3.0.1.
-
-* Wed Jul 28 2021 Leigh Scott <leigh123linux@gmail.com> - 2.8.8-3
-- Disable gtk integration
-
-* Wed Jul 28 2021 Leigh Scott <leigh123linux@gmail.com> - 2.8.8-2
-- Add Buildrequires webkitgtk4-devel and enable gtk integration
-
-* Tue Jul 27 2021 Leigh Scott <leigh123linux@gmail.com> - 2.8.8-1
-- Updated to version 2.8.8.
-
-* Sun Mar 21 2021 Alexey Gorgurov <alexfails@fedoraproject.org> - 2.7.1-1
-- Updated to version 2.7.1.
-
-* Thu Feb 25 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 2.6.1-1
-- Updated to version 2.6.1.
-
-* Wed Feb 24 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 2.6.0-1
-- Updated to version 2.6.0.
-
-* Thu Feb 18 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 2.5.9-1
-- Updated to version 2.5.9.
