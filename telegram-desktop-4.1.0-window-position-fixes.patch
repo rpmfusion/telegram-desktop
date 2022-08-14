@@ -1,0 +1,70 @@
+From 1e7117dd674e81ddd178683f7011b2a29b513950 Mon Sep 17 00:00:00 2001
+From: Ilya Fedin <fedin-ilja2010@ya.ru>
+Date: Sun, 14 Aug 2022 10:46:49 +0400
+Subject: [PATCH] Revert "Fix enlargening the window by shadow margin when
+ resotring position"
+
+This reverts commit e0ddaf9da15482e758d1817442521d491dd39504.
+---
+ Telegram/SourceFiles/window/main_window.cpp | 2 +-
+ Telegram/lib_ui                             | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Telegram/SourceFiles/window/main_window.cpp b/Telegram/SourceFiles/window/main_window.cpp
+index aed252e81e75a..0940c72ec6b40 100644
+--- a/Telegram/SourceFiles/window/main_window.cpp
++++ b/Telegram/SourceFiles/window/main_window.cpp
+@@ -744,7 +744,7 @@ void MainWindow::initGeometry() {
+ 		).arg(geometry.y()
+ 		).arg(geometry.width()
+ 		).arg(geometry.height()));
+-	RpWidget::setGeometry(geometry);
++	setGeometry(geometry);
+ }
+ 
+ void MainWindow::positionUpdated() {
+
+From 180b0bc51796dcbe5d9371280e49fda24dfaf0fd Mon Sep 17 00:00:00 2001
+From: Ilya Fedin <fedin-ilja2010@ya.ru>
+Date: Sun, 14 Aug 2022 07:02:06 +0400
+Subject: [PATCH] Apply window extents early to avoid window size changes
+
+---
+ Telegram/lib_ui/ui/platform/ui_platform_window.cpp | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
+
+diff --git a/Telegram/lib_ui/ui/platform/ui_platform_window.cpp b/Telegram/lib_ui/ui/platform/ui_platform_window.cpp
+index 0a4a70f0..55bcf0e5 100644
+--- a/Telegram/lib_ui/ui/platform/ui_platform_window.cpp
++++ b/Telegram/lib_ui/ui/platform/ui_platform_window.cpp
+@@ -192,12 +192,13 @@ DefaultWindowHelper::DefaultWindowHelper(not_null<RpWidget*> window)
+ }
+ 
+ void DefaultWindowHelper::init() {
+-	_title->show();
+-
+ 	if (WindowExtentsSupported()) {
+ 		window()->setAttribute(Qt::WA_TranslucentBackground);
+ 	}
+ 
++	window()->createWinId();
++	_title->show();
++
+ 	rpl::combine(
+ 		window()->widthValue(),
+ 		_windowState.value(),
+@@ -260,12 +261,8 @@ void DefaultWindowHelper::init() {
+ 			bool shown,
+ 			bool titleShown,
+ 			Qt::WindowStates windowState) {
+-		if (const auto handle = window()->windowHandle()) {
+-			handle->setFlag(Qt::FramelessWindowHint, titleShown);
+-			updateWindowExtents();
+-		} else {
+-			window()->setWindowFlag(Qt::FramelessWindowHint, titleShown);
+-		}
++		window()->windowHandle()->setFlag(Qt::FramelessWindowHint, titleShown);
++		updateWindowExtents();
+ 	}, window()->lifetime());
+ 
+ 	window()->events() | rpl::start_with_next([=](not_null<QEvent*> e) {
