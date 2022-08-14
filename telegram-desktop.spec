@@ -11,8 +11,8 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 4.0.2
-Release: 3%{?dist}
+Version: 4.1.0
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
@@ -22,6 +22,9 @@ License: GPLv3+ and LGPLv2+ and LGPLv3
 URL: https://github.com/telegramdesktop/%{appname}
 Summary: Telegram Desktop official messaging app
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
+
+# https://github.com/telegramdesktop/tdesktop/pull/24918
+Patch100: %{name}-4.1.0-gcc12-build-fixes.patch
 
 # Telegram Desktop require more than 8 GB of RAM on linking stage.
 # Disabling all low-memory architectures.
@@ -49,15 +52,10 @@ BuildRequires: pkgconfig(glibmm-2.4)
 BuildRequires: pkgconfig(gobject-2.0)
 BuildRequires: pkgconfig(hunspell)
 BuildRequires: pkgconfig(jemalloc)
-BuildRequires: pkgconfig(libavcodec)
-BuildRequires: pkgconfig(libavformat)
-BuildRequires: pkgconfig(libavutil)
 BuildRequires: pkgconfig(libcrypto)
 BuildRequires: pkgconfig(liblz4)
 BuildRequires: pkgconfig(liblzma)
 BuildRequires: pkgconfig(libpulse)
-BuildRequires: pkgconfig(libswresample)
-BuildRequires: pkgconfig(libswscale)
 BuildRequires: pkgconfig(libxxhash)
 BuildRequires: pkgconfig(openssl)
 BuildRequires: pkgconfig(opus)
@@ -104,10 +102,19 @@ BuildRequires: pkgconfig(xcb-record)
 BuildRequires: pkgconfig(xcb-screensaver)
 %endif
 
-# Fedora now has a stripped ffmpeg. Make sure we're using the full version.
+# Telegram Desktop has major issues when built against ffmpeg 5.x:
+# https://bugzilla.rpmfusion.org/show_bug.cgi?id=6273
+# Upstream refuses to fix this issue:
+# https://github.com/telegramdesktop/tdesktop/issues/24855
+# https://github.com/telegramdesktop/tdesktop/issues/23899
 %if 0%{?fedora} && 0%{?fedora} >= 36
-BuildRequires: ffmpeg-devel
-Requires: ffmpeg-libs%{?_isa}
+BuildRequires: compat-ffmpeg4-devel
+%else
+BuildRequires: pkgconfig(libavcodec)
+BuildRequires: pkgconfig(libavformat)
+BuildRequires: pkgconfig(libavutil)
+BuildRequires: pkgconfig(libswresample)
+BuildRequires: pkgconfig(libswscale)
 %endif
 
 %{?_qt6:Requires: %{_qt6}%{?_isa} = %{_qt6_version}}
@@ -150,6 +157,11 @@ business messaging needs.
 rm -rf Telegram/ThirdParty/{GSL,QR,dispatch,expected,fcitx-qt5,fcitx5-qt,hime,hunspell,jemalloc,lz4,minizip,nimf,range-v3,xxHash}
 
 %build
+# Setting pkgconfig path for compat-ffmpeg4...
+%if 0%{?fedora} && 0%{?fedora} >= 36
+export PKG_CONFIG_PATH="%{_libdir}/compat-ffmpeg4/pkgconfig/"
+%endif
+
 # Building Telegram Desktop using cmake...
 %cmake -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
@@ -195,15 +207,13 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.metainfo.xml
 
 %changelog
+* Sun Aug 14 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.1.0-1
+- Updated to version 4.1.0.
+- Switched to compat-ffmpeg4 to mitigate RFBZ#6273.
+
 * Mon Aug 08 2022 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 4.0.2-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild and ffmpeg
   5.1
 
 * Wed Jul 27 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.0.2-2
 - Rebuilt due to the Qt 6.3.1 update.
-
-* Sat Jun 25 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.0.2-1
-- Updated to version 4.0.2.
-
-* Fri Jun 03 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 3.7.3-2
-- Rebuilt due to Qt 6.3.0 update.

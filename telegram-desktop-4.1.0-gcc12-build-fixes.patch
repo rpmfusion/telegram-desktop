@@ -1,0 +1,43 @@
+From f82089cbfe1c459022f9d4cad250b58a568e9619 Mon Sep 17 00:00:00 2001
+From: Joe Kappus <joe@wt.gd>
+Date: Fri, 12 Aug 2022 22:24:10 -0400
+Subject: [PATCH] Fix build with GCC 12.
+
+---
+ Telegram/SourceFiles/ffmpeg/ffmpeg_emoji.h | 1 +
+ Telegram/lib_lottie                        | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Telegram/SourceFiles/ffmpeg/ffmpeg_emoji.h b/Telegram/SourceFiles/ffmpeg/ffmpeg_emoji.h
+index ac896903edab4..d1e4acd96dee3 100644
+--- a/Telegram/SourceFiles/ffmpeg/ffmpeg_emoji.h
++++ b/Telegram/SourceFiles/ffmpeg/ffmpeg_emoji.h
+@@ -10,6 +10,7 @@
+ #include "ui/effects/frame_generator.h"
+ 
+ #include <QtGui/QImage>
++#include <memory>
+ 
+ namespace FFmpeg {
+ 
+From f3563bc6b0e042095d4d667d013f62cb8ae62b65 Mon Sep 17 00:00:00 2001
+From: Joe Kappus <joe@wt.gd>
+Date: Fri, 12 Aug 2022 22:17:20 -0400
+Subject: [PATCH] fix build with GCC-12.
+
+---
+ lottie/lottie_emoji.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/lottie/lottie_emoji.h b/lottie/lottie_emoji.h
+index ec2221c..d882e87 100644
+--- a/Telegram/lib_lottie/lottie/lottie_emoji.h
++++ b/Telegram/lib_lottie/lottie/lottie_emoji.h
+@@ -9,6 +9,7 @@
+ #include "ui/effects/frame_generator.h"
+ 
+ #include <QtGui/QImage>
++#include <memory>
+ 
+ namespace rlottie {
+ class Animation;
