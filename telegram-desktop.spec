@@ -1,4 +1,5 @@
 # Build conditionals...
+%global bundled_fonts 1
 %global enable_wayland 1
 %global enable_x11 1
 
@@ -78,6 +79,14 @@ BuildRequires: ninja-build
 BuildRequires: python3
 BuildRequires: qt6-qtbase-private-devel
 
+%if %{bundled_fonts}
+Provides: bundled(open-sans-fonts) = 1.10
+Provides: bundled(vazirmatn-fonts) = 27.2.2
+%else
+Requires: open-sans-fonts
+Requires: vazirmatn-fonts
+%endif
+
 %if %{enable_wayland}
 BuildRequires: cmake(Qt6Concurrent)
 BuildRequires: cmake(Qt6WaylandClient)
@@ -103,7 +112,6 @@ Requires: ffmpeg-libs%{?_isa}
 
 %{?_qt6:Requires: %{_qt6}%{?_isa} = %{_qt6_version}}
 Requires: hicolor-icon-theme
-Requires: open-sans-fonts
 Requires: qt6-qtimageformats%{?_isa}
 Requires: webkit2gtk3%{?_isa}
 
@@ -151,9 +159,13 @@ rm -rf Telegram/ThirdParty/{GSL,QR,dispatch,expected,fcitx-qt5,fcitx5-qt,hime,hu
     -DTDESKTOP_API_ID=611335 \
     -DTDESKTOP_API_HASH=d524b414d21f4d37f08684c1df41ac9c \
     -DDESKTOP_APP_USE_PACKAGED:BOOL=ON \
-    -DDESKTOP_APP_USE_PACKAGED_FONTS:BOOL=ON \
     -DDESKTOP_APP_DISABLE_CRASH_REPORTS:BOOL=ON \
     -DDESKTOP_APP_QT6:BOOL=ON \
+%if %{bundled_fonts}
+    -DDESKTOP_APP_USE_PACKAGED_FONTS:BOOL=OFF \
+%else
+    -DDESKTOP_APP_USE_PACKAGED_FONTS:BOOL=ON \
+%endif
 %if %{enable_wayland}
     -DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION:BOOL=OFF \
 %else
