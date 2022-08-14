@@ -54,16 +54,13 @@ BuildRequires: pkgconfig(glibmm-2.4)
 BuildRequires: pkgconfig(gobject-2.0)
 BuildRequires: pkgconfig(hunspell)
 BuildRequires: pkgconfig(jemalloc)
-BuildRequires: pkgconfig(libcrypto)
 BuildRequires: pkgconfig(liblz4)
 BuildRequires: pkgconfig(liblzma)
 BuildRequires: pkgconfig(libpulse)
 BuildRequires: pkgconfig(libxxhash)
-BuildRequires: pkgconfig(openssl)
 BuildRequires: pkgconfig(opus)
 BuildRequires: pkgconfig(rnnoise)
 BuildRequires: pkgconfig(vpx)
-BuildRequires: pkgconfig(webkit2gtk-4.0)
 
 BuildRequires: cmake
 BuildRequires: desktop-file-utils
@@ -104,6 +101,14 @@ BuildRequires: pkgconfig(xcb-record)
 BuildRequires: pkgconfig(xcb-screensaver)
 %endif
 
+%if 0%{?fedora} && 0%{?fedora} >= 37
+BuildRequires: pkgconfig(webkit2gtk-5.0)
+Requires: webkit2gtk5.0%{?_isa}
+%else
+BuildRequires: pkgconfig(webkit2gtk-4.0)
+Requires: webkit2gtk3%{?_isa}
+%endif
+
 # Telegram Desktop has major issues when built against ffmpeg 5.x:
 # https://bugzilla.rpmfusion.org/show_bug.cgi?id=6273
 # Upstream refuses to fix this issue:
@@ -119,10 +124,18 @@ BuildRequires: pkgconfig(libswresample)
 BuildRequires: pkgconfig(libswscale)
 %endif
 
+# Video calls doesn't work when built against openssl 3.0:
+# https://github.com/telegramdesktop/tdesktop/issues/24698
+%if 0%{?fedora} && 0%{?fedora} >= 36
+BuildRequires: openssl1.1-devel
+%else
+BuildRequires: pkgconfig(libcrypto)
+BuildRequires: pkgconfig(openssl)
+%endif
+
 %{?_qt6:Requires: %{_qt6}%{?_isa} = %{_qt6_version}}
 Requires: hicolor-icon-theme
 Requires: qt6-qtimageformats%{?_isa}
-Requires: webkit2gtk3%{?_isa}
 
 # Telegram Desktop can use native open/save dialogs with XDG portals.
 Recommends: xdg-desktop-portal%{?_isa}
@@ -212,6 +225,7 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 * Sun Aug 14 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.1.0-1
 - Updated to version 4.1.0.
 - Switched to compat-ffmpeg4 to mitigate RFBZ#6273.
+- Switched to openssl1.1 to mitigate issues with video calls.
 
 * Mon Aug 08 2022 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 4.0.2-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild and ffmpeg
