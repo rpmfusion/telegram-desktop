@@ -16,9 +16,12 @@ Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
+# * tg_owt - BSD and ASL 2.0 -- static dependency;
 # * rlottie - LGPLv2+ -- static dependency;
-# * qt_functions.cpp - LGPLv3 -- build-time dependency.
-License: GPLv3+ and LGPLv2+ and LGPLv3
+# * qt_functions.cpp - LGPLv3 -- build-time dependency;
+# * open-sans-fonts  - ASL 2.0 -- bundled font;
+# * vazirmatn-fonts - OFL -- bundled font.
+License: GPLv3+ and BSD and ASL 2.0 and LGPLv2+ and LGPLv3 and OFL
 URL: https://github.com/telegramdesktop/%{appname}
 Summary: Telegram Desktop official messaging app
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
@@ -223,6 +226,7 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 - Updated to version 4.1.0.
 - Switched to compat-ffmpeg4 to mitigate RFBZ#6273.
 - Switched to openssl1.1 to mitigate issues with video calls.
+- Switched to bundled fonts by upstream request.
 
 * Mon Aug 08 2022 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 4.0.2-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild and ffmpeg
