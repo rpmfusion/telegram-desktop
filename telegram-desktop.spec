@@ -11,7 +11,7 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 4.1.0
+Version: 4.1.1
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -22,11 +22,6 @@ License: GPLv3+ and LGPLv2+ and LGPLv3
 URL: https://github.com/telegramdesktop/%{appname}
 Summary: Telegram Desktop official messaging app
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
-
-# https://github.com/telegramdesktop/tdesktop/commit/f82089cbfe1c459022f9d4cad250b58a568e9619
-Patch100: %{name}-4.1.0-gcc12-build-fixes.patch
-# https://github.com/telegramdesktop/tdesktop/commit/1e7117dd674e81ddd178683f7011b2a29b513950
-Patch101: %{name}-4.1.0-window-position-fixes.patch
 
 # Telegram Desktop require more than 8 GB of RAM on linking stage.
 # Disabling all low-memory architectures.
@@ -187,7 +182,6 @@ export PKG_CONFIG_PATH="%{_libdir}/compat-ffmpeg4/pkgconfig/"
     -DTDESKTOP_API_HASH=d524b414d21f4d37f08684c1df41ac9c \
     -DDESKTOP_APP_USE_PACKAGED:BOOL=ON \
     -DDESKTOP_APP_DISABLE_CRASH_REPORTS:BOOL=ON \
-    -DDESKTOP_APP_QT6:BOOL=ON \
 %if %{bundled_fonts}
     -DDESKTOP_APP_USE_PACKAGED_FONTS:BOOL=OFF \
 %else
@@ -222,6 +216,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.metainfo.xml
 
 %changelog
+* Wed Aug 17 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.1.1-1
+- Updated to version 4.1.1.
+
 * Sun Aug 14 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.1.0-1
 - Updated to version 4.1.0.
 - Switched to compat-ffmpeg4 to mitigate RFBZ#6273.
@@ -230,6 +227,3 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 * Mon Aug 08 2022 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 4.0.2-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild and ffmpeg
   5.1
-
-* Wed Jul 27 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.0.2-2
-- Rebuilt due to the Qt 6.3.1 update.
