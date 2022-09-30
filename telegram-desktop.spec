@@ -11,7 +11,7 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 4.1.1
+Version: 4.2.3
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -86,10 +86,8 @@ Requires: vazirmatn-fonts
 BuildRequires: cmake(Qt6Concurrent)
 BuildRequires: cmake(Qt6WaylandClient)
 BuildRequires: pkgconfig(wayland-client)
-BuildRequires: pkgconfig(wayland-protocols)
 BuildRequires: qt6-qtbase-static
-Provides: bundled(kf5-kwayland) = 5.93.0
-Provides: bundled(plasma-wayland-protocols) = 1.6.0
+Provides: bundled(kf5-kcoreaddons) = 5.98.0
 %endif
 
 %if %{enable_x11}
@@ -167,14 +165,9 @@ business messaging needs.
 %autosetup -n %{appname}-%{version}-full -p1
 
 # Unbundling libraries...
-rm -rf Telegram/ThirdParty/{GSL,QR,dispatch,expected,fcitx-qt5,fcitx5-qt,hime,hunspell,jemalloc,lz4,minizip,nimf,range-v3,xxHash}
+rm -rf Telegram/ThirdParty/{GSL,QR,dispatch,expected,fcitx-qt5,fcitx5-qt,hime,hunspell,jemalloc,kimageformats,lz4,minizip,nimf,range-v3,xxHash}
 
 %build
-# Setting pkgconfig path for compat-ffmpeg4...
-%if 0%{?fedora} && 0%{?fedora} >= 36
-export PKG_CONFIG_PATH="%{_libdir}/compat-ffmpeg4/pkgconfig/"
-%endif
-
 # Building Telegram Desktop using cmake...
 %cmake -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
@@ -219,6 +212,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.metainfo.xml
 
 %changelog
+* Fri Sep 30 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.2.3-1
+- Updated to version 4.2.3.
+
 * Wed Aug 17 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.1.1-1
 - Updated to version 4.1.1.
 
@@ -227,7 +223,3 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 - Switched to compat-ffmpeg4 to mitigate RFBZ#6273.
 - Switched to openssl1.1 to mitigate issues with video calls.
 - Switched to bundled fonts by upstream request.
-
-* Mon Aug 08 2022 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 4.0.2-3
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild and ffmpeg
-  5.1
