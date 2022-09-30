@@ -11,7 +11,7 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 4.2.3
+Version: 4.2.4
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -213,8 +213,8 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.metainfo.xml
 
 %changelog
-* Fri Sep 30 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.2.3-1
-- Updated to version 4.2.3.
+* Fri Sep 30 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.2.4-1
+- Updated to version 4.2.4.
 
 * Wed Aug 17 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.1.1-1
 - Updated to version 4.1.1.
