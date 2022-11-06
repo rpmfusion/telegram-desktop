@@ -11,7 +11,7 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 4.2.4
+Version: 4.3.0
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -213,14 +213,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
 %{_metainfodir}/%{launcher}.metainfo.xml
 
 %changelog
+* Sun Nov 06 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.3.0-1
+- Updated to version 4.3.0.
+
 * Fri Sep 30 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.2.4-1
 - Updated to version 4.2.4.
 
 * Wed Aug 17 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.1.1-1
 - Updated to version 4.1.1.
-
-* Sun Aug 14 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.1.0-1
-- Updated to version 4.1.0.
-- Switched to compat-ffmpeg4 to mitigate RFBZ#6273.
-- Switched to openssl1.1 to mitigate issues with video calls.
-- Switched to bundled fonts by upstream request.
