@@ -5,13 +5,12 @@
 
 # Telegram Desktop's constants...
 %global appname tdesktop
-%global launcher telegramdesktop
 
 # Reducing debuginfo verbosity...
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 4.3.0
+Version: 4.3.1
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -178,7 +177,6 @@ rm -rf Telegram/ThirdParty/{GSL,QR,dispatch,expected,fcitx-qt5,fcitx5-qt,hime,hu
     -DTDESKTOP_API_ID=611335 \
     -DTDESKTOP_API_HASH=d524b414d21f4d37f08684c1df41ac9c \
     -DDESKTOP_APP_USE_PACKAGED:BOOL=ON \
-    -DDESKTOP_APP_DISABLE_CRASH_REPORTS:BOOL=ON \
 %if %{bundled_fonts}
     -DDESKTOP_APP_USE_PACKAGED_FONTS:BOOL=OFF \
 %else
@@ -194,30 +192,30 @@ rm -rf Telegram/ThirdParty/{GSL,QR,dispatch,expected,fcitx-qt5,fcitx5-qt,hime,hu
 %else
     -DDESKTOP_APP_DISABLE_X11_INTEGRATION:BOOL=ON \
 %endif
-    -DTDESKTOP_LAUNCHER_BASENAME=%{launcher}
+    -DDESKTOP_APP_DISABLE_CRASH_REPORTS:BOOL=ON
 %cmake_build
 
 %install
 %cmake_install
 
 %check
-appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{launcher}.metainfo.xml
-desktop-file-validate %{buildroot}%{_datadir}/applications/%{launcher}.desktop
+appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/*.metainfo.xml
+desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 
 %files
 %doc README.md changelog.txt
 %license LICENSE LEGAL
 %{_bindir}/%{name}
-%{_datadir}/applications/%{launcher}.desktop
+%{_datadir}/applications/*.desktop
 %{_datadir}/icons/hicolor/*/apps/*.png
-%{_metainfodir}/%{launcher}.metainfo.xml
+%{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Tue Nov 08 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.3.1-1
+- Updated to version 4.3.1.
+
 * Sun Nov 06 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.3.0-1
 - Updated to version 4.3.0.
 
 * Fri Sep 30 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.2.4-1
 - Updated to version 4.2.4.
-
-* Wed Aug 17 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.1.1-1
-- Updated to version 4.1.1.
