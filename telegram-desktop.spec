@@ -98,8 +98,8 @@ BuildRequires: pkgconfig(xcb-screensaver)
 %endif
 
 %if 0%{?fedora} && 0%{?fedora} >= 37
-BuildRequires: pkgconfig(webkit2gtk-5.0)
-Requires: webkit2gtk5.0%{?_isa}
+BuildRequires: pkgconfig(webkit2gtk-4.1)
+Requires: webkit2gtk4.1%{?_isa}
 %else
 BuildRequires: pkgconfig(webkit2gtk-4.0)
 Requires: webkit2gtk3%{?_isa}
