@@ -10,13 +10,14 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 4.3.1
+Version: 4.3.4
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
 # * tg_owt - BSD and ASL 2.0 -- static dependency;
 # * rlottie - LGPLv2+ -- static dependency;
+# * cld3  - ASL 2.0 -- static dependency;
 # * qt_functions.cpp - LGPLv3 -- build-time dependency;
 # * open-sans-fonts  - ASL 2.0 -- bundled font;
 # * vazirmatn-fonts - OFL -- bundled font.
@@ -56,6 +57,7 @@ BuildRequires: pkgconfig(liblzma)
 BuildRequires: pkgconfig(libpulse)
 BuildRequires: pkgconfig(libxxhash)
 BuildRequires: pkgconfig(opus)
+BuildRequires: pkgconfig(protobuf)
 BuildRequires: pkgconfig(rnnoise)
 BuildRequires: pkgconfig(vpx)
 
@@ -144,6 +146,7 @@ Provides: telegram = %{?epoch:%{epoch}:}%{version}-%{release}
 Provides: telegram%{?_isa} = %{?epoch:%{epoch}:}%{version}-%{release}
 
 # Virtual provides for bundled libraries...
+Provides: bundled(cld3) = 3.0.13~gitb48dc46
 Provides: bundled(libtgvoip) = 2.4.4
 Provides: bundled(rlottie) = 0~git8c69fc2
 
@@ -211,11 +214,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Sat Nov 26 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.3.4-1
+- Updated to version 4.3.4.
+
 * Tue Nov 08 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.3.1-1
 - Updated to version 4.3.1.
 
 * Sun Nov 06 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.3.0-1
 - Updated to version 4.3.0.
-
-* Fri Sep 30 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.2.4-1
-- Updated to version 4.2.4.
