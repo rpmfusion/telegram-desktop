@@ -58,6 +58,7 @@ BuildRequires: pkgconfig(libpulse)
 BuildRequires: pkgconfig(libxxhash)
 BuildRequires: pkgconfig(opus)
 BuildRequires: pkgconfig(protobuf)
+BuildRequires: pkgconfig(protobuf-lite)
 BuildRequires: pkgconfig(rnnoise)
 BuildRequires: pkgconfig(vpx)
 
