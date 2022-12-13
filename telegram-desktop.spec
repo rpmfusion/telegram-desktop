@@ -14,14 +14,14 @@ Version: 4.4.1
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
-# * Telegram Desktop - GPLv3+ with OpenSSL exception -- main tarball;
-# * tg_owt - BSD and ASL 2.0 -- static dependency;
-# * rlottie - LGPLv2+ -- static dependency;
-# * cld3  - ASL 2.0 -- static dependency;
-# * qt_functions.cpp - LGPLv3 -- build-time dependency;
-# * open-sans-fonts  - ASL 2.0 -- bundled font;
-# * vazirmatn-fonts - OFL -- bundled font.
-License: GPLv3+ and BSD and ASL 2.0 and LGPLv2+ and LGPLv3 and OFL
+# * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
+# * tg_owt - BSD-3-Clause AND BSD-2-Clause AND Apache-2.0 AND MIT AND LicenseRef-Fedora-Public-Domain -- static dependency;
+# * rlottie - LGPL-2.1-or-later AND AND FTL AND BSD-3-Clause -- static dependency;
+# * cld3  - Apache-2.0 -- static dependency;
+# * qt_functions.cpp - LGPL-3.0-only -- build-time dependency;
+# * open-sans-fonts  - Apache-2.0 -- bundled font;
+# * vazirmatn-fonts - OFL-1.1 -- bundled font.
+License: GPL-3.0-or-later AND BSD-3-Clause AND BSD-2-Clause AND Apache-2.0 AND MIT AND LicenseRef-Fedora-Public-Domain AND LGPL-2.1-or-later AND FTL AND MPL-1.1 AND LGPL-3.0-only AND OFL-1.1
 URL: https://github.com/telegramdesktop/%{appname}
 Summary: Telegram Desktop official messaging app
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
