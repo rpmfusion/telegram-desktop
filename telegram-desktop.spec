@@ -89,7 +89,7 @@ BuildRequires: cmake(Qt6Concurrent)
 BuildRequires: cmake(Qt6WaylandClient)
 BuildRequires: pkgconfig(wayland-client)
 BuildRequires: qt6-qtbase-static
-Provides: bundled(kf5-kcoreaddons) = 5.98.0
+Provides: bundled(kf5-kcoreaddons) = 5.101.0
 Provides: bundled(plasma-wayland-protocols) = 1.6.0
 %endif
 
