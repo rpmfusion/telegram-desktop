@@ -124,6 +124,7 @@ BuildRequires: pkgconfig(libavformat)
 BuildRequires: pkgconfig(libavutil)
 BuildRequires: pkgconfig(libswresample)
 BuildRequires: pkgconfig(libswscale)
+BuildRequires: ffmpeg-devel
 Requires: ffmpeg-libs%{?_isa}
 %endif
 
