@@ -115,18 +115,21 @@ Requires: webkit2gtk3%{?_isa}
 # https://github.com/telegramdesktop/tdesktop/issues/23899
 %if 0%{?fedora} && 0%{?fedora} >= 36
 BuildRequires: compat-ffmpeg4-devel
+Requires: compat-ffmpeg4%{?_isa}
 %else
 BuildRequires: pkgconfig(libavcodec)
 BuildRequires: pkgconfig(libavformat)
 BuildRequires: pkgconfig(libavutil)
 BuildRequires: pkgconfig(libswresample)
 BuildRequires: pkgconfig(libswscale)
+Requires: ffmpeg-libs%{?_isa}
 %endif
 
 # Video calls doesn't work when built against openssl 3.0:
 # https://github.com/telegramdesktop/tdesktop/issues/24698
 %if 0%{?fedora} && 0%{?fedora} >= 36
 BuildRequires: openssl1.1-devel
+Requires: openssl1.1%{?_isa}
 %else
 BuildRequires: pkgconfig(libcrypto)
 BuildRequires: pkgconfig(openssl)
