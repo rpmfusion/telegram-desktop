@@ -2,6 +2,8 @@
 %global bundled_fonts 1
 %global enable_wayland 1
 %global enable_x11 1
+%global legacy_ffmpeg 1
+%global legacy_openssl 1
 
 # Telegram Desktop's constants...
 %global appname tdesktop
@@ -113,7 +115,7 @@ Requires: webkit2gtk3%{?_isa}
 # Upstream refuses to fix this issue:
 # https://github.com/telegramdesktop/tdesktop/issues/24855
 # https://github.com/telegramdesktop/tdesktop/issues/23899
-%if 0%{?fedora} && 0%{?fedora} >= 36
+%if %{legacy_ffmpeg}
 BuildRequires: compat-ffmpeg4-devel
 Requires: compat-ffmpeg4%{?_isa}
 %else
@@ -127,7 +129,7 @@ Requires: ffmpeg-libs%{?_isa}
 
 # Video calls doesn't work when built against openssl 3.0:
 # https://github.com/telegramdesktop/tdesktop/issues/24698
-%if 0%{?fedora} && 0%{?fedora} >= 36
+%if %{legacy_openssl}
 BuildRequires: openssl1.1-devel
 Requires: openssl1.1%{?_isa}
 %else
