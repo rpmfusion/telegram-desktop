@@ -13,7 +13,7 @@
 
 Name: telegram-desktop
 Version: 4.5.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -117,7 +117,6 @@ Requires: webkit2gtk3%{?_isa}
 # https://github.com/telegramdesktop/tdesktop/issues/23899
 %if %{legacy_ffmpeg}
 BuildRequires: compat-ffmpeg4-devel
-Requires: compat-ffmpeg4%{?_isa}
 %else
 BuildRequires: pkgconfig(libavcodec)
 BuildRequires: pkgconfig(libavformat)
@@ -221,6 +220,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Wed Jan 04 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.5.2-2
+- Removed explicit dependency on compat-ffmpeg4.
+
 * Tue Jan 03 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.5.2-1
 - Updated to version 4.5.2.
 
