@@ -12,8 +12,8 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 4.5.2
-Release: 2%{?dist}
+Version: 4.5.3
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -220,6 +220,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Sat Jan 07 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.5.3-1
+- Updated to version 4.5.3.
+
 * Wed Jan 04 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.5.2-2
 - Removed explicit dependency on compat-ffmpeg4.
 
