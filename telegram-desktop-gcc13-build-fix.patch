@@ -1,0 +1,37 @@
+From ccef5acc51d2059f33d3e35f7972351b4221cd9f Mon Sep 17 00:00:00 2001
+From: Vitaly Zaitsev <vitaly@easycoding.org>
+Date: Mon, 6 Feb 2023 11:23:57 +0100
+Subject: [PATCH] Fixed build with GCC 13.
+
+Signed-off-by: Vitaly Zaitsev <vitaly@easycoding.org>
+---
+ .../SourceFiles/history/view/history_view_list_widget.h  | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/Telegram/SourceFiles/history/view/history_view_list_widget.h b/Telegram/SourceFiles/history/view/history_view_list_widget.h
+index 77c51f7508246..c8ad5f1fcd58a 100644
+--- a/Telegram/SourceFiles/history/view/history_view_list_widget.h
++++ b/Telegram/SourceFiles/history/view/history_view_list_widget.h
+@@ -355,6 +355,11 @@ class ListWidget final
+ 	int resizeGetHeight(int newWidth) override;
+ 
+ private:
++	using ScrollTopState = ListMemento::ScrollTopState;
++	using PointState = HistoryView::PointState;
++	using CursorState = HistoryView::CursorState;
++	using ChosenReaction = HistoryView::Reactions::ChosenReaction;
++
+ 	struct MouseState {
+ 		MouseState();
+ 		MouseState(
+@@ -405,10 +410,6 @@ class ListWidget final
+ 		Selecting,
+ 		Deselecting,
+ 	};
+-	using ScrollTopState = ListMemento::ScrollTopState;
+-	using PointState = HistoryView::PointState;
+-	using CursorState = HistoryView::CursorState;
+-	using ChosenReaction = HistoryView::Reactions::ChosenReaction;
+ 
+ 	void onTouchSelect();
+ 	void onTouchScrollTimer();
