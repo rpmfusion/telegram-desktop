@@ -11,6 +11,13 @@
 # Reducing debuginfo verbosity...
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
+# Workaround to GCC 13 lambda mangling conflict:
+# RHBZ: https://bugzilla.redhat.com/show_bug.cgi?id=2168862
+# GCC: https://gcc.gnu.org/PR107897
+%if 0%{?fedora} && 0%{?fedora} >= 38
+%global optflags %(echo %{optflags} -fabi-compat-version=0)
+%endif
+
 Name: telegram-desktop
 Version: 4.6.2
 Release: 1%{?dist}
