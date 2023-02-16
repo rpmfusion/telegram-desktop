@@ -19,7 +19,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 4.6.2
+Version: 4.6.3
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -34,9 +34,6 @@ License: GPL-3.0-or-later AND BSD-3-Clause AND BSD-2-Clause AND Apache-2.0 AND M
 URL: https://github.com/telegramdesktop/%{appname}
 Summary: Telegram Desktop official messaging app
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
-
-# https://github.com/telegramdesktop/tdesktop/pull/25841
-Patch100: %{name}-gcc13-build-fixes.patch
 
 # Telegram Desktop require more than 8 GB of RAM on linking stage.
 # Disabling all low-memory architectures.
@@ -230,6 +227,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Thu Feb 16 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.6.3-1
+- Updated to version 4.6.3.
+
 * Thu Feb 09 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.6.2-1
 - Updated to version 4.6.2.
 
