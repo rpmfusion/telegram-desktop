@@ -19,7 +19,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 4.6.3
+Version: 4.6.5
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -160,7 +160,7 @@ Provides: telegram%{?_isa} = %{?epoch:%{epoch}:}%{version}-%{release}
 
 # Virtual provides for bundled libraries...
 Provides: bundled(cld3) = 3.0.13~gitb48dc46
-Provides: bundled(libtgvoip) = 2.4.4
+Provides: bundled(libtgvoip) = 2.4.4~git7c46f4c
 Provides: bundled(rlottie) = 0~git8c69fc2
 
 %description
@@ -227,6 +227,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Sun Feb 26 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.6.5-1
+- Updated to version 4.6.5.
+
 * Thu Feb 16 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.6.3-1
 - Updated to version 4.6.3.
 
