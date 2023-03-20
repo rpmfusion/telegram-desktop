@@ -2,8 +2,8 @@
 %global bundled_fonts 1
 %global enable_wayland 1
 %global enable_x11 1
-%global legacy_ffmpeg 1
-%global legacy_openssl 1
+%global legacy_ffmpeg 0
+%global legacy_openssl 0
 
 # Telegram Desktop's constants...
 %global appname tdesktop
@@ -19,7 +19,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 4.6.5
+Version: 4.7.0
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -126,12 +126,12 @@ Requires: webkit2gtk3%{?_isa}
 BuildRequires: compat-ffmpeg4-devel
 %else
 BuildRequires: pkgconfig(libavcodec)
+BuildRequires: pkgconfig(libavfilter)
 BuildRequires: pkgconfig(libavformat)
 BuildRequires: pkgconfig(libavutil)
 BuildRequires: pkgconfig(libswresample)
 BuildRequires: pkgconfig(libswscale)
 BuildRequires: ffmpeg-devel
-Requires: ffmpeg-libs%{?_isa}
 %endif
 
 # Video calls doesn't work when built against openssl 3.0:
@@ -227,6 +227,10 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Mon Mar 20 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.7.0-1
+- Updated to version 4.7.0.
+- Switched to modern ffmpeg and OpenSSL.
+
 * Sun Feb 26 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.6.5-1
 - Updated to version 4.6.5.
 
