@@ -57,7 +57,7 @@ BuildRequires: cmake(tl-expected)
 BuildRequires: pkgconfig(alsa)
 BuildRequires: pkgconfig(gio-2.0)
 BuildRequires: pkgconfig(glib-2.0)
-BuildRequires: pkgconfig(glibmm-2.68)
+BuildRequires: pkgconfig(glibmm-2.68) >= 2.76
 BuildRequires: pkgconfig(gobject-2.0)
 BuildRequires: pkgconfig(hunspell)
 BuildRequires: pkgconfig(jemalloc)
