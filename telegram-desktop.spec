@@ -19,7 +19,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 4.7.0
+Version: 4.7.1
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -57,7 +57,7 @@ BuildRequires: cmake(tl-expected)
 BuildRequires: pkgconfig(alsa)
 BuildRequires: pkgconfig(gio-2.0)
 BuildRequires: pkgconfig(glib-2.0)
-BuildRequires: pkgconfig(glibmm-2.68) >= 2.76
+BuildRequires: pkgconfig(glibmm-2.68) >= 2.76.0
 BuildRequires: pkgconfig(gobject-2.0)
 BuildRequires: pkgconfig(hunspell)
 BuildRequires: pkgconfig(jemalloc)
@@ -227,6 +227,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Wed Mar 22 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.7.1-1
+- Updated to version 4.7.1.
+
 * Mon Mar 20 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.7.0-1
 - Updated to version 4.7.0.
 - Switched to modern ffmpeg and OpenSSL.
