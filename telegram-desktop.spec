@@ -1,10 +1,3 @@
-# Build conditionals...
-%global bundled_fonts 1
-%global enable_wayland 1
-%global enable_x11 1
-%global legacy_ffmpeg 0
-%global legacy_openssl 0
-
 # Telegram Desktop's constants...
 %global appname tdesktop
 
@@ -41,6 +34,7 @@ ExclusiveArch: x86_64 aarch64
 
 BuildRequires: cmake(Microsoft.GSL)
 BuildRequires: cmake(OpenAL)
+BuildRequires: cmake(Qt6Concurrent)
 BuildRequires: cmake(Qt6Core)
 BuildRequires: cmake(Qt6Core5Compat)
 BuildRequires: cmake(Qt6DBus)
@@ -49,6 +43,7 @@ BuildRequires: cmake(Qt6Network)
 BuildRequires: cmake(Qt6OpenGL)
 BuildRequires: cmake(Qt6OpenGLWidgets)
 BuildRequires: cmake(Qt6Svg)
+BuildRequires: cmake(Qt6WaylandClient)
 BuildRequires: cmake(Qt6Widgets)
 BuildRequires: cmake(range-v3)
 BuildRequires: cmake(tg_owt)
@@ -61,18 +56,33 @@ BuildRequires: pkgconfig(glibmm-2.68) >= 2.76.0
 BuildRequires: pkgconfig(gobject-2.0)
 BuildRequires: pkgconfig(hunspell)
 BuildRequires: pkgconfig(jemalloc)
+BuildRequires: pkgconfig(libavcodec)
+BuildRequires: pkgconfig(libavfilter)
+BuildRequires: pkgconfig(libavformat)
+BuildRequires: pkgconfig(libavutil)
+BuildRequires: pkgconfig(libcrypto)
 BuildRequires: pkgconfig(liblz4)
 BuildRequires: pkgconfig(liblzma)
 BuildRequires: pkgconfig(libpulse)
+BuildRequires: pkgconfig(libswresample)
+BuildRequires: pkgconfig(libswscale)
 BuildRequires: pkgconfig(libxxhash)
+BuildRequires: pkgconfig(openssl)
 BuildRequires: pkgconfig(opus)
 BuildRequires: pkgconfig(protobuf)
 BuildRequires: pkgconfig(protobuf-lite)
 BuildRequires: pkgconfig(rnnoise)
 BuildRequires: pkgconfig(vpx)
+BuildRequires: pkgconfig(wayland-client)
+BuildRequires: pkgconfig(webkitgtk-6.0)
+BuildRequires: pkgconfig(xcb)
+BuildRequires: pkgconfig(xcb-keysyms)
+BuildRequires: pkgconfig(xcb-record)
+BuildRequires: pkgconfig(xcb-screensaver)
 
 BuildRequires: cmake
 BuildRequires: desktop-file-utils
+BuildRequires: ffmpeg-devel
 BuildRequires: gcc
 BuildRequires: gcc-c++
 BuildRequires: libappstream-glib
@@ -84,69 +94,12 @@ BuildRequires: minizip-compat-devel
 BuildRequires: ninja-build
 BuildRequires: python3
 BuildRequires: qt6-qtbase-private-devel
-
-%if %{bundled_fonts}
-Provides: bundled(open-sans-fonts) = 1.10
-Provides: bundled(vazirmatn-fonts) = 27.2.2
-%else
-Requires: open-sans-fonts
-Requires: vazirmatn-fonts
-%endif
-
-%if %{enable_wayland}
-BuildRequires: cmake(Qt6Concurrent)
-BuildRequires: cmake(Qt6WaylandClient)
-BuildRequires: pkgconfig(wayland-client)
 BuildRequires: qt6-qtbase-static
-Provides: bundled(kf5-kcoreaddons) = 5.101.0
-Provides: bundled(plasma-wayland-protocols) = 1.6.0
-%endif
-
-%if %{enable_x11}
-BuildRequires: pkgconfig(xcb)
-BuildRequires: pkgconfig(xcb-keysyms)
-BuildRequires: pkgconfig(xcb-record)
-BuildRequires: pkgconfig(xcb-screensaver)
-%endif
-
-%if 0%{?fedora} && 0%{?fedora} >= 37
-BuildRequires: pkgconfig(webkit2gtk-4.1)
-Requires: webkit2gtk4.1%{?_isa}
-%else
-BuildRequires: pkgconfig(webkit2gtk-4.0)
-Requires: webkit2gtk3%{?_isa}
-%endif
-
-# Telegram Desktop has major issues when built against ffmpeg 5.x:
-# https://bugzilla.rpmfusion.org/show_bug.cgi?id=6273
-# Upstream refuses to fix this issue:
-# https://github.com/telegramdesktop/tdesktop/issues/24855
-# https://github.com/telegramdesktop/tdesktop/issues/23899
-%if %{legacy_ffmpeg}
-BuildRequires: compat-ffmpeg4-devel
-%else
-BuildRequires: pkgconfig(libavcodec)
-BuildRequires: pkgconfig(libavfilter)
-BuildRequires: pkgconfig(libavformat)
-BuildRequires: pkgconfig(libavutil)
-BuildRequires: pkgconfig(libswresample)
-BuildRequires: pkgconfig(libswscale)
-BuildRequires: ffmpeg-devel
-%endif
-
-# Video calls doesn't work when built against openssl 3.0:
-# https://github.com/telegramdesktop/tdesktop/issues/24698
-%if %{legacy_openssl}
-BuildRequires: openssl1.1-devel
-Requires: openssl1.1%{?_isa}
-%else
-BuildRequires: pkgconfig(libcrypto)
-BuildRequires: pkgconfig(openssl)
-%endif
 
 %{?_qt6:Requires: %{_qt6}%{?_isa} = %{_qt6_version}}
 Requires: hicolor-icon-theme
 Requires: qt6-qtimageformats%{?_isa}
+Requires: webkitgtk6.0%{?_isa}
 
 # Telegram Desktop can use native open/save dialogs with XDG portals.
 Recommends: xdg-desktop-portal%{?_isa}
@@ -160,8 +113,12 @@ Provides: telegram%{?_isa} = %{?epoch:%{epoch}:}%{version}-%{release}
 
 # Virtual provides for bundled libraries...
 Provides: bundled(cld3) = 3.0.13~gitb48dc46
+Provides: bundled(kf5-kcoreaddons) = 5.106.0
 Provides: bundled(libtgvoip) = 2.4.4~git7c46f4c
+Provides: bundled(open-sans-fonts) = 1.10
+Provides: bundled(plasma-wayland-protocols) = 1.6.0
 Provides: bundled(rlottie) = 0~git8c69fc2
+Provides: bundled(vazirmatn-fonts) = 27.2.2
 
 %description
 Telegram is a messaging app with a focus on speed and security, it’s super
@@ -193,21 +150,9 @@ rm -rf Telegram/ThirdParty/{GSL,QR,dispatch,expected,fcitx-qt5,fcitx5-qt,hime,hu
     -DTDESKTOP_API_ID=611335 \
     -DTDESKTOP_API_HASH=d524b414d21f4d37f08684c1df41ac9c \
     -DDESKTOP_APP_USE_PACKAGED:BOOL=ON \
-%if %{bundled_fonts}
     -DDESKTOP_APP_USE_PACKAGED_FONTS:BOOL=OFF \
-%else
-    -DDESKTOP_APP_USE_PACKAGED_FONTS:BOOL=ON \
-%endif
-%if %{enable_wayland}
     -DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION:BOOL=OFF \
-%else
-    -DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION:BOOL=ON \
-%endif
-%if %{enable_x11}
     -DDESKTOP_APP_DISABLE_X11_INTEGRATION:BOOL=OFF \
-%else
-    -DDESKTOP_APP_DISABLE_X11_INTEGRATION:BOOL=ON \
-%endif
     -DDESKTOP_APP_DISABLE_CRASH_REPORTS:BOOL=ON
 %cmake_build
 
