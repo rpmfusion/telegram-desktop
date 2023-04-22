@@ -12,8 +12,8 @@
 %endif
 
 Name: telegram-desktop
-Version: 4.7.1
-Release: 2%{?dist}
+Version: 4.8.0
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -172,6 +172,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Sat Apr 22 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.8.0-1
+- Updated to version 4.8.0.
+
 * Thu Mar 30 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.7.1-2
 - Rebuilt due to Qt 6.4.3 update.
 
