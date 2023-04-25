@@ -4,13 +4,6 @@
 # Reducing debuginfo verbosity...
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
-# Workaround to GCC 13 lambda mangling conflict:
-# RHBZ: https://bugzilla.redhat.com/show_bug.cgi?id=2168862
-# GCC: https://gcc.gnu.org/PR107897
-%if 0%{?fedora} && 0%{?fedora} >= 38
-%global optflags %(echo %{optflags} -fabi-compat-version=0)
-%endif
-
 Name: telegram-desktop
 Version: 4.8.1
 Release: 1%{?dist}
@@ -100,12 +93,6 @@ BuildRequires: qt6-qtbase-static
 Requires: hicolor-icon-theme
 Requires: qt6-qtimageformats%{?_isa}
 Requires: webkitgtk6.0%{?_isa}
-
-# Telegram Desktop can use native open/save dialogs with XDG portals.
-Recommends: xdg-desktop-portal%{?_isa}
-Recommends: (xdg-desktop-portal-gnome%{?_isa} if gnome-shell%{?_isa})
-Recommends: (xdg-desktop-portal-kde%{?_isa} if plasma-workspace-wayland%{?_isa})
-Recommends: (xdg-desktop-portal-wlr%{?_isa} if wlroots%{?_isa})
 
 # Short alias for the main package...
 Provides: telegram = %{?epoch:%{epoch}:}%{version}-%{release}
