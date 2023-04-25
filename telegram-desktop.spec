@@ -12,7 +12,7 @@
 %endif
 
 Name: telegram-desktop
-Version: 4.8.0
+Version: 4.8.1
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -172,6 +172,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Tue Apr 25 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.8.1-1
+- Updated to version 4.8.1.
+
 * Sat Apr 22 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.8.0-1
 - Updated to version 4.8.0.
 
