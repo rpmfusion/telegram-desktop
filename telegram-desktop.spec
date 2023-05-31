@@ -6,7 +6,7 @@
 
 Name: telegram-desktop
 Version: 4.8.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -159,66 +159,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
-* Sun May 07 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.8.1 -2
+* Wed May 31 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.8.1-3
+- Fixed issues with voice and video calls.
+
+* Sun May 07 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.8.1-2
 - Rebuild for new Qt 6
 
 * Tue Apr 25 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.8.1-1
 - Updated to version 4.8.1.
-
-* Sat Apr 22 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.8.0-1
-- Updated to version 4.8.0.
-
-* Thu Mar 30 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.7.1-2
-- Rebuilt due to Qt 6.4.3 update.
-
-* Wed Mar 22 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.7.1-1
-- Updated to version 4.7.1.
-
-* Mon Mar 20 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.7.0-1
-- Updated to version 4.7.0.
-- Switched to modern ffmpeg and OpenSSL.
-
-* Sun Feb 26 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.6.5-1
-- Updated to version 4.6.5.
-
-* Thu Feb 16 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.6.3-1
-- Updated to version 4.6.3.
-
-* Thu Feb 09 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.6.2-1
-- Updated to version 4.6.2.
-
-* Tue Feb 07 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.6.1-1
-- Updated to version 4.6.1.
-
-* Mon Feb 06 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.6.0-1
-- Updated to version 4.6.0.
-
-* Wed Feb 01 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.5.3-2
-- Rebuilt due to Qt 6.4.2 update.
-
-* Sat Jan 07 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.5.3-1
-- Updated to version 4.5.3.
-
-* Wed Jan 04 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.5.2-2
-- Removed explicit dependency on compat-ffmpeg4.
-
-* Tue Jan 03 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.5.2-1
-- Updated to version 4.5.2.
-
-* Mon Jan 02 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.5.1-1
-- Updated to version 4.5.1.
-
-* Sat Dec 31 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.5.0-1
-- Updated to version 4.5.0.
-
-* Thu Dec 08 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.4.1-1
-- Updated to version 4.4.1.
-
-* Sat Nov 26 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.3.4-1
-- Updated to version 4.3.4.
-
-* Tue Nov 08 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.3.1-1
-- Updated to version 4.3.1.
-
-* Sun Nov 06 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 4.3.0-1
-- Updated to version 4.3.0.
