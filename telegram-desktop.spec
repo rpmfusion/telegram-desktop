@@ -5,8 +5,8 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 4.8.3
-Release: 1%{?dist}
+Version: 4.8.1
+Release: 3%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -159,9 +159,6 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
-* Sat Jun 03 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.8.3-1
-- Update to 4.8.3
-
 * Wed May 31 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.8.1-3
 - Fixed issues with voice and video calls.
 
