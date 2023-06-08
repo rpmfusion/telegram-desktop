@@ -6,7 +6,7 @@
 
 Name: telegram-desktop
 Version: 4.8.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -159,6 +159,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Thu Jun 08 2023 Nicolas Chauvet <kwizart@gmail.com> - 4.8.1-4
+- Rebuilt for qt6
+
 * Wed May 31 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.8.1-3
 - Fixed issues with voice and video calls.
 
