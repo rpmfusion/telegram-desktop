@@ -5,8 +5,8 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 4.8.1
-Release: 4%{?dist}
+Version: 4.8.4
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -41,6 +41,7 @@ BuildRequires: cmake(Qt6Widgets)
 BuildRequires: cmake(range-v3)
 BuildRequires: cmake(tg_owt)
 BuildRequires: cmake(tl-expected)
+BuildRequires: cmake(fmt)
 
 BuildRequires: pkgconfig(alsa)
 BuildRequires: pkgconfig(gio-2.0)
@@ -72,6 +73,7 @@ BuildRequires: pkgconfig(xcb)
 BuildRequires: pkgconfig(xcb-keysyms)
 BuildRequires: pkgconfig(xcb-record)
 BuildRequires: pkgconfig(xcb-screensaver)
+BuildRequires: pkgconfig(gobject-introspection-1.0)
 
 BuildRequires: cmake
 BuildRequires: desktop-file-utils
@@ -88,6 +90,7 @@ BuildRequires: ninja-build
 BuildRequires: python3
 BuildRequires: qt6-qtbase-private-devel
 BuildRequires: qt6-qtbase-static
+BuildRequires: boost-devel
 
 %{?_qt6:Requires: %{_qt6}%{?_isa} = %{_qt6_version}}
 Requires: hicolor-icon-theme
@@ -159,6 +162,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Wed Jun 14 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.8.4-1
+- Updated to version 4.8.4.
+
 * Thu Jun 08 2023 Nicolas Chauvet <kwizart@gmail.com> - 4.8.1-4
 - Rebuilt for qt6
 
