@@ -159,6 +159,7 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_bindir}/%{name}
 %{_datadir}/applications/*.desktop
 %{_datadir}/icons/hicolor/*/apps/*.png
+%{_datadir}/dbus-1/services/org.telegram.desktop.service
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
