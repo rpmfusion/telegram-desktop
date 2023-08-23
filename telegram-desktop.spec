@@ -5,8 +5,8 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 4.8.4
-Release: 4%{?dist}
+Version: 4.9.3
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -162,6 +162,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Wed Aug 23 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.9.3-1
+- Update to 4.9.3
+
 * Fri Aug 11 2023 Leigh Scott <leigh123linux@gmail.com> - 4.8.4-4
 - Rebuild for new Qt
 
