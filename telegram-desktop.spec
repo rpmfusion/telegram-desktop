@@ -5,7 +5,7 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 4.9.4
+Version: 4.9.5
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -163,6 +163,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Wed Sep 06 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.9.5-1
+- Update to 4.9.5
+
 * Fri Sep 01 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.9.4-1
 - Update to 4.9.4
 
