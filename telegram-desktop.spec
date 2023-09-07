@@ -74,6 +74,7 @@ BuildRequires: pkgconfig(xcb)
 BuildRequires: pkgconfig(xcb-keysyms)
 BuildRequires: pkgconfig(xcb-record)
 BuildRequires: pkgconfig(xcb-screensaver)
+BuildRequires: pkgconfig(gsl)
 
 BuildRequires: boost-devel
 BuildRequires: cmake
