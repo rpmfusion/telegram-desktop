@@ -74,7 +74,6 @@ BuildRequires: pkgconfig(xcb)
 BuildRequires: pkgconfig(xcb-keysyms)
 BuildRequires: pkgconfig(xcb-record)
 BuildRequires: pkgconfig(xcb-screensaver)
-BuildRequires: pkgconfig(gsl)
 
 BuildRequires: boost-devel
 BuildRequires: cmake
@@ -129,7 +128,7 @@ business messaging needs.
 %autosetup -n %{appname}-%{version}-full -p1
 
 # Unbundling libraries...
-rm -rf Telegram/ThirdParty/{GSL,QR,dispatch,expected,fcitx-qt5,fcitx5-qt,hime,hunspell,jemalloc,kimageformats,lz4,minizip,nimf,range-v3,xxHash}
+rm -rf Telegram/ThirdParty/{QR,dispatch,expected,fcitx-qt5,fcitx5-qt,hime,hunspell,jemalloc,kimageformats,lz4,minizip,nimf,range-v3,xxHash}
 
 %build
 # Building Telegram Desktop using cmake...
