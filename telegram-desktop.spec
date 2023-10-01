@@ -5,7 +5,7 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 4.10.1
+Version: 4.10.2
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -109,6 +109,7 @@ Provides: bundled(open-sans-fonts) = 1.10
 Provides: bundled(plasma-wayland-protocols) = 1.6.0
 Provides: bundled(rlottie) = 0~git8c69fc2
 Provides: bundled(vazirmatn-fonts) = 27.2.2
+Provides: bundled(cppgir) = 0~git69ef481c
 
 %description
 Telegram is a messaging app with a focus on speed and security, it’s super
@@ -163,6 +164,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Sun Oct 01 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.10.2-1
+- Update to 4.10.2
+
 * Mon Sep 25 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.10.1-1
 - Update to 4.10.1
 
