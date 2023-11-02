@@ -5,7 +5,7 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 4.11.1
+Version: 4.11.2
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -164,6 +164,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Thu Nov 02 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.11.2-1
+- Update to 4.11.2
+
 * Mon Oct 30 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.11.1-1
 - Update to 4.11.1
 
