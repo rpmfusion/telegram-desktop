@@ -6,7 +6,7 @@
 
 Name: telegram-desktop
 Version: 4.11.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -164,6 +164,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Sat Nov 04 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.11.3-2
+- Rebuild
+
 * Fri Nov 03 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.11.3-1
 - Update to 4.11.3
 
