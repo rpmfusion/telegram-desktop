@@ -164,6 +164,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 * Tue Dec 12 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.8.4-4
 - Switch to Qt5
 
+* Sun Nov 19 2023 Sérgio Basto <sergio@serjux.com> - 4.8.4-3.1
+- Rebuilt for Qt_6.6_PRIVATE_API
+
 * Fri Jul 28 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.8.4-3
 - Rebuild for new Qt 6
 
