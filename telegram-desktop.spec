@@ -6,7 +6,7 @@
 
 Name: telegram-desktop
 Version: 4.8.4
-Release: 3%{?dist}
+Release: 4%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -27,17 +27,16 @@ ExclusiveArch: x86_64 aarch64
 
 BuildRequires: cmake(Microsoft.GSL)
 BuildRequires: cmake(OpenAL)
-BuildRequires: cmake(Qt6Concurrent)
-BuildRequires: cmake(Qt6Core)
-BuildRequires: cmake(Qt6Core5Compat)
-BuildRequires: cmake(Qt6DBus)
-BuildRequires: cmake(Qt6Gui)
-BuildRequires: cmake(Qt6Network)
-BuildRequires: cmake(Qt6OpenGL)
-BuildRequires: cmake(Qt6OpenGLWidgets)
-BuildRequires: cmake(Qt6Svg)
-BuildRequires: cmake(Qt6WaylandClient)
-BuildRequires: cmake(Qt6Widgets)
+BuildRequires: cmake(Qt5Concurrent)
+BuildRequires: cmake(Qt5Core)
+BuildRequires: cmake(Qt5DBus)
+BuildRequires: cmake(Qt5Gui)
+BuildRequires: cmake(Qt5Network)
+BuildRequires: cmake(Qt5OpenGL)
+BuildRequires: cmake(KF5CoreAddons)
+BuildRequires: cmake(Qt5Svg)
+BuildRequires: cmake(Qt5WaylandClient)
+BuildRequires: cmake(Qt5Widgets)
 BuildRequires: cmake(fmt)
 BuildRequires: cmake(range-v3)
 BuildRequires: cmake(tg_owt)
@@ -89,12 +88,12 @@ BuildRequires: libstdc++-devel
 BuildRequires: minizip-compat-devel
 BuildRequires: ninja-build
 BuildRequires: python3
-BuildRequires: qt6-qtbase-private-devel
-BuildRequires: qt6-qtbase-static
+BuildRequires: qt5-qtbase-private-devel
+BuildRequires: qt5-qtbase-static
 
 %{?_qt6:Requires: %{_qt6}%{?_isa} = %{_qt6_version}}
 Requires: hicolor-icon-theme
-Requires: qt6-qtimageformats%{?_isa}
+Requires: qt5-qtimageformats%{?_isa}
 Requires: webkitgtk6.0%{?_isa}
 
 # Short alias for the main package...
@@ -162,6 +161,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Tue Dec 12 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.8.4-4
+- Switch to Qt5
+
 * Fri Jul 28 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.8.4-3
 - Rebuild for new Qt 6
 
