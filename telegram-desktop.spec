@@ -131,6 +131,9 @@ business messaging needs.
 # Unbundling libraries...
 rm -rf Telegram/ThirdParty/{QR,dispatch,expected,fcitx-qt5,fcitx5-qt,hime,hunspell,jemalloc,kimageformats,lz4,minizip,nimf,range-v3,xxHash}
 
+# Fix minizip requrement
+sed -i 's|2.0.0|4.0.0|' cmake/external/minizip/CMakeLists.txt
+
 %build
 # Building Telegram Desktop using cmake...
 %cmake -G Ninja \
