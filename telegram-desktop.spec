@@ -110,6 +110,7 @@ Provides: bundled(plasma-wayland-protocols) = 1.6.0
 Provides: bundled(rlottie) = 0~git8c69fc2
 Provides: bundled(vazirmatn-fonts) = 27.2.2
 Provides: bundled(cppgir) = 0~git69ef481c
+Provides: bundled(minizip) = 1.2.13
 
 %description
 Telegram is a messaging app with a focus on speed and security, it’s super
