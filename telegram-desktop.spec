@@ -21,6 +21,11 @@ URL: https://github.com/telegramdesktop/%{appname}
 Summary: Telegram Desktop official messaging app
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
 
+Patch1: 0001-Disable-sponsored-messages.patch
+Patch2: 0002-Disable-saving-restrictions.patch
+Patch3: 0003-Disable-invite-peeking-restrictions.patch
+Patch4: 0004-Disable-accounts-limit.patch
+
 # Telegram Desktop require more than 8 GB of RAM on linking stage.
 # Disabling all low-memory architectures.
 ExclusiveArch: x86_64 aarch64
