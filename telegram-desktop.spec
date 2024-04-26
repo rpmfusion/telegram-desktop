@@ -6,7 +6,7 @@
 
 Name: telegram-desktop
 Version: 4.16.8
-Release: 1%{?dist}
+Release: 2%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -169,6 +169,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Fri Apr 26 2024 Vasiliy Glazov <vascom2@gmail.com> - 4.16.8-2
+- Rebuild for new QT6
+
 * Wed Apr 17 2024 Vasiliy Glazov <vascom2@gmail.com> - 4.16.8-1
 - Update to 4.16.8
 
