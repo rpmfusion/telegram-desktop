@@ -62,7 +62,11 @@ BuildRequires: pkgconfig(libpulse)
 BuildRequires: pkgconfig(libswresample)
 BuildRequires: pkgconfig(libswscale)
 BuildRequires: pkgconfig(libxxhash)
+%if 0%{?fedora} < 41
 BuildRequires: pkgconfig(openssl)
+%else
+BuildRequires: openssl-devel-engine
+%endif
 BuildRequires: pkgconfig(opus)
 BuildRequires: pkgconfig(protobuf)
 BuildRequires: pkgconfig(protobuf-lite)
