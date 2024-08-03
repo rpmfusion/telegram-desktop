@@ -179,8 +179,8 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 * Sat Aug 03 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.3.2-1
 - Update to 5.3.2
 
-* Thu Aug 01 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.3.0-1
-- Update to 5.3.0
+* Fri Aug 02 2024 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 5.2.3-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_41_Mass_Rebuild
 
 * Wed Jul 10 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.2.3-1
 - Update to 5.2.3
