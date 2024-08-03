@@ -5,7 +5,7 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 5.2.3
+Version: 5.3.2
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -64,8 +64,6 @@ BuildRequires: pkgconfig(libswscale)
 BuildRequires: pkgconfig(libxxhash)
 %if 0%{?fedora} < 41
 BuildRequires: pkgconfig(openssl)
-%else
-BuildRequires: openssl-devel-engine
 %endif
 BuildRequires: pkgconfig(opus)
 BuildRequires: pkgconfig(protobuf)
@@ -95,6 +93,7 @@ BuildRequires: ninja-build
 BuildRequires: python3
 BuildRequires: qt6-qtbase-private-devel
 BuildRequires: qt6-qtbase-static
+BuildRequires: pkgconfig(openh264)
 
 %{?_qt6:Requires: %{_qt6}%{?_isa} = %{_qt6_version}}
 Requires: hicolor-icon-theme
@@ -139,6 +138,10 @@ rm -rf Telegram/ThirdParty/{QR,dispatch,expected,fcitx-qt5,fcitx5-qt,hime,hunspe
 # Fix minizip requrement
 # sed -i 's|2.0.0|4.0.0|' cmake/external/minizip/CMakeLists.txt
 
+%if 0%{?fedora} >= 41
+sed -i "/#include <openssl\/engine.h>/d" Telegram/SourceFiles/core/utils.cpp
+%endif
+
 %build
 # Building Telegram Desktop using cmake...
 %cmake -G Ninja \
@@ -173,6 +176,12 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Sat Aug 03 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.3.2-1
+- Update to 5.3.2
+
+* Thu Aug 01 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.3.0-1
+- Update to 5.3.0
+
 * Wed Jul 10 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.2.3-1
 - Update to 5.2.3
 
