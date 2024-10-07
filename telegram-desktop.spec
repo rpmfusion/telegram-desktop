@@ -5,7 +5,7 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 5.3.2
+Version: 5.6.0
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -42,6 +42,7 @@ BuildRequires: cmake(fmt)
 BuildRequires: cmake(range-v3)
 BuildRequires: cmake(tg_owt)
 BuildRequires: cmake(tl-expected)
+BuildRequires: cmake(ada)
 
 BuildRequires: pkgconfig(alsa)
 BuildRequires: pkgconfig(gio-2.0)
@@ -176,6 +177,12 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Mon Oct 07 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.6.0-1
+- Update to 5.6.0
+
+* Thu Oct 03 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.5.5-1
+- Update to 5.5.5
+
 * Sat Aug 03 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.3.2-1
 - Update to 5.3.2
 
