@@ -5,8 +5,8 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 5.6.3
-Release: 2%{?dist}
+Version: 5.7.1
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -20,6 +20,7 @@ License: GPL-3.0-or-later AND BSD-3-Clause AND BSD-2-Clause AND Apache-2.0 AND M
 URL: https://github.com/telegramdesktop/%{appname}
 Summary: Telegram Desktop official messaging app
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
+Patch0:     28611.patch
 
 # Telegram Desktop require more than 8 GB of RAM on linking stage.
 # Disabling all low-memory architectures.
@@ -177,6 +178,10 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Tue Nov 05 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.7.1-1
+- Update to 5.7.1
+- Add patch for ffmpeg
+
 * Mon Nov 04 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.6.3-2
 - Rebuild for new Qt
 
