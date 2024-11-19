@@ -1,3 +1,7 @@
+%ifarch aarch64
+    %global _lto_cflags %nil
+%endif
+
 # Telegram Desktop's constants...
 %global appname tdesktop
 
