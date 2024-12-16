@@ -10,7 +10,7 @@
 
 Name: telegram-desktop
 Version: 5.9.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -181,6 +181,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Mon Dec 16 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.9.0-2
+- Rebuild for new Qt6
+
 * Wed Dec 04 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.9.0-1
 - Update to 5.9.0
 
