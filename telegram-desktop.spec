@@ -100,7 +100,6 @@ BuildRequires: qt6-qtbase-private-devel
 BuildRequires: qt6-qtbase-static
 BuildRequires: pkgconfig(openh264)
 
-%{?_qt6:Requires: %{_qt6}%{?_isa} = %{_qt6_version}}
 Requires: hicolor-icon-theme
 Requires: qt6-qtimageformats%{?_isa}
 Requires: webkitgtk6.0%{?_isa}
