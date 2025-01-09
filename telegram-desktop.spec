@@ -9,8 +9,8 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 5.9.0
-Release: 2%{?dist}
+Version: 5.10.2
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -180,6 +180,12 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Thu Jan 09 2025 Vasiliy Glazov <vascom2@gmail.com> - 5.10.2-1
+- Update to 5.10.2
+
+* Thu Dec 19 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.9.1-1
+- Update to 5.9.1
+
 * Mon Dec 16 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.9.0-2
 - Rebuild for new Qt6
 
