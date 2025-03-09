@@ -9,7 +9,7 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 5.11.1
+Version: 5.12.1
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -157,7 +157,7 @@ sed -i "/#include <openssl\/engine.h>/d" Telegram/SourceFiles/core/utils.cpp
     -DTDESKTOP_API_HASH=d524b414d21f4d37f08684c1df41ac9c \
     -DDESKTOP_APP_USE_PACKAGED:BOOL=ON \
     -DDESKTOP_APP_USE_PACKAGED_FONTS:BOOL=OFF \
-    -DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION:BOOL=OFF \
+⁶    -DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION:BOOL=OFF \
     -DDESKTOP_APP_DISABLE_X11_INTEGRATION:BOOL=OFF \
     -DDESKTOP_APP_DISABLE_CRASH_REPORTS:BOOL=ON
 %cmake_build
@@ -180,6 +180,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Sun Feb 09 2025 Vasiliy Glazov <vascom2@gmail.com> - 5.12.1-1
+- Update to 5.12.1
+
 * Fri Feb 14 2025 Vasiliy Glazov <vascom2@gmail.com> - 5.11.1-1
 - Update to 5.11.1
 
