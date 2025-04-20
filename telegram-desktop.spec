@@ -10,7 +10,7 @@
 
 Name: telegram-desktop
 Version: 5.13.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -24,6 +24,9 @@ License: GPL-3.0-or-later AND BSD-3-Clause AND BSD-2-Clause AND Apache-2.0 AND M
 URL: https://github.com/telegramdesktop/%{appname}
 Summary: Telegram Desktop official messaging app
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
+
+# https://github.com/desktop-app/lib_base/commit/c952da37294b958e896b27528e7834f0892faa0a
+Patch0: 0001-Fix-build-with-Qt-6.9.patch
 
 # Telegram Desktop require more than 8 GB of RAM on linking stage.
 # Disabling all low-memory architectures.
@@ -180,6 +183,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Sun Apr 20 2025 LuK1337 <priv.luk@gmail.com> - 5.13.1-3
+- Fix build with Qt 6.9
+
 * Wed Apr 09 2025 Vasiliy Glazov <vascom2@gmail.com> - 5.13.1-2
 - Rebuild for new Qt6
 
