@@ -9,7 +9,7 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 5.14.1
+Version: 5.14.2
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -24,6 +24,8 @@ License: GPL-3.0-or-later AND BSD-3-Clause AND BSD-2-Clause AND Apache-2.0 AND M
 URL: https://github.com/telegramdesktop/%{appname}
 Summary: Telegram Desktop official messaging app
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
+
+Patch0: findprotobuf_fix.patch
 
 # Telegram Desktop require more than 8 GB of RAM on linking stage.
 # Disabling all low-memory architectures.
@@ -99,6 +101,7 @@ BuildRequires: python3
 BuildRequires: qt6-qtbase-private-devel
 BuildRequires: qt6-qtbase-static
 BuildRequires: pkgconfig(openh264)
+BuildRequires: cmake(KF6CoreAddons)
 
 Requires: hicolor-icon-theme
 Requires: qt6-qtimageformats%{?_isa}
@@ -157,7 +160,7 @@ sed -i "/#include <openssl\/engine.h>/d" Telegram/SourceFiles/core/utils.cpp
     -DTDESKTOP_API_HASH=d524b414d21f4d37f08684c1df41ac9c \
     -DDESKTOP_APP_USE_PACKAGED:BOOL=ON \
     -DDESKTOP_APP_USE_PACKAGED_FONTS:BOOL=OFF \
-⁶    -DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION:BOOL=OFF \
+    -DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION:BOOL=OFF \
     -DDESKTOP_APP_DISABLE_X11_INTEGRATION:BOOL=OFF \
     -DDESKTOP_APP_DISABLE_CRASH_REPORTS:BOOL=ON
 %cmake_build
@@ -180,6 +183,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Sat May 10 2025 Vasiliy Glazov <vascom2@gmail.com> - 5.14.2-1
+- Update to 5.14.2
+
 * Sat May 03 2025 Vasiliy Glazov <vascom2@gmail.com> - 5.14.1-1
 - Update to 5.14.1
 
