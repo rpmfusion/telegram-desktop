@@ -9,8 +9,8 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 5.14.2
-Release: 2%{?dist}
+Version: 6.0.2
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -102,6 +102,7 @@ BuildRequires: qt6-qtbase-private-devel
 BuildRequires: qt6-qtbase-static
 BuildRequires: pkgconfig(openh264)
 BuildRequires: cmake(KF6CoreAddons)
+BuildRequires: cmake(tde2e)
 
 Requires: hicolor-icon-theme
 Requires: qt6-qtimageformats%{?_isa}
@@ -162,7 +163,8 @@ sed -i "/#include <openssl\/engine.h>/d" Telegram/SourceFiles/core/utils.cpp
     -DDESKTOP_APP_USE_PACKAGED_FONTS:BOOL=OFF \
     -DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION:BOOL=OFF \
     -DDESKTOP_APP_DISABLE_X11_INTEGRATION:BOOL=OFF \
-    -DDESKTOP_APP_DISABLE_CRASH_REPORTS:BOOL=ON
+    -DDESKTOP_APP_DISABLE_CRASH_REPORTS:BOOL=ON \
+    -DDESKTOP_APP_DISABLE_QT_PLUGINS:BOOL=ON
 %cmake_build
 
 %install
@@ -175,7 +177,7 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %files
 %doc README.md changelog.txt
 %license LICENSE LEGAL
-%{_bindir}/%{name}
+%{_bindir}/Telegram
 %{_datadir}/applications/*.desktop
 %{_datadir}/icons/hicolor/*/apps/*.png
 %{_datadir}/icons/hicolor/*/apps/*.svg
@@ -183,6 +185,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Tue Aug 05 2025 Vasiliy Glazov <vascom2@gmail.com> - 6.0.2-1
+- Update to 6.0.2
+
 * Sun Jul 27 2025 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 5.14.2-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_43_Mass_Rebuild
 
