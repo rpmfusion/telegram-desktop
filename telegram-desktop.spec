@@ -9,7 +9,7 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 6.0.2
+Version: 6.0.3
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -185,6 +185,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Fri Aug 22 2025 Vasiliy Glazov <vascom2@gmail.com> - 6.0.3-1
+- Update to 6.0.3
+
 * Tue Aug 05 2025 Vasiliy Glazov <vascom2@gmail.com> - 6.0.2-1
 - Update to 6.0.2
 
