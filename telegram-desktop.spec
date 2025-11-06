@@ -10,7 +10,7 @@
 
 Name: telegram-desktop
 Version: 6.2.4
-Release: 2%{?dist}
+Release: 3%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -185,6 +185,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Thu Nov 06 2025 Leigh Scott <leigh123linux@gmail.com> - 6.2.4-3
+- Rebuild for ffmpeg-8.0
+
 * Mon Nov 03 2025 Vasiliy Glazov <vascom2@gmail.com> - 6.2.4-2
 - Rebuild for new Qt
 
