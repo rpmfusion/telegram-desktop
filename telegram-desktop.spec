@@ -9,8 +9,8 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 6.2.4
-Release: 3%{?dist}
+Version: 6.3.0
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -185,6 +185,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Sat Nov 15 2025 Vasiliy Glazov <vascom2@gmail.com> 6.3.0-1
+- Update to 6.3.0
+
 * Thu Nov 06 2025 Leigh Scott <leigh123linux@gmail.com> - 6.2.4-3
 - Rebuild for ffmpeg-8.0
 
