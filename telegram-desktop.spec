@@ -10,7 +10,7 @@
 
 Name: telegram-desktop
 Version: 6.4.2
-Release: 2%{?dist}
+Release: 3%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -185,10 +185,14 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Sat Feb 28 2026 Vasiliy Glazov <vascom2@gmail.com> - 6.4.2-3
+- Rebuilt for new Qt
+
 * Mon Feb 02 2026 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 6.4.2-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_44_Mass_Rebuild
 
 * Mon Jan 12 2026 Vasiliy Glazov <vascom2@gmail.com> - 6.4.2-1
+- Update to 6.4.2
 
 * Wed Dec 24 2025 Vasiliy Glazov <vascom2@gmail.com> - 6.3.10-1
 - Update to 6.3.10
