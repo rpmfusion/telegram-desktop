@@ -26,6 +26,8 @@ Summary: Telegram Desktop official messaging app
 Source0: %{url}/releases/download/v%{version}/%{appname}-%{version}-full.tar.gz
 
 Patch0: findprotobuf_fix.patch
+# https://github.com/TelegramMessenger/tgcalls/pull/50
+Patch1: gcc16.patch
 
 # Telegram Desktop require more than 8 GB of RAM on linking stage.
 # Disabling all low-memory architectures.

@@ -1,0 +1,44 @@
+diff -uNrp a/Telegram/ThirdParty/tgcalls/tgcalls/DirectConnectionChannel.h b/Telegram/ThirdParty/tgcalls/tgcalls/DirectConnectionChannel.h
+--- a/Telegram/ThirdParty/tgcalls/tgcalls/DirectConnectionChannel.h	2025-11-09 19:27:19.000000000 +0000
++++ b/Telegram/ThirdParty/tgcalls/tgcalls/DirectConnectionChannel.h	2026-03-03 15:15:37.145063454 +0000
+@@ -1,6 +1,7 @@
+ #ifndef TGCALLS_DIRECT_CONNECTION_CHANNEL_H
+ #define TGCALLS_DIRECT_CONNECTION_CHANNEL_H
+ 
++#include <cstdint>
+ #include <functional>
+ #include <memory>
+ #include <vector>
+diff -uNrp a/Telegram/ThirdParty/tgcalls/tgcalls/Instance.h b/Telegram/ThirdParty/tgcalls/tgcalls/Instance.h
+--- a/Telegram/ThirdParty/tgcalls/tgcalls/Instance.h	2025-11-09 19:27:19.000000000 +0000
++++ b/Telegram/ThirdParty/tgcalls/tgcalls/Instance.h	2026-03-03 15:50:06.124592400 +0000
+@@ -1,6 +1,7 @@
+ #ifndef TGCALLS_INSTANCE_H
+ #define TGCALLS_INSTANCE_H
+ 
++#include <cstdint>
+ #include <functional>
+ #include <vector>
+ #include <string>
+diff -uNrp a/Telegram/ThirdParty/tgcalls/tgcalls/third-party/json11.cpp b/Telegram/ThirdParty/tgcalls/tgcalls/third-party/json11.cpp
+--- a/Telegram/ThirdParty/tgcalls/tgcalls/third-party/json11.cpp	2025-11-09 19:27:19.000000000 +0000
++++ b/Telegram/ThirdParty/tgcalls/tgcalls/third-party/json11.cpp	2026-03-03 15:38:23.634009142 +0000
+@@ -22,6 +22,7 @@
+ #include "json11.hpp"
+ #include <cassert>
+ #include <cmath>
++#include <cstdint>
+ #include <cstdlib>
+ #include <cstdio>
+ #include <limits>
+diff -uNrp a/Telegram/ThirdParty/tgcalls/tgcalls/v2/SignalingConnection.h b/Telegram/ThirdParty/tgcalls/tgcalls/v2/SignalingConnection.h
+--- a/Telegram/ThirdParty/tgcalls/tgcalls/v2/SignalingConnection.h	2025-11-09 19:27:19.000000000 +0000
++++ b/Telegram/ThirdParty/tgcalls/tgcalls/v2/SignalingConnection.h	2026-03-03 15:34:37.782878180 +0000
+@@ -1,6 +1,7 @@
+ #ifndef TGCALLS_SIGNALING_CONNECTION_H_
+ #define TGCALLS_SIGNALING_CONNECTION_H_
+ 
++#include <cstdint>
+ #include <memory>
+ #include <vector>
+ 
