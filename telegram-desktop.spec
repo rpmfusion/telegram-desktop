@@ -9,8 +9,8 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 6.4.2
-Release: 3%{?dist}
+Version: 6.6.1
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -185,7 +185,13 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
-* Sat Feb 28 2026 Vasiliy Glazov <vascom2@gmail.com> - 6.4.2-3
+* Mon Mar 02 2026 Vasiliy Glazov <vascom2@gmail.com> - 6.6.1-1
+- Update to 6.6.1
+
+* Sat Feb 28 2026 Vasiliy Glazov <vascom2@gmail.com> - 6.5.1-1
+- Update to 6.5.1
+
+* Fri Feb 27 2026 Vasiliy Glazov <vascom2@gmail.com> - 6.4.2-3
 - Rebuilt for new Qt
 
 * Mon Feb 02 2026 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 6.4.2-2
