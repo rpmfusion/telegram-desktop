@@ -31,7 +31,7 @@ Patch1: gcc16.patch
 
 # Telegram Desktop require more than 8 GB of RAM on linking stage.
 # Disabling all low-memory architectures.
-ExclusiveArch: x86_64 aarch64
+ExclusiveArch: x86_64 aarch64 ppc64le
 
 BuildRequires: cmake(Microsoft.GSL)
 BuildRequires: cmake(OpenAL)
