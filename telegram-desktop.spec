@@ -9,8 +9,8 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 6.6.1
-Release: 2%{?dist}
+Version: 6.7.6
+Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -187,6 +187,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Fri Apr 17 2026 Nicolas Chauvet <kwizart@gmail.com> - 6.7.6-1
+- Update to 6.7.6
+
 * Fri Mar 20 2026 Nicolas Chauvet <kwizart@gmail.com> - 6.6.1-2
 - Rebuilt for libvpx-1.16.0
 
