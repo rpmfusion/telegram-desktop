@@ -9,7 +9,7 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 6.7.6
+Version: 6.7.8
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -71,9 +71,6 @@ BuildRequires: pkgconfig(libpulse)
 BuildRequires: pkgconfig(libswresample)
 BuildRequires: pkgconfig(libswscale)
 BuildRequires: pkgconfig(libxxhash)
-%if 0%{?fedora} < 41
-BuildRequires: pkgconfig(openssl)
-%endif
 BuildRequires: pkgconfig(opus)
 BuildRequires: pkgconfig(protobuf)
 BuildRequires: pkgconfig(protobuf-lite)
@@ -145,12 +142,7 @@ business messaging needs.
 # Unbundling libraries... except minizip
 rm -rf Telegram/ThirdParty/{QR,dispatch,expected,fcitx-qt5,fcitx5-qt,hime,hunspell,jemalloc,kimageformats,lz4,nimf,range-v3,xxHash}
 
-# Fix minizip requrement
-# sed -i 's|2.0.0|4.0.0|' cmake/external/minizip/CMakeLists.txt
-
-%if 0%{?fedora} >= 41
 sed -i "/#include <openssl\/engine.h>/d" Telegram/SourceFiles/core/utils.cpp
-%endif
 
 %build
 # Building Telegram Desktop using cmake...
@@ -187,6 +179,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Sat Apr 25 2026 Leigh Scott <leigh123linux@gmail.com> - 6.7.8-1
+- Update to 6.7.8
+- Trim changelog
+- Clean up old fedora conditionals
+
 * Fri Apr 17 2026 Nicolas Chauvet <kwizart@gmail.com> - 6.7.6-1
 - Update to 6.7.6
 
@@ -214,300 +211,3 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 * Tue Dec 16 2025 Vasiliy Glazov <vascom2@gmail.com> - 6.3.9-1
 - Update to 6.3.9
 
-* Sat Dec 06 2025 Vasiliy Glazov <vascom2@gmail.com> - 6.3.6-1
-- Update to 6.3.6
-
-* Thu Nov 27 2025 Vasiliy Glazov <vascom2@gmail.com> - 6.3.4-1
-- Update to 6.3.4
-
-* Fri Nov 21 2025 Vasiliy Glazov <vascom2@gmail.com> 6.3.2-1
-- Update to 6.3.2
-
-* Mon Nov 17 2025 Vasiliy Glazov <vascom2@gmail.com> 6.3.1-1
-- Update to 6.3.1
-
-* Sat Nov 15 2025 Vasiliy Glazov <vascom2@gmail.com> 6.3.0-1
-- Update to 6.3.0
-
-* Thu Nov 06 2025 Leigh Scott <leigh123linux@gmail.com> - 6.2.4-3
-- Rebuild for ffmpeg-8.0
-
-* Mon Nov 03 2025 Vasiliy Glazov <vascom2@gmail.com> - 6.2.4-2
-- Rebuild for new Qt
-
-* Thu Oct 23 2025 Vasiliy Glazov <vascom2@gmail.com> - 6.2.4-1
-- Update to 6.2.4
-
-* Mon Oct 13 2025 Vasiliy Glazov <vascom2@gmail.com> - 6.2.3-1
-- Update to 6.2.3
-
-* Tue Oct 07 2025 Vasiliy Glazov <vascom2@gmail.com> - 6.1.4-1
-- Update to 6.1.4
-
-* Mon Sep 08 2025 Vasiliy Glazov <vascom2@gmail.com> - 6.1.3-1
-- Update to 6.1.3
-
-* Thu Sep 04 2025 Vasiliy Glazov <vascom2@gmail.com> - 6.1.2-1
-- Update to 6.1.2
-
-* Tue Sep 02 2025 Vasiliy Glazov <vascom2@gmail.com> - 6.1.1-1
-- Update to 6.1.1
-
-* Mon Sep 01 2025 Vasiliy Glazov <vascom2@gmail.com> - 6.1.0-1
-- Update to 6.1.0
-
-* Fri Aug 22 2025 Vasiliy Glazov <vascom2@gmail.com> - 6.0.3-1
-- Update to 6.0.3
-
-* Tue Aug 05 2025 Vasiliy Glazov <vascom2@gmail.com> - 6.0.2-1
-- Update to 6.0.2
-
-* Sun Jul 27 2025 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 5.14.2-2
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_43_Mass_Rebuild
-
-* Sat May 10 2025 Vasiliy Glazov <vascom2@gmail.com> - 5.14.2-1
-- Update to 5.14.2
-
-* Sat May 03 2025 Vasiliy Glazov <vascom2@gmail.com> - 5.14.1-1
-- Update to 5.14.1
-
-* Wed Apr 09 2025 Vasiliy Glazov <vascom2@gmail.com> - 5.13.1-2
-- Rebuild for new Qt6
-
-* Thu Mar 27 2025 Vasiliy Glazov <vascom2@gmail.com> - 5.13.1-1
-- Update to 5.13.1
-
-* Fri Mar 21 2025 Vasiliy Glazov <vascom2@gmail.com> - 5.12.6-1
-- Update to 5.12.6
-
-* Thu Mar 20 2025 Vasiliy Glazov <vascom2@gmail.com> - 5.12.5-1
-- Update to 5.12.5
-
-* Mon Mar 10 2025 Vasiliy Glazov <vascom2@gmail.com> - 5.12.3-1
-- Update to 5.12.3
-
-* Sun Feb 09 2025 Vasiliy Glazov <vascom2@gmail.com> - 5.12.1-1
-- Update to 5.12.1
-
-* Fri Feb 14 2025 Vasiliy Glazov <vascom2@gmail.com> - 5.11.1-1
-- Update to 5.11.1
-
-* Tue Jan 28 2025 Vasiliy Glazov <vascom2@gmail.com> - 5.10.7-1
-- Update to 5.10.7
-
-* Mon Jan 27 2025 Vasiliy Glazov <vascom2@gmail.com> - 5.10.6-1
-- Update to 5.10.6
-
-* Fri Jan 10 2025 Vasiliy Glazov <vascom2@gmail.com> - 5.10.3-1
-- Update to 5.10.3
-
-* Thu Jan 09 2025 Vasiliy Glazov <vascom2@gmail.com> - 5.10.2-1
-- Update to 5.10.2
-
-* Thu Dec 19 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.9.1-1
-- Update to 5.9.1
-
-* Mon Dec 16 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.9.0-2
-- Rebuild for new Qt6
-
-* Wed Dec 04 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.9.0-1
-- Update to 5.9.0
-
-* Mon Nov 25 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.8.3-1
-- Update to 5.8.3
-
-* Tue Nov 19 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.8.2-1
-- Update to 5.8.2
-
-* Mon Nov 18 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.8.1-1
-- Update to 5.8.1
-
-* Sun Nov 17 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.8.0-1
-- Update to 5.8.0
-
-* Wed Nov 06 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.7.2-1
-- Update to 5.7.2
-
-* Tue Nov 05 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.7.1-1
-- Update to 5.7.1
-- Add patch for ffmpeg
-
-* Mon Nov 04 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.6.3-2
-- Rebuild for new Qt
-
-* Thu Oct 17 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.6.3-1
-- Update to 5.6.3
-
-* Tue Oct 15 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.6.2-1
-- Update to 5.6.2
-
-* Tue Oct 08 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.6.1-1
-- Update to 5.6.1
-
-* Mon Oct 07 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.6.0-1
-- Update to 5.6.0
-
-* Thu Oct 03 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.5.5-1
-- Update to 5.5.5
-
-* Sat Aug 03 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.3.2-1
-- Update to 5.3.2
-
-* Fri Aug 02 2024 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 5.2.3-2
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_41_Mass_Rebuild
-
-* Wed Jul 10 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.2.3-1
-- Update to 5.2.3
-
-* Wed Jul 03 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.2.2-1
-- Update to 5.2.2
-
-* Tue Jun 18 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.1.7-1
-- Update to 5.1.7
-
-* Wed May 29 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.0.4-1
-- Update to 5.0.4
-
-* Tue May 07 2024 Vasiliy Glazov <vascom2@gmail.com> - 5.0.1-1
-- Update to 5.0.1
-
-* Fri Apr 26 2024 Vasiliy Glazov <vascom2@gmail.com> - 4.16.8-2
-- Rebuild for new QT6
-
-* Wed Apr 17 2024 Vasiliy Glazov <vascom2@gmail.com> - 4.16.8-1
-- Update to 4.16.8
-
-* Tue Apr 16 2024 Vasiliy Glazov <vascom2@gmail.com> - 4.16.7-1
-- Update to 4.16.7
-
-* Wed Apr 10 2024 Vasiliy Glazov <vascom2@gmail.com> - 4.16.6-1
-- Update to 4.16.6
-
-* Tue Apr 09 2024 Vasiliy Glazov <vascom2@gmail.com> - 4.16.5-1
-- Update to 4.16.5
-
-* Mon Apr 08 2024 Vasiliy Glazov <vascom2@gmail.com> - 4.16.4-1
-- Update to 4.16.4
-
-* Sat Apr 06 2024 Vasiliy Glazov <vascom2@gmail.com> - 4.16.3-1
-- Update to 4.16.3
-
-* Fri Apr 05 2024 Vasiliy Glazov <vascom2@gmail.com> - 4.16.2-1
-- Update to 4.16.2
-
-* Wed Apr 03 2024 Vasiliy Glazov <vascom2@gmail.com> - 4.16.1-1
-- Update to 4.16.1
-
-* Wed Mar 13 2024 Vasiliy Glazov <vascom2@gmail.com> - 4.15.2-1
-- Update to 4.15.2
-
-* Sat Feb 24 2024 Vasiliy Glazov <vascom2@gmail.com> - 4.15.0-3
-- Rebuild
-
-* Fri Feb 23 2024 Vasiliy Glazov <vascom2@gmail.com> - 4.15.0-2
-- Rebuild for new QT6
-
-* Tue Feb 20 2024 Vasiliy Glazov <vascom2@gmail.com> - 4.15.0-1
-- Update to 4.15.0
-
-* Sat Feb 10 2024 Vasiliy Glazov <vascom2@gmail.com> - 4.14.15-1
-- Update to 4.14.15
-
-* Tue Feb 06 2024 Vasiliy Glazov <vascom2@gmail.com> - 4.14.13-1
-- Update to 4.14.13
-
-* Fri Feb 02 2024 Vasiliy Glazov <vascom2@gmail.com> - 4.14.12-1
-- Update to 4.14.12
-
-* Mon Jan 22 2024 Vasiliy Glazov <vascom2@gmail.com> - 4.14.9-1
-- Update to 4.14.9
-
-* Tue Jan 09 2024 Vasiliy Glazov <vascom2@gmail.com> - 4.14.4-1
-- Update to 4.14.4
-
-* Mon Jan 08 2024 Vasiliy Glazov <vascom2@gmail.com> - 4.14.3-1
-- Update to 4.14.3
-
-* Tue Dec 26 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.13.1-1
-- Update to 4.13.1
-
-* Mon Dec 04 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.12.2-1
-- Update to 4.12.2
-
-* Fri Dec 01 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.12.0-1
-- Update to 4.12.0
-
-* Mon Nov 13 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.11.7-1
-- Update to 4.11.7
-
-* Mon Nov 06 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.11.5-1
-- Update to 4.11.5
-
-* Sat Nov 04 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.11.3-2
-- Rebuild
-
-* Fri Nov 03 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.11.3-1
-- Update to 4.11.3
-
-* Thu Nov 02 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.11.2-1
-- Update to 4.11.2
-
-* Mon Oct 30 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.11.1-1
-- Update to 4.11.1
-
-* Tue Oct 24 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.10.3-3
-- Rebuild with new Qt 6
-
-* Tue Oct 10 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.10.3-2
-- Rebuild with new Qt 6
-
-* Tue Oct 03 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.10.3-1
-- Update to 4.10.3
-
-* Sun Oct 01 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.10.2-1
-- Update to 4.10.2
-
-* Mon Sep 25 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.10.1-1
-- Update to 4.10.1
-
-* Wed Sep 20 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.9.9-1
-- Update to 4.9.9
-
-* Sat Sep 16 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.9.8-1
-- Update to 4.9.8
-
-* Thu Sep 14 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.9.7-1
-- Update to 4.9.7
-
-* Wed Sep 06 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.9.5-1
-- Update to 4.9.5
-
-* Fri Sep 01 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.9.4-1
-- Update to 4.9.4
-
-* Wed Aug 23 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.9.3-1
-- Update to 4.9.3
-
-* Fri Aug 11 2023 Leigh Scott <leigh123linux@gmail.com> - 4.8.4-4
-- Rebuild for new Qt
-
-* Fri Jul 28 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.8.4-3
-- Rebuild for new Qt 6
-
-* Sun Jul 16 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.8.4-2
-- Rebuilt due to Qt 6 private API export changes.
-
-* Wed Jun 14 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.8.4-1
-- Updated to version 4.8.4.
-
-* Thu Jun 08 2023 Nicolas Chauvet <kwizart@gmail.com> - 4.8.1-4
-- Rebuilt for qt6
-
-* Wed May 31 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.8.1-3
-- Fixed issues with voice and video calls.
-
-* Sun May 07 2023 Vasiliy Glazov <vascom2@gmail.com> - 4.8.1-2
-- Rebuild for new Qt 6
-
-* Tue Apr 25 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 4.8.1-1
-- Updated to version 4.8.1.
