@@ -10,7 +10,7 @@
 
 Name: telegram-desktop
 Version: 6.8.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -177,6 +177,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Wed May 20 2026 Leigh Scott <leigh123linux@gmail.com> - 6.8.2-2
+- Rebuild for qt6
+
 * Tue May 12 2026 Leigh Scott <leigh123linux@gmail.com> - 6.8.2-1
 - Update to 6.8.2
 
