@@ -89,7 +89,10 @@ BuildRequires: gcc
 BuildRequires: gcc-c++
 BuildRequires: libappstream-glib
 BuildRequires: libatomic
+# aarch64 fails if it's installed
+%ifarch x86_64
 BuildRequires: libdispatch-devel
+%endif
 BuildRequires: libqrcodegencpp-devel
 BuildRequires: libstdc++-devel
 BuildRequires: minizip-compat-devel
@@ -138,7 +141,10 @@ business messaging needs.
 %autosetup -n %{appname}-%{version}-full -p1
 
 # Unbundling libraries... except minizip
-rm -rf Telegram/ThirdParty/{QR,dispatch,expected,fcitx-qt5,fcitx5-qt,hime,hunspell,jemalloc,kimageformats,lz4,nimf,range-v3,xxHash}
+%ifarch x86_64
+rm -rf Telegram/ThirdParty/dispatch
+%endif
+rm -rf Telegram/ThirdParty/{QR,expected,fcitx-qt5,fcitx5-qt,hime,hunspell,jemalloc,kimageformats,lz4,nimf,range-v3,xxHash}
 
 sed -i "/#include <openssl\/engine.h>/d" Telegram/SourceFiles/core/utils.cpp
 
