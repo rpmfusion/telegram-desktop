@@ -9,7 +9,7 @@
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
 Name: telegram-desktop
-Version: 7.0.6
+Version: 7.0.9
 Release: 1%{?dist}
 
 # Application and 3rd-party modules licensing:
@@ -178,6 +178,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Sat Aug 22 2026 Leigh Scott <leigh123linux@gmail.com> - 7.0.9-1
+- 7.0.9
+
 * Tue Jul 28 2026 Steve Cossette <farchord@gmail.com> - 7.0.6-1
 - 7.0.6
 
