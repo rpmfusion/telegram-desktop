@@ -10,7 +10,7 @@
 
 Name: telegram-desktop
 Version: 7.2.5
-Release: 1%{?dist}
+Release: 2%{?dist}
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -178,6 +178,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
+* Thu Sep 17 2026 Leigh Scott <leigh123linux@gmail.com> - 7.2.5-2
+- Rebuild for f45 ffmpeg9
+
 * Sun Sep 06 2026 Leigh Scott <leigh123linux@gmail.com> - 7.2.5-1
 - 7.2.5
 
