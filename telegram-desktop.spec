@@ -8,9 +8,9 @@
 # Reducing debuginfo verbosity...
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 
-Name: telegram-desktop
-Version: 7.2.5
-Release: 2%{?dist}
+Name:    telegram-desktop
+Version: 7.2.10
+Release: %autorelease
 
 # Application and 3rd-party modules licensing:
 # * Telegram Desktop - GPL-3.0-or-later with OpenSSL exception -- main tarball;
@@ -30,6 +30,20 @@ Patch0: findprotobuf_fix.patch
 # Telegram Desktop require more than 8 GB of RAM on linking stage.
 # Disabling all low-memory architectures.
 ExclusiveArch: x86_64 aarch64
+
+BuildSystem:       cmake
+BuildOption(conf): -DCMAKE_BUILD_TYPE=Release
+BuildOption(conf): -DCMAKE_AR=%{_bindir}/gcc-ar
+BuildOption(conf): -DCMAKE_RANLIB=%{_bindir}/gcc-ranlib
+BuildOption(conf): -DCMAKE_NM=%{_bindir}/gcc-nm
+BuildOption(conf): -DTDESKTOP_API_ID=611335
+BuildOption(conf): -DTDESKTOP_API_HASH=d524b414d21f4d37f08684c1df41ac9c
+BuildOption(conf): -DDESKTOP_APP_USE_PACKAGED:BOOL=ON
+BuildOption(conf): -DDESKTOP_APP_USE_PACKAGED_FONTS:BOOL=OFF
+BuildOption(conf): -DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION:BOOL=OFF
+BuildOption(conf): -DDESKTOP_APP_DISABLE_X11_INTEGRATION:BOOL=OFF
+BuildOption(conf): -DDESKTOP_APP_DISABLE_CRASH_REPORTS:BOOL=ON
+BuildOption(conf): -DDESKTOP_APP_DISABLE_QT_PLUGINS:BOOL=ON
 
 BuildRequires: cmake(Microsoft.GSL)
 BuildRequires: cmake(OpenAL)
@@ -73,6 +87,7 @@ BuildRequires: pkgconfig(opus)
 BuildRequires: pkgconfig(protobuf)
 BuildRequires: pkgconfig(protobuf-lite)
 BuildRequires: pkgconfig(rnnoise)
+BuildRequires: pkgconfig(tlottie)
 BuildRequires: pkgconfig(vpx)
 BuildRequires: pkgconfig(wayland-client)
 BuildRequires: pkgconfig(webkitgtk-6.0)
@@ -82,7 +97,6 @@ BuildRequires: pkgconfig(xcb-record)
 BuildRequires: pkgconfig(xcb-screensaver)
 
 BuildRequires: boost-devel
-BuildRequires: cmake
 BuildRequires: desktop-file-utils
 BuildRequires: ffmpeg-devel
 BuildRequires: gcc
@@ -143,26 +157,6 @@ rm -rf Telegram/ThirdParty/{QR,expected,fcitx-qt5,fcitx5-qt,hime,hunspell,jemall
 
 sed -i "/#include <openssl\/engine.h>/d" Telegram/SourceFiles/core/utils.cpp
 
-%build
-# Building Telegram Desktop using cmake...
-%cmake -G Ninja \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_AR=%{_bindir}/gcc-ar \
-    -DCMAKE_RANLIB=%{_bindir}/gcc-ranlib \
-    -DCMAKE_NM=%{_bindir}/gcc-nm \
-    -DTDESKTOP_API_ID=611335 \
-    -DTDESKTOP_API_HASH=d524b414d21f4d37f08684c1df41ac9c \
-    -DDESKTOP_APP_USE_PACKAGED:BOOL=ON \
-    -DDESKTOP_APP_USE_PACKAGED_FONTS:BOOL=OFF \
-    -DDESKTOP_APP_DISABLE_WAYLAND_INTEGRATION:BOOL=OFF \
-    -DDESKTOP_APP_DISABLE_X11_INTEGRATION:BOOL=OFF \
-    -DDESKTOP_APP_DISABLE_CRASH_REPORTS:BOOL=ON \
-    -DDESKTOP_APP_DISABLE_QT_PLUGINS:BOOL=ON
-%cmake_build
-
-%install
-%cmake_install
-
 %check
 appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/*.metainfo.xml
 desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
@@ -178,71 +172,4 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_metainfodir}/*.metainfo.xml
 
 %changelog
-* Thu Sep 17 2026 Leigh Scott <leigh123linux@gmail.com> - 7.2.5-2
-- Rebuild for f45 ffmpeg9
-
-* Sun Sep 06 2026 Leigh Scott <leigh123linux@gmail.com> - 7.2.5-1
-- 7.2.5
-
-* Sat Aug 22 2026 Leigh Scott <leigh123linux@gmail.com> - 7.1.1-1
-- 7.1.1
-
-* Sat Aug 22 2026 Leigh Scott <leigh123linux@gmail.com> - 7.0.9-1
-- 7.0.9
-
-* Sun Aug 02 2026 RPM Fusion Release Engineering <leigh123linux@rpmfusion.org> - 7.0.6-2
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_45_Mass_Rebuild
-
-* Tue Jul 28 2026 Steve Cossette <farchord@gmail.com> - 7.0.6-1
-- 7.0.6
-
-* Thu Jul 16 2026 Steve Cossette <farchord@gmail.com> - 7.0.1-1
-- 7.0.1
-
-* Fri Jul 10 2026 Leigh Scott <leigh123linux@gmail.com> - 6.9.3-1
-- Update to 6.9.3
-
-* Wed May 20 2026 Leigh Scott <leigh123linux@gmail.com> - 6.8.2-2
-- Rebuild for qt6
-
-* Tue May 12 2026 Leigh Scott <leigh123linux@gmail.com> - 6.8.2-1
-- Update to 6.8.2
-
-* Fri May 08 2026 Leigh Scott <leigh123linux@gmail.com> - 6.8.1-1
-- Update to 6.8.1
-
-* Fri May 08 2026 Leigh Scott <leigh123linux@gmail.com> - 6.8.0-1
-- Update to 6.8.0
-
-* Sat Apr 25 2026 Leigh Scott <leigh123linux@gmail.com> - 6.7.8-1
-- Update to 6.7.8
-- Trim changelog
-- Clean up old fedora conditionals
-
-* Fri Apr 17 2026 Nicolas Chauvet <kwizart@gmail.com> - 6.7.6-1
-- Update to 6.7.6
-
-* Fri Mar 20 2026 Nicolas Chauvet <kwizart@gmail.com> - 6.6.1-2
-- Rebuilt for libvpx-1.16.0
-
-* Mon Mar 02 2026 Vasiliy Glazov <vascom2@gmail.com> - 6.6.1-1
-- Update to 6.6.1
-
-* Sat Feb 28 2026 Vasiliy Glazov <vascom2@gmail.com> - 6.5.1-1
-- Update to 6.5.1
-
-* Fri Feb 27 2026 Vasiliy Glazov <vascom2@gmail.com> - 6.4.2-3
-- Rebuilt for new Qt
-
-* Mon Feb 02 2026 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 6.4.2-2
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_44_Mass_Rebuild
-
-* Mon Jan 12 2026 Vasiliy Glazov <vascom2@gmail.com> - 6.4.2-1
-- Update to 6.4.2
-
-* Wed Dec 24 2025 Vasiliy Glazov <vascom2@gmail.com> - 6.3.10-1
-- Update to 6.3.10
-
-* Tue Dec 16 2025 Vasiliy Glazov <vascom2@gmail.com> - 6.3.9-1
-- Update to 6.3.9
-
+%autochangelog
